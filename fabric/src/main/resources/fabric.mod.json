@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "scena",
+  "version": "${version}",
+
+  "name": "Scena",
+  "description": "Cross-Platform API for Fabric, Quilt and Forge",
+  "authors": [
+    "OrionDevelopment"
+  ],
+  "contact": {
+    "sources": "https://github.com/Communi-Suggestu/Scena"
+  },
+
+  "license": "MIT",
+  "icon": "logo.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.communi.suggestu.scena.fabric.Fabric"
+    ]
+  },
+  "mixins": [
+    "scena.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.12.0",
+    "fabric": "*",
+    "minecraft": "1.19.x",
+    "java": ">=17"
+  },
+  "suggests": {
+  }
+}

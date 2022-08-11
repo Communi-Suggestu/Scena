@@ -1,0 +1,24 @@
+import org.gradle.plugin.use.internal.DefaultPluginId
+
+pluginManagement.repositories.maven { url = 'https://maven.minecraftforge.net' }
+pluginManagement.repositories.maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+pluginManagement.repositories.maven { url = 'https://maven.parchmentmc.org' }
+pluginManagement.repositories.mavenCentral()
+pluginManagement.repositories.mavenLocal()
+
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.minecraftforge.gradle"), "5.1.+")
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("org.parchmentmc.librarian.forgegradle"), "1.+")
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "0.13-SNAPSHOT")
+
+pluginManagement.resolutionStrategy.eachPlugin {
+    if (requested.id.id == "org.spongepowered.mixin") {
+        useModule("org.spongepowered:mixingradle:0.7-SNAPSHOT")
+    }
+}
+
+rootProject.name = "scena"
+
+include("common")
+include("core")
+include("fabric")
+include("forge")

@@ -2,6 +2,11 @@
 ### Scena git ignore file.
 #########################
 
+# Project specific
+#########################
+/repo/
+
+
 # Default java
 #########################
 
@@ -201,3 +206,5 @@ local.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+!/gradle/wrapper/gradle-wrapper.jar

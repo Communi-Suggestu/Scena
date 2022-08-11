@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.communi.suggestu.scena.forge.mixin.platform",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "scena.refmap.json",
+  "mixins": [
+    "common.LivingEntityEquipmentSlotMixin",
+    "common.WorldlyBlockGrassGrowMixin"
+  ],
+  "client": [
+    "client.BlockEntityWithoutLevelRendererMixin",
+    "client.ModelDataManagerMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

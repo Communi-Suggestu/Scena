@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+license="GLGPLv3"
+
+[[mods]] #mandatory
+modId="scena"
+version="${file.jarVersion}"
+displayName="Scena"
+authors="OrionOnline"
+logoFile="logo-forge.png"
+description='''
+Cross-Platform Minecraft Modding System
+'''
