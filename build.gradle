@@ -1,5 +1,5 @@
 project.group = "com.communi-suggestu.scena"
-project.version = project.localVersion
+project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
 
 subprojects { subProject ->
     subProject.apply { configure ->
