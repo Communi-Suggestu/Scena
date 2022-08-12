@@ -8,7 +8,7 @@ project.dependencies.implementation fg.deobf("com.communi-suggestu.saecularia-ca
 
 //project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
 project.minecraft.mappings channel: "official", version: "${project.minecraftVersion}"
-project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
+project.minecraft.accessTransformer = project(':scena-common').file("accesstransformer.cfg")
 
 //Subsequent code is needed to fix FG
 if (!project.file("build\\fg_cache\\net\\minecraft\\joined\\${project.minecraftVersion}").exists()) {

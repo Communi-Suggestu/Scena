@@ -6,7 +6,7 @@ pluginManagement.repositories.maven { url = 'https://maven.parchmentmc.org' }
 pluginManagement.repositories.mavenCentral()
 pluginManagement.repositories.mavenLocal()
 
-pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.minecraftforge.gradle"), "5.1.+")
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.minecraftforge.gradle"), "5.1.57-fix-feature-jar_jar_resolution")
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("org.parchmentmc.librarian.forgegradle"), "1.+")
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "0.13-SNAPSHOT")
 
@@ -22,3 +22,10 @@ include("common")
 include("core")
 include("fabric")
 include("forge")
+
+projectDescriptorRegistry.allProjects.each {project ->
+    if (project == rootProject)
+        return;
+
+    project.name = "${rootProject.name}-${project.name}"
+}

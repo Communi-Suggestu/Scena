@@ -54,6 +54,14 @@ subprojects { subProject ->
     subProject.dependencies.compileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
     subProject.dependencies.testCompileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
 
+    subProject.ext.setupEmbeddedPublishing = { mavenPublication ->
+        subProject.afterEvaluate { evaluatedSubProject ->
+            if (evaluatedSubProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
+                evaluatedSubProject.jarJar.component(mavenPublication)
+            }
+        }
+    }
+
     subProject.ext.cleanMavenPublication = { mavenPublication ->
         subProject.afterEvaluate { evaluatedSubProject ->
             if (evaluatedSubProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
@@ -106,12 +114,19 @@ subprojects { subProject ->
     }
 
     subProject.ext.addCoreProject = {
-        subProject.dependencies.implementation (subProject.project(":core")) {
-            transitive = false
+        subProject.dependencies.implementation (subProject.project(":scena-core")) { dependency ->
+            dependency.transitive = false
+
+            subProject.afterEvaluate { evaluatedSubProject ->
+                if (subProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
+                    subProject.jarJar.pin(dependency, subProject.project(":scena-core").version)
+                    subProject.jarJar.ranged(dependency, "[${subProject.project(":scena-core").version}]")
+                }
+            }
         }
 
-        subProject.tasks.jar.from subProject.project(":core").sourceSets.main.resources
-        subProject.tasks.processResources.from subProject.project(":core").sourceSets.main.resources
+        subProject.tasks.jar.from subProject.project(":scena-core").sourceSets.main.resources
+        subProject.tasks.processResources.from subProject.project(":scena-core").sourceSets.main.resources
         subProject.tasks.processResources.inputs.property "version", subProject.version
         subProject.tasks.processResources.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
@@ -121,8 +136,6 @@ subprojects { subProject ->
             subProject.publishing {
                 publications {
                     mavenJava(MavenPublication) { pub ->
-                        artifactId "${rootProject.name}-${subProject.name}"
-
                         from subProject.components.java
 
                         pom {
@@ -148,6 +161,7 @@ subprojects { subProject ->
                         }
 
                         subProject.cleanMavenPublication(pub)
+                        subProject.setupEmbeddedPublishing(pub)
                     }
                 }
             }

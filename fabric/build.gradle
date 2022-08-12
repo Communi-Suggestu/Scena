@@ -16,8 +16,8 @@ project.dependencies.mappings loom.layered() { layer ->
     layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
 }
 
-project.loom.accessWidenerPath = project(':common').file("scena.accesswidener")
-project.tasks.processResources.from project(':common').file("scena.accesswidener")
+project.loom.accessWidenerPath = project(':scena-common').file("scena.accesswidener")
+project.tasks.processResources.from project(':scena-common').file("scena.accesswidener")
 project.tasks.processResources.filesMatching("fabric.mod.json") {
     expand "version": project.version
 }

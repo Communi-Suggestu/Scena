@@ -10,7 +10,7 @@ configurations.implementation.extendsFrom configurations.includedLibraries
 project.addCoreProject()
 
 project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
-project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
+project.minecraft.accessTransformer = project(':scena-common').file("accesstransformer.cfg")
 
 project.minecraft.runs {
     client { clientRun ->
@@ -24,8 +24,8 @@ project.minecraft.runs {
         mods {
             scena {
                 source sourceSets.main
-                source project(":common").sourceSets.main
-                source project(":core").sourceSets.main
+                source project(":scena-common").sourceSets.main
+                source project(":scena-core").sourceSets.main
             }
         }
     }
@@ -33,9 +33,11 @@ project.minecraft.runs {
 
 project.dependencies.minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
 project.dependencies.annotationProcessor "org.spongepowered:mixin:${project.mixinAnnotationProcessorVersion}:processor"
-project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-forge:${project.saeculariaCaudicesVersion}")
+project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-forge:${project.saeculariaCaudicesVersion}") {
+    jarJar.ranged(it, project.supportedSaeculariaCaudicesVersionRange)
+}
 
-project.tasks.processResources.from project(":common").file("accesstransformer.cfg")
+project.tasks.processResources.from project(":scena-common").file("accesstransformer.cfg")
 
 project.mixin.config "scena.mixins.json"
 project.mixin.add project.sourceSets.main, "scena.refmap.json"
@@ -56,6 +58,11 @@ jarJar {
     fromRuntimeConfiguration()
     dependencies {
         include(dependency("com.communi-suggestu.saecularia-caudices:saecularia-caudices-forge"))
+        include(dependency("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core"))
+        include(dependency("com.communi-suggestu.scena:scena-core"))
     }
 }
+
+tasks.jarJar.archiveClassifier.set("");
+tasks.jar.archiveClassifier.set("slim");
 
