@@ -21,4 +21,8 @@ public record FluidInformation(Fluid fluid, long amount, CompoundTag data)
 
         return this;
     }
+
+    public FluidInformation withAmount(long amount) {
+        return new FluidInformation(fluid, amount, data);
+    }
 }

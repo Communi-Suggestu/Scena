@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.core.creativetab.ICreativeTabManager;
 import com.communi.suggestu.scena.core.dist.IDistributionManager;
 import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
@@ -118,5 +119,11 @@ public final class ForgeScenaPlatform implements IScenaPlatform
     public @NotNull ICreativeTabManager getCreativeTabManager()
     {
         return ForgeCreativeTabManager.getInstance();
+    }
+
+    @Override
+    public @NotNull IBlockEntityManager getBlockEntityManager()
+    {
+        return new IBlockEntityManager() {};
     }
 }

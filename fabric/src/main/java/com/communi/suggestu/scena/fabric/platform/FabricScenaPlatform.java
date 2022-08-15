@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
 import com.communi.suggestu.scena.fabric.platform.client.FabricClientManager;
 import com.communi.suggestu.scena.fabric.platform.configuration.FabricConfigurationManager;
 import com.communi.suggestu.scena.fabric.platform.creativetab.FabricCreativeTabManager;
@@ -118,5 +119,11 @@ public final class FabricScenaPlatform implements IScenaPlatform
     public @NotNull ICreativeTabManager getCreativeTabManager()
     {
         return FabricCreativeTabManager.getInstance();
+    }
+
+    @Override
+    public @NotNull IBlockEntityManager getBlockEntityManager()
+    {
+        return new IBlockEntityManager() {};
     }
 }

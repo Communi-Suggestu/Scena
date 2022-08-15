@@ -7,9 +7,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
@@ -97,10 +101,21 @@ public interface IRenderingManager
     IRenderTypeManager getRenderTypeManager();
 
     /**
-     * Registers a new BEWLR (ISTER) for a specific item.
+     * Registers a new {@link BlockEntityWithoutLevelRenderer} for a specific item.
      *
-     * @param item The item to register the BEWLR for.
-     * @param renderer The BEWLR to register.
+     * @param item The item to register the {@link BlockEntityWithoutLevelRenderer} for.
+     * @param renderer The {@link BlockEntityWithoutLevelRenderer} to register.
      */
-    void registerISTER(final Item item, final BlockEntityWithoutLevelRenderer renderer);
+    void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer);
+
+    /**
+     * Registers a new {@link BlockEntityRendererProvider} for a specific {@link BlockEntityType}.
+     *
+     * @param type The type to register the provider for.
+     * @param provider The provider.
+     * @param <T> The type of the block entity.
+     */
+    default <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider) {
+        BlockEntityRenderers.register(type, provider);
+    }
 }

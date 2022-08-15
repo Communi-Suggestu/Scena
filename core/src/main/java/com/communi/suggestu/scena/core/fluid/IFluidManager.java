@@ -1,11 +1,14 @@
 package com.communi.suggestu.scena.core.fluid;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * The fluid manager of the platform.
@@ -20,6 +23,36 @@ public interface IFluidManager
      */
     static IFluidManager getInstance() {
         return IScenaPlatform.getInstance().getFluidManager();
+    }
+
+    /**
+     * Registers a new variant handler and the passed in fluid.
+     *
+     * @param name The name of the fluid.
+     * @param fluid The fluid to register the handler for.
+     * @param variantHandler The builder that will be used to create the handler.
+     * @return A supplier which will return the registered variant handler.
+     */
+    FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler);
+
+    /**
+     * Returns the fluid variant handler for the given fluid.
+     * This might be empty or filled with a default handler depending on the platform.
+     *
+     * @param fluid The fluid to get the handler for.
+     * @return The fluid variant handler for the given fluid.
+     */
+    Optional<IFluidVariantHandler> getVariantHandlerFor(final Fluid fluid);
+
+    /**
+     * Returns the fluid variant handler for the given fluid information.
+     * This might be empty or filled with a default handler depending on the platform.
+     *
+     * @param fluid The fluid information to get the handler for.
+     * @return The fluid variant handler for the given fluid information.
+     */
+    default Optional<IFluidVariantHandler> getVariantHandlerFor(FluidInformation fluid) {
+        return getVariantHandlerFor(fluid.fluid());
     }
 
     /**
@@ -74,4 +107,5 @@ public interface IFluidManager
      * @return The display name of the fluid.
      */
     Component getDisplayName(Fluid fluid);
+
 }

@@ -12,9 +12,12 @@ import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
@@ -77,11 +80,17 @@ public final class FabricRenderingManager implements IRenderingManager
     }
 
     @Override
-    public void registerISTER(final Item item, final BlockEntityWithoutLevelRenderer renderer)
+    public void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer)
     {
         BuiltinItemRendererRegistry.INSTANCE.register(
           item,
           renderer::renderByItem
         );
+    }
+
+    @Override
+    public <T extends BlockEntity> void registerBlockEntityRenderer(final BlockEntityType<? extends T> type, final BlockEntityRendererProvider<T> provider)
+    {
+
     }
 }

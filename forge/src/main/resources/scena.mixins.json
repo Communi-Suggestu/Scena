@@ -6,7 +6,8 @@
   "refmap": "scena.refmap.json",
   "mixins": [
     "common.LivingEntityEquipmentSlotMixin",
-    "common.WorldlyBlockGrassGrowMixin"
+    "common.WorldlyBlockGrassGrowMixin",
+    "common.FluidTypeFluidMixin"
   ],
   "client": [
     "client.BlockEntityWithoutLevelRendererMixin",

@@ -6,8 +6,7 @@ plugins {
 project.dependencies.minecraft "net.minecraft:joined:${project.minecraftVersion}"
 project.dependencies.implementation fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
 
-//project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
-project.minecraft.mappings channel: "official", version: "${project.minecraftVersion}"
+project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
 project.minecraft.accessTransformer = project(':scena-common').file("accesstransformer.cfg")
 
 //Subsequent code is needed to fix FG

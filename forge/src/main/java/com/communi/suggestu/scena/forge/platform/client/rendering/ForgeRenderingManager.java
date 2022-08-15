@@ -88,7 +88,7 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @Override
-    public void registerISTER(final Item item, final BlockEntityWithoutLevelRenderer renderer)
+    public void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer)
     {
         this.bewlrs.put(item, renderer);
     }
