@@ -10,7 +10,6 @@ import java.util.Map;
 
 public final class ModelDataBuilder implements IModelDataBuilder
 {
-
     private final Map<IModelDataKey<?>, Object> values = Maps.newHashMap();
 
     @Override
@@ -41,4 +40,6 @@ public final class ModelDataBuilder implements IModelDataBuilder
         this.values.put(key, value);
         return this;
     }
+
+
 }

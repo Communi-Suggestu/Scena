@@ -25,4 +25,11 @@ public interface IModelDataManager {
      * @param blockEntity The block entity to refresh the model data for.
      */
     void requestModelDataRefresh(BlockEntity blockEntity);
+
+    /**
+     * Returns an empty block model data to use in cases where it is not available.
+     *
+     * @return The block model data.
+     */
+    IBlockModelData empty();
 }

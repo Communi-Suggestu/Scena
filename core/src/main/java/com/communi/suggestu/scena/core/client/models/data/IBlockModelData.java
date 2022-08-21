@@ -4,6 +4,11 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IBlockModelData
 {
+    static IBlockModelData empty()
+    {
+        return IModelDataManager.getInstance().empty();
+    }
+
     /**
      * Check if this data has a property, even if the value is {@code null}. Can be
      * used by code that intends to fill in data for a render pipeline.

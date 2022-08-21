@@ -40,4 +40,19 @@ public class ForgeBlockModelDataPlatformDelegate implements IBlockModelData
     {
         return delegate;
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof final ForgeBlockModelDataPlatformDelegate that)) return false;
+
+        return getDelegate().equals(that.getDelegate());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return getDelegate().hashCode();
+    }
 }

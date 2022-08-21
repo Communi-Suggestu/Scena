@@ -37,8 +37,10 @@ public final class ForgeModelGeometryToSpecificationPlatformDelegator<T extends 
       final ItemOverrides overrides,
       final ResourceLocation modelLocation)
     {
+        final ForgeModelBakingContextDelegate context = new ForgeModelBakingContextDelegate(bakery::getModel, owner);
+
         return new ForgeBakedModelDelegate(delegate.bake(
-          bakery, spriteGetter, modelTransform, modelLocation
+          context, bakery, spriteGetter, modelTransform, modelLocation
         ));
     }
 
@@ -46,8 +48,10 @@ public final class ForgeModelGeometryToSpecificationPlatformDelegator<T extends 
     public Collection<Material> getMaterials(
       final IGeometryBakingContext owner, final Function<ResourceLocation, UnbakedModel> modelGetter, final Set<Pair<String, String>> missingTextureErrors)
     {
+        final ForgeModelBakingContextDelegate context = new ForgeModelBakingContextDelegate(modelGetter, owner);
+
         return delegate.getTextures(
-          modelGetter, missingTextureErrors
+          context, modelGetter, missingTextureErrors
         );
     }
 }

@@ -29,26 +29,14 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
     {
         this.gson = new GsonBuilder()
                       .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-                      .registerTypeHierarchyAdapter(IModelSpecification.class, (JsonDeserializer<IModelSpecification<?>>) (json, typeOfT, context) -> {
-                          if (!json.isJsonObject())
-                              throw new JsonParseException("Model specification must be an object");
-
-                          if (!json.getAsJsonObject().has("loader"))
-                              return null;
-
-                          if (!json.getAsJsonObject().get("loader").getAsString().equals(name.toString()))
-                              return null;
-
-                          return delegate.read(context, json.getAsJsonObject());
-                      })
+                      .registerTypeHierarchyAdapter(UnbakedModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
                       .disableHtmlEscaping()
                       .create();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @Nullable UnbakedModel loadModelResource(
-      final ResourceLocation resourceLocation, final ModelProviderContext modelProviderContext) throws ModelProviderException
+    public @Nullable UnbakedModel loadModelResource(final ResourceLocation resourceLocation, final ModelProviderContext modelProviderContext) throws ModelProviderException
     {
         try
         {
@@ -61,15 +49,12 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
             final InputStream inputStream = resource.get().open();
             final InputStreamReader streamReader = new InputStreamReader(inputStream);
 
-            final IModelSpecification<S> modelSpecification = gson.fromJson(streamReader, IModelSpecification.class);
+            final UnbakedModel modelSpecification = gson.fromJson(streamReader, UnbakedModel.class);
 
             streamReader.close();
             inputStream.close();
 
-            if (modelSpecification == null)
-                return null;
-
-            return new FabricModelSpecificationUnbakedModelDelegate<>(modelSpecification);
+            return modelSpecification;
         }
         catch (IOException e)
         {
