@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.client.rendering;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
+import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -118,4 +119,11 @@ public interface IRenderingManager
     default <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider) {
         BlockEntityRenderers.register(type, provider);
     }
+
+    /**
+     * Gives access to this platform's model manager.
+     *
+     * @return The model manager
+     */
+    IModelManager getModelManager();
 }

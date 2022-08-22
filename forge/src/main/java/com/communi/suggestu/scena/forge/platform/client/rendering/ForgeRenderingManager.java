@@ -1,8 +1,10 @@
 package com.communi.suggestu.scena.forge.platform.client.rendering;
 
+import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
+import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -91,6 +93,12 @@ public class ForgeRenderingManager implements IRenderingManager
     public void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer)
     {
         this.bewlrs.put(item, renderer);
+    }
+
+    @Override
+    public IModelManager getModelManager()
+    {
+        return ForgeModelManager.getInstance();
     }
 
     public Optional<BlockEntityWithoutLevelRenderer> getRenderer(final Item item) {

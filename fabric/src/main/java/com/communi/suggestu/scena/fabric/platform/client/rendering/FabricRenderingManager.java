@@ -1,12 +1,15 @@
 package com.communi.suggestu.scena.fabric.platform.client.rendering;
 
+import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
+import com.communi.suggestu.scena.fabric.platform.client.rendering.model.FabricModelManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.rendertype.FabricRenderTypeManager;
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.client.Minecraft;
@@ -91,6 +94,12 @@ public final class FabricRenderingManager implements IRenderingManager
     @Override
     public <T extends BlockEntity> void registerBlockEntityRenderer(final BlockEntityType<? extends T> type, final BlockEntityRendererProvider<T> provider)
     {
+        BlockEntityRendererRegistry.register(type, provider);
+    }
 
+    @Override
+    public IModelManager getModelManager()
+    {
+        return FabricModelManager.getInstance();
     }
 }

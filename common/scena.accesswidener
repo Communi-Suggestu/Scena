@@ -9,3 +9,4 @@ accessible   class      net/minecraft/client/renderer/block/model/ItemTransform$
 accessible   class      net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer
 accessible   class      net/minecraft/client/renderer/block/model/ItemOverride$Deserializer
 accessible   method     net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V
+accessible   method     net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)Ljava/util/List; # processFrames
