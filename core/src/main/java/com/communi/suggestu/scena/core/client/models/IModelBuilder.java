@@ -42,9 +42,9 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         return new Collecting(quads);
     }
 
-    T addCulledFace(Direction facing, BakedQuad quad);
+    T addCulledFace(RenderTypeGroup renderTypeGroup, Direction facing, BakedQuad quad);
 
-    T addUnculledFace(BakedQuad quad);
+    T addUnculledFace(RenderTypeGroup renderTypeGroup, BakedQuad quad);
 
     BakedModel build();
 
@@ -62,14 +62,14 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         }
 
         @Override
-        public Simple addCulledFace(Direction facing, BakedQuad quad)
+        public Simple addCulledFace(final RenderTypeGroup group, Direction facing, BakedQuad quad)
         {
             builder.addCulledFace(facing, quad);
             return this;
         }
 
         @Override
-        public Simple addUnculledFace(BakedQuad quad)
+        public Simple addUnculledFace(final RenderTypeGroup group, BakedQuad quad)
         {
             builder.addUnculledFace(quad);
             return this;
@@ -93,14 +93,14 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         }
 
         @Override
-        public Collecting addCulledFace(Direction facing, BakedQuad quad)
+        public Collecting addCulledFace(final RenderTypeGroup group, Direction facing, BakedQuad quad)
         {
             quads.add(quad);
             return this;
         }
 
         @Override
-        public Collecting addUnculledFace(BakedQuad quad)
+        public Collecting addUnculledFace(final RenderTypeGroup group, BakedQuad quad)
         {
             quads.add(quad);
             return this;

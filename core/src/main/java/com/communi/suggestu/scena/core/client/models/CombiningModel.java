@@ -234,7 +234,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
             return children.get(name);
         }
 
-        public static class Builder
+        public static class Builder implements IModelBuilder<Builder>
         {
             private final boolean isAmbientOcclusion;
             private final boolean isGui3d;
@@ -265,7 +265,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
             private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads)
             {
                 var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides, particle, renderTypes);
-                quads.forEach(modelBuilder::addUnculledFace);
+                quads.forEach(q -> modelBuilder.addUnculledFace(renderTypes, q));
                 children.add(modelBuilder.build());
             }
 
@@ -288,17 +288,19 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
                 return this;
             }
 
-            public Builder addQuads(RenderTypeGroup renderTypes, BakedQuad... quadsToAdd)
+            @Override
+            public Builder addCulledFace(final RenderTypeGroup group, final Direction facing, final BakedQuad quad)
             {
-                flushQuads(renderTypes);
-                Collections.addAll(quads, quadsToAdd);
+                flushQuads(group);
+                quads.add(quad);
                 return this;
             }
 
-            public Builder addQuads(RenderTypeGroup renderTypes, Collection<BakedQuad> quadsToAdd)
+            @Override
+            public Builder addUnculledFace(final RenderTypeGroup group, final BakedQuad quad)
             {
-                flushQuads(renderTypes);
-                quads.addAll(quadsToAdd);
+                flushQuads(null);
+                quads.add(quad);
                 return this;
             }
 

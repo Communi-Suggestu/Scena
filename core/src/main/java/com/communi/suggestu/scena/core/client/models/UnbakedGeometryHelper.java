@@ -116,17 +116,18 @@ public class UnbakedGeometryHelper
     /**
      * Bakes a list of {@linkplain BlockElement block elements} and feeds the baked quads to a {@linkplain IModelBuilder model builder}.
      */
-    public static void bakeElements(IModelBuilder<?> builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
+    public static void bakeElements(IModelBuilder<?> builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation, RenderTypeGroup renderTypeGroup)
     {
         for (BlockElement element : elements)
         {
             element.faces.forEach((side, face) -> {
                 var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(face.texture)));
                 var quad = bakeElementFace(element, face, sprite, side, modelState, modelLocation);
+                //noinspection ConstantConditions This can be null!
                 if (face.cullForDirection == null)
-                    builder.addUnculledFace(quad);
+                    builder.addUnculledFace(renderTypeGroup, quad);
                 else
-                    builder.addCulledFace(Direction.rotate(modelState.getRotation().getMatrix(), face.cullForDirection), quad);
+                    builder.addCulledFace(renderTypeGroup, Direction.rotate(modelState.getRotation().getMatrix(), face.cullForDirection), quad);
             });
         }
     }
