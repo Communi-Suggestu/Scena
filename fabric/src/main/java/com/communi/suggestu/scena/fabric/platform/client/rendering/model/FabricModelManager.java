@@ -6,9 +6,12 @@ import com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader.
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -37,5 +40,11 @@ public final class FabricModelManager implements IModelManager
     public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IModelSpecificationLoader<?> modelLoader)
     {
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> new FabricPlatformModelLoaderPlatformDelegate<>(name, modelLoader));
+    }
+
+    @Override
+    public void registerItemModelProperty(final @NotNull Item item, final @NotNull ResourceLocation name, final @NotNull ClampedItemPropertyFunction clampedItemPropertyFunction)
+    {
+        ItemProperties.register(item, name, clampedItemPropertyFunction);
     }
 }

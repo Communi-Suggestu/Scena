@@ -7,11 +7,15 @@ import com.communi.suggestu.scena.forge.platform.client.model.loader.ForgePlatfo
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -55,6 +59,12 @@ public final class ForgeModelManager implements IModelManager
         }
 
         loaders.put(name, modelLoader);
+    }
+
+    @Override
+    public void registerItemModelProperty(final @NotNull Item item, final @NotNull ResourceLocation name, final @NotNull ClampedItemPropertyFunction clampedItemPropertyFunction)
+    {
+        ItemProperties.register(item, name, clampedItemPropertyFunction);
     }
 
     @OnlyIn(Dist.CLIENT)
