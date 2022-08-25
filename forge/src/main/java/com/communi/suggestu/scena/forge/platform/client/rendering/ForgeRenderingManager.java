@@ -5,25 +5,42 @@ import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
+import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.Subscribe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
 public class ForgeRenderingManager implements IRenderingManager
 {
     private static final ForgeRenderingManager INSTANCE = new ForgeRenderingManager();
@@ -33,6 +50,9 @@ public class ForgeRenderingManager implements IRenderingManager
         return INSTANCE;
     }
 
+    private final List<Consumer<IBlockEntityRendererRegistrar>> blockEntityRegistrars = Collections.synchronizedList(Lists.newArrayList());
+    private final List<Consumer<IBlockEntityWithoutLevelRendererRegistrar>> blockEntityWithoutLevelRegistrars = Collections.synchronizedList(Lists.newArrayList());
+    private final AtomicBoolean registered = new AtomicBoolean(false);
     private final Map<Item, BlockEntityWithoutLevelRenderer> bewlrs = Maps.newConcurrentMap();
 
     private ForgeRenderingManager()
@@ -90,10 +110,35 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @Override
-    public void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer)
+    public void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback)
     {
-        this.bewlrs.put(item, renderer);
+        if (registered.get())
+        {
+            throw new IllegalStateException("Cannot register a block entity without level renderer after the client setup event has been fired.");
+        }
+
+        blockEntityWithoutLevelRegistrars.add(callback);
     }
+
+    @Override
+    public void registerBlockEntityRenderer(final Consumer<IBlockEntityRendererRegistrar> callback)
+    {
+        if (registered.get())
+        {
+            throw new IllegalStateException("Cannot register a block entity renderer after the client setup event has been fired.");
+        }
+
+        blockEntityRegistrars.add(callback);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterBlockEntityWithoutLevelRenderers(final FMLClientSetupEvent event)
+    {
+        getInstance().registered.set(true);
+        getInstance().blockEntityWithoutLevelRegistrars.forEach(callback -> callback.accept((item, renderer) -> getInstance().bewlrs.put(item, renderer)));
+        getInstance().blockEntityRegistrars.forEach(callback -> callback.accept(BlockEntityRenderers::register));
+    }
+
 
     @Override
     public IModelManager getModelManager()

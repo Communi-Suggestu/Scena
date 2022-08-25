@@ -25,6 +25,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
+@SuppressWarnings("UnstableApiUsage")
 public final class FabricRenderingManager implements IRenderingManager
 {
     private static final FabricRenderingManager INSTANCE = new FabricRenderingManager();
@@ -83,18 +86,18 @@ public final class FabricRenderingManager implements IRenderingManager
     }
 
     @Override
-    public void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer)
+    public void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback)
     {
-        BuiltinItemRendererRegistry.INSTANCE.register(
-          item,
-          renderer::renderByItem
-        );
+        callback.accept((item, renderer) -> BuiltinItemRendererRegistry.INSTANCE.register(
+                item,
+                renderer::renderByItem
+        ));
     }
 
     @Override
-    public <T extends BlockEntity> void registerBlockEntityRenderer(final BlockEntityType<? extends T> type, final BlockEntityRendererProvider<T> provider)
+    public void registerBlockEntityRenderer(final Consumer<IBlockEntityRendererRegistrar> callback)
     {
-        BlockEntityRendererRegistry.register(type, provider);
+        callback.accept(BlockEntityRendererRegistry::register);
     }
 
     @Override

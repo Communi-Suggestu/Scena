@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 /**
  * Gives access to the platforms specific rendering tasks.
  */
@@ -102,23 +104,19 @@ public interface IRenderingManager
     IRenderTypeManager getRenderTypeManager();
 
     /**
-     * Registers a new {@link BlockEntityWithoutLevelRenderer} for a specific item.
+     * Registers a callback which can register a new {@link BlockEntityWithoutLevelRenderer} for a specific item.
      *
-     * @param item The item to register the {@link BlockEntityWithoutLevelRenderer} for.
-     * @param renderer The {@link BlockEntityWithoutLevelRenderer} to register.
+     * @param callback The callback that registers the renderer.
      */
-    void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer);
+    void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback);
 
     /**
-     * Registers a new {@link BlockEntityRendererProvider} for a specific {@link BlockEntityType}.
+     * Registers a callback which can register a new {@link BlockEntityRendererProvider} for a specific {@link BlockEntityType}.
      *
-     * @param type The type to register the provider for.
-     * @param provider The provider.
-     * @param <T> The type of the block entity.
+     * @param callback The callback that registers the renderer.
      */
-    default <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider) {
-        BlockEntityRenderers.register(type, provider);
-    }
+    void registerBlockEntityRenderer(final Consumer<IBlockEntityRendererRegistrar> callback);
+
 
     /**
      * Gives access to this platform's model manager.
@@ -126,4 +124,28 @@ public interface IRenderingManager
      * @return The model manager
      */
     IModelManager getModelManager();
+
+    /**
+     * A registrar for the {@link BlockEntityWithoutLevelRenderer}s.
+     */
+    interface IBlockEntityWithoutLevelRendererRegistrar {
+        /**
+         * Registers a new {@link BlockEntityWithoutLevelRenderer} for a specific item.
+         *
+         * @param item The item to register the {@link BlockEntityWithoutLevelRenderer} for.
+         * @param renderer The {@link BlockEntityWithoutLevelRenderer} to register.
+         */
+        void registerBlockEntityWithoutLevelRenderer(final Item item, final BlockEntityWithoutLevelRenderer renderer);
+    }
+
+    interface IBlockEntityRendererRegistrar {
+        /**
+         * Registers a new {@link BlockEntityRendererProvider} for a specific {@link BlockEntityType}.
+         *
+         * @param type The type to register the provider for.
+         * @param provider The provider.
+         * @param <T> The type of the block entity.
+         */
+        <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider);
+    }
 }
