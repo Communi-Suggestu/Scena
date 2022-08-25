@@ -1,7 +1,6 @@
 package com.communi.suggestu.scena.forge.platform.client.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
-import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
 import com.communi.suggestu.scena.forge.platform.client.model.loader.ForgePlatformModelLoaderPlatformDelegate;
 import com.communi.suggestu.scena.forge.utils.Constants;
@@ -15,17 +14,21 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -39,7 +42,10 @@ public final class ForgeModelManager implements IModelManager
     }
 
     private final Map<ResourceLocation, IModelSpecificationLoader<?>> loaders = Maps.newConcurrentMap();
-    private final AtomicBoolean registered = new AtomicBoolean(false);
+    private final AtomicBoolean registeredLoaders = new AtomicBoolean(false);
+
+    private final Collection<Consumer<IItemModelPropertyRegistrar>> modelPropertyRegistrars = Collections.synchronizedCollection(Lists.newArrayList());
+    private final AtomicBoolean registeredModelProperties = new AtomicBoolean(false);
 
     private ForgeModelManager()
     {
@@ -54,24 +60,19 @@ public final class ForgeModelManager implements IModelManager
     @Override
     public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IModelSpecificationLoader<?> modelLoader)
     {
-        if (registered.get()) {
+        if (registeredLoaders.get()) {
             throw new IllegalStateException("Cannot register model loader after model loading has started.");
         }
 
         loaders.put(name, modelLoader);
     }
 
-    @Override
-    public void registerItemModelProperty(final @NotNull Item item, final @NotNull ResourceLocation name, final @NotNull ClampedItemPropertyFunction clampedItemPropertyFunction)
-    {
-        ItemProperties.register(item, name, clampedItemPropertyFunction);
-    }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onModelRegistry(final ModelEvent.RegisterGeometryLoaders event)
     {
-        getInstance().registered.set(true);
+        getInstance().registeredLoaders.set(true);
 
         final ModContainer container = ModLoadingContext.get().getActiveContainer();
 
@@ -81,5 +82,23 @@ public final class ForgeModelManager implements IModelManager
         });
 
         ModLoadingContext.get().setActiveContainer(container);
+    }
+
+    @Override
+    public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
+    {
+        if (registeredModelProperties.get()) {
+            throw new IllegalStateException("Cannot register item model property after model loading has started.");
+        }
+
+        modelPropertyRegistrars.add(callback);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void onModelRegistry(final FMLClientSetupEvent event)
+    {
+        getInstance().registeredModelProperties.set(true);
+        getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(ItemProperties::register));
     }
 }

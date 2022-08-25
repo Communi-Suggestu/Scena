@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 /**
  * The model manager of the platform.
  */
@@ -40,11 +42,20 @@ public interface IModelManager
     void registerModelLoader(@NotNull final ResourceLocation name, @NotNull final IModelSpecificationLoader<?> modelLoader);
 
     /**
-     * Registers a property function for the given item.
+     * Registers a new callback for item model property registration.
      *
-     * @param item the item.
-     * @param name the function name.
-     * @param clampedItemPropertyFunction the function.
+     * @param callback The callback.
      */
-    void registerItemModelProperty(@NotNull final Item item, @NotNull final ResourceLocation name, @NotNull final ClampedItemPropertyFunction clampedItemPropertyFunction);
+    void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback);
+
+    public static interface IItemModelPropertyRegistrar {
+        /**
+         * Register a new item model property to this registrar.
+         *
+         * @param item The item to register the property for.
+         * @param name The name of the property.
+         * @param clampedItemPropertyFunction The function to get the property value.
+         */
+        void registerItemModelProperty(@NotNull final Item item, @NotNull final ResourceLocation name, @NotNull final ClampedItemPropertyFunction clampedItemPropertyFunction);
+    }
 }

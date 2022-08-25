@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class FabricModelManager implements IModelManager
@@ -43,8 +44,8 @@ public final class FabricModelManager implements IModelManager
     }
 
     @Override
-    public void registerItemModelProperty(final @NotNull Item item, final @NotNull ResourceLocation name, final @NotNull ClampedItemPropertyFunction clampedItemPropertyFunction)
+    public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
     {
-        ItemProperties.register(item, name, clampedItemPropertyFunction);
+        callback.accept(ItemProperties::register);
     }
 }
