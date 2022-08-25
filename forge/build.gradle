@@ -24,8 +24,6 @@ project.minecraft.runs {
         mods {
             scena {
                 source sourceSets.main
-                source project(":scena-common").sourceSets.main
-                source project(":scena-core").sourceSets.main
             }
         }
     }
