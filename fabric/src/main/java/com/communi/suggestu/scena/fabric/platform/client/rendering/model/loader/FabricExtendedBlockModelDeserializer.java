@@ -10,6 +10,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -18,22 +19,14 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
 public class FabricExtendedBlockModelDeserializer extends BlockModel.Deserializer
 {
-    private final Gson GSON = (new GsonBuilder())
-                                                .registerTypeAdapter(BlockModel.class, this)
-                                                .registerTypeAdapter(BlockElement.class, new BlockElement.Deserializer() {})
-                                                .registerTypeAdapter(BlockElementFace.class, new BlockElementFace.Deserializer() {})
-                                                .registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer() {})
-                                                .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer() {})
-                                                .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer() {})
-                                                .registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer() {})
-                                                .registerTypeAdapter(Transformation.class, new TransformationUtils.Deserializer())
-                                                .create();
 
     private final String name;
     private final IModelSpecificationLoader<?> delegate;
@@ -42,14 +35,22 @@ public class FabricExtendedBlockModelDeserializer extends BlockModel.Deserialize
         this.delegate = delegate;
     }
 
-
     public BlockModel deserialize(JsonElement element, Type targetType, JsonDeserializationContext deserializationContext) throws JsonParseException
     {
+        if (!element.isJsonObject())
+            throw new JsonSyntaxException("Model needs to be object");
+
+        final JsonObject jsonobject = element.getAsJsonObject();
+        if (!jsonobject.has("loader"))
+            return null;
+
+        if (!jsonobject.get("loader").getAsString().equals(name))
+            return null;
+
         final BlockModel model = super.deserialize(element, targetType, deserializationContext);
         if (model == null)
             return null;
 
-        final JsonObject jsonobject = element.getAsJsonObject();
         final IModelSpecification<?> geometry = deserializeGeometry(deserializationContext, jsonobject);
 
         if (geometry != null)

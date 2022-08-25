@@ -2,14 +2,22 @@ package com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader
 
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
+import com.communi.suggestu.scena.core.util.TransformationUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonParseException;
+import com.mojang.math.Transformation;
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
 import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverride;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -27,11 +35,19 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
 
     public FabricPlatformModelLoaderPlatformDelegate(final ResourceLocation name, final L delegate)
     {
-        this.gson = new GsonBuilder()
-                      .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-                      .registerTypeHierarchyAdapter(UnbakedModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
-                      .disableHtmlEscaping()
-                      .create();
+        this.gson = (new GsonBuilder())
+                            .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+                            .registerTypeHierarchyAdapter(UnbakedModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
+                            .registerTypeHierarchyAdapter(BlockModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
+                            .registerTypeAdapter(BlockModel.class, this)
+                            .registerTypeAdapter(BlockElement.class, new BlockElement.Deserializer() {})
+                            .registerTypeAdapter(BlockElementFace.class, new BlockElementFace.Deserializer() {})
+                            .registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer() {})
+                            .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer() {})
+                            .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer() {})
+                            .registerTypeAdapter(ItemOverride.class, new ItemOverride.Deserializer() {})
+                            .registerTypeAdapter(Transformation.class, new TransformationUtils.Deserializer())
+                            .create();
     }
 
     @SuppressWarnings("unchecked")

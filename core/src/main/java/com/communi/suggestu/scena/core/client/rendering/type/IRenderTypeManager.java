@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.core.client.rendering.type;
 
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.RandomSource;
