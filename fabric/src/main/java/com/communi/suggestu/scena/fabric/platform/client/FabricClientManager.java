@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.client;
 
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
+import com.communi.suggestu.scena.core.client.textures.ITextureManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.FabricClientFluidManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.FabricRenderingManager;
 import com.communi.suggestu.scena.fabric.platform.client.keys.FabricKeyBindingManager;
@@ -15,6 +16,7 @@ import com.communi.suggestu.scena.core.client.models.data.IModelDataKey;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.communi.suggestu.scena.fabric.platform.client.texture.FabricTextureManager;
 import org.jetbrains.annotations.NotNull;
 
 public final class FabricClientManager implements IClientManager
@@ -70,5 +72,11 @@ public final class FabricClientManager implements IClientManager
     public @NotNull IClientFluidManager getFluidManager()
     {
         return FabricClientFluidManager.getInstance();
+    }
+
+    @Override
+    public @NotNull ITextureManager getTextureManager()
+    {
+        return FabricTextureManager.getInstance();
     }
 }

@@ -10,6 +10,7 @@ import com.communi.suggestu.scena.core.client.models.data.IModelDataKey;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.communi.suggestu.scena.core.client.textures.ITextureManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -93,4 +94,7 @@ public interface IClientManager
 
     @NotNull
     IClientFluidManager getFluidManager();
+
+    @NotNull
+    ITextureManager getTextureManager();
 }
