@@ -136,7 +136,13 @@ public class ForgeRenderingManager implements IRenderingManager
     {
         getInstance().registered.set(true);
         getInstance().blockEntityWithoutLevelRegistrars.forEach(callback -> callback.accept((item, renderer) -> getInstance().bewlrs.put(item, renderer)));
-        getInstance().blockEntityRegistrars.forEach(callback -> callback.accept(BlockEntityRenderers::register));
+        getInstance().blockEntityRegistrars.forEach(callback -> callback.accept(new IBlockEntityRendererRegistrar() {
+            @Override
+            public <T extends BlockEntity> void registerBlockEntityRenderer(final BlockEntityType<? extends T> type, final BlockEntityRendererProvider<T> provider)
+            {
+                BlockEntityRenderers.register(type, provider);
+            }
+        }));
     }
 
 
