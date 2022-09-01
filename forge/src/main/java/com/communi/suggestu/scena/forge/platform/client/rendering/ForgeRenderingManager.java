@@ -145,7 +145,6 @@ public class ForgeRenderingManager implements IRenderingManager
         }));
     }
 
-
     @Override
     public IModelManager getModelManager()
     {

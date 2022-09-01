@@ -208,3 +208,5 @@ local.properties
 *.vsix
 
 !/gradle/wrapper/gradle-wrapper.jar
+
+**/run/**
