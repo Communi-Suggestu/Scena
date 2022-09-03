@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.client.models.baked.base;
 
-import com.communi.suggestu.scena.core.client.models.ITransformAwareBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.ITransformAwareBakedModel;
 import com.communi.suggestu.scena.core.client.utils.TransformationUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;

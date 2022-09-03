@@ -2,15 +2,17 @@ package com.communi.suggestu.scena.core.client.rendering.type;
 
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * Manager for handling the different render types which are available to
@@ -48,6 +50,12 @@ public interface IRenderTypeManager
     boolean canRenderInType(final FluidState fluidState, final RenderType renderType);
 
     /**
+     * Registers a callback which can be used to register render types for blocks.
+     * @param consumer The configurator.
+     */
+    void registerBlockFallbackRenderTypes(final Consumer<IFallbackBlockRenderTypeRegistrar> consumer);
+
+    /**
      * Retrieves the {@linkplain RenderType render types} for the given block state, data and model.
      *
      * @param model The model to get the types for.
@@ -58,4 +66,18 @@ public interface IRenderTypeManager
      */
     @NotNull
     Collection<RenderType> getRenderTypesFor(BakedModel model, BlockState state, RandomSource rand, IBlockModelData data);
+
+    /**
+     * A registrar for fallback render types for blocks, in case the platform does not support model based render types.
+     */
+    interface IFallbackBlockRenderTypeRegistrar
+    {
+        /**
+         * Registers a fallback render type for the given block.
+         *
+         * @param block The block to register the fallback render type for.
+         * @param renderType The render type to use as a fallback.
+         */
+        void register(final Block block, final RenderType renderType);
+    }
 }

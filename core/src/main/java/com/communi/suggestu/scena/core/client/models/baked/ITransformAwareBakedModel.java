@@ -1,4 +1,4 @@
-package com.communi.suggestu.scena.core.client.models;
+package com.communi.suggestu.scena.core.client.models.baked;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.ItemTransforms;

@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.client.models.baked.base;
 
-import com.communi.suggestu.scena.core.client.models.IDelegatingBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;

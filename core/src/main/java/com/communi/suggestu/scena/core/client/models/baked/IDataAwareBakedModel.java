@@ -1,4 +1,4 @@
-package com.communi.suggestu.scena.core.client.models;
+package com.communi.suggestu.scena.core.client.models.baked;
 
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import net.minecraft.client.renderer.RenderType;
@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,4 +36,14 @@ public interface IDataAwareBakedModel extends BakedModel {
      * @param data The data to use.
      * @return The render types of the model.
      */
-    @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data);}
+    @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data);
+
+    /**
+     * The render types of the model when it is rendered as an item.
+     *
+     * @param stack The stack of the model.
+     * @param fabulous If the rendering is happening in fabulous or not.
+     * @return The render types of the model.
+     */
+    @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous);
+}

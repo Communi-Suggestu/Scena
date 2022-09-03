@@ -1,4 +1,4 @@
-package com.communi.suggestu.scena.core.client.models;
+package com.communi.suggestu.scena.core.client.models.baked;
 
 import net.minecraft.client.resources.model.BakedModel;
 

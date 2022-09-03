@@ -1,5 +1,7 @@
 package com.communi.suggestu.scena.core.client.models;
 
+import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataKey;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification;
@@ -28,6 +30,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -217,6 +219,20 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
                 if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel)
                 {
                     sets.add(dataAwareBakedModel.getSupportedRenderTypes(state, rand, CombiningModel.Data.resolve(data, entry.getKey())));
+                }
+            }
+            return sets.stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        }
+
+        @Override
+        public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous)
+        {
+            var sets = new ArrayList<Collection<RenderType>>();
+            for (Map.Entry<String, BakedModel> entry : children.entrySet())
+            {
+                if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel)
+                {
+                    sets.add(dataAwareBakedModel.getSupportedRenderTypes(stack, fabulous));
                 }
             }
             return sets.stream().flatMap(Collection::stream).collect(Collectors.toSet());

@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.client.models.baked.base;
 
-import com.communi.suggestu.scena.core.client.models.IDataAwareBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.simple.NullBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import net.minecraft.client.Minecraft;

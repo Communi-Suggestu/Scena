@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader;
 
-import com.communi.suggestu.scena.core.client.models.IDataAwareBakedModel;
-import com.communi.suggestu.scena.core.client.models.IDelegatingBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;

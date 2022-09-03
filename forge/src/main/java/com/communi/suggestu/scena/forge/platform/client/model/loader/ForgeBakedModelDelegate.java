@@ -1,7 +1,9 @@
 package com.communi.suggestu.scena.forge.platform.client.model.loader;
 
-import com.communi.suggestu.scena.core.client.models.IDataAwareBakedModel;
-import com.communi.suggestu.scena.core.client.models.IDelegatingBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.ICompoundItemBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
+import com.communi.suggestu.scena.core.client.models.baked.ITransformAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockModelDataPlatformDelegate;
 import com.google.common.collect.Lists;
@@ -126,19 +128,23 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull ChunkRenderTypeSet getRenderTypes(@NotNull final BlockState state, @NotNull final RandomSource rand, @NotNull final ModelData data)
     {
-        return delegate.getRenderTypes(state, rand, data);
+        final ForgeBlockModelDataPlatformDelegate dataDelegate = new ForgeBlockModelDataPlatformDelegate(data);
+        return ChunkRenderTypeSet.of(getSupportedRenderTypes(state, rand, dataDelegate));
     }
 
     @Override
     public @NotNull List<RenderType> getRenderTypes(final @NotNull ItemStack itemStack, final boolean fabulous)
     {
-        return delegate.getRenderTypes(itemStack, fabulous);
+        return Lists.newArrayList(getSupportedRenderTypes(itemStack, fabulous));
     }
 
     @Override
     public @NotNull List<BakedModel> getRenderPasses(final @NotNull ItemStack itemStack, final boolean fabulous)
     {
-        return delegate.getRenderPasses(itemStack, fabulous);
+        if (delegate instanceof ICompoundItemBakedModel compoundItemBakedModel)
+            return compoundItemBakedModel.getRenderPasses(itemStack, fabulous);
+
+        return List.of(this);
     }
 
     @Override
@@ -157,5 +163,11 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
             return Lists.newArrayList(delegate.getRenderTypes(state, rand, ModelData.EMPTY));
 
         return Lists.newArrayList(delegate.getRenderTypes(state, rand, blockModelDataPlatformDelegate.getDelegate()));
+    }
+
+    @Override
+    public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous)
+    {
+        return Lists.newArrayList(delegate.getRenderTypes(stack, fabulous));
     }
 }
