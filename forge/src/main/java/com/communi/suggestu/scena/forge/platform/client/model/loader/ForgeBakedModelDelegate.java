@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBakedModel, IDataAwareBakedModel
+public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBakedModel, IDataAwareBakedModel, ICompoundItemBakedModel
 {
     private final BakedModel delegate;
 
@@ -169,5 +169,11 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous)
     {
         return Lists.newArrayList(delegate.getRenderTypes(stack, fabulous));
+    }
+
+    @Override
+    public List<BakedModel> getLayers(final ItemStack stack, final boolean fabulous)
+    {
+        return getRenderPasses(stack, fabulous);
     }
 }

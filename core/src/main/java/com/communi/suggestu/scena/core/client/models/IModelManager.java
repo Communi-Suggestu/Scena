@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.models;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -48,7 +49,17 @@ public interface IModelManager
      */
     void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback);
 
-    public static interface IItemModelPropertyRegistrar {
+    /**
+     * Adapts a given baked model to the current platform.
+     * Adaptation might not be necessary in all cases, but this method allows the underlying platform to adapt a default vanilla {@link BakedModel},
+     * to platform specific implementations, unlocking additional functionality.
+     *
+     * @param bakedModel The baked model to adapt.
+     * @return The adapted model.
+     */
+    BakedModel adaptToPlatform(final BakedModel bakedModel);
+
+    interface IItemModelPropertyRegistrar {
         /**
          * Register a new item model property to this registrar.
          *

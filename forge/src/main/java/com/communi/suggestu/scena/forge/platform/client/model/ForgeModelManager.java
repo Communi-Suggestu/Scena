@@ -2,12 +2,14 @@ package com.communi.suggestu.scena.forge.platform.client.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
+import com.communi.suggestu.scena.forge.platform.client.model.loader.ForgeBakedModelDelegate;
 import com.communi.suggestu.scena.forge.platform.client.model.loader.ForgePlatformModelLoaderPlatformDelegate;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -82,6 +84,15 @@ public final class ForgeModelManager implements IModelManager
         });
 
         ModLoadingContext.get().setActiveContainer(container);
+    }
+
+    @Override
+    public BakedModel adaptToPlatform(final BakedModel bakedModel)
+    {
+        if (bakedModel instanceof ForgeBakedModelDelegate)
+            return bakedModel;
+
+        return new ForgeBakedModelDelegate(bakedModel);
     }
 
     @Override
