@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.forge.platform.client.rendering;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockModelDataPlatformDelegate;
+import com.communi.suggestu.scena.forge.utils.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -12,7 +13,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
 public class ForgeRenderTypeManager implements IRenderTypeManager
 {
     private static final RandomSource RANDOM_SOURCE = new LegacyRandomSource(0);
@@ -56,6 +61,7 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
         return ItemBlockRenderTypes.getRenderLayer(fluidState) == renderType;
     }
 
+    @SubscribeEvent
     public static void onClientInit(final FMLClientSetupEvent clientSetupEvent) {
         getInstance().registeredRenderTypes.set(true);
 
