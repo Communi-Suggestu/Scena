@@ -48,4 +48,10 @@ public abstract class BaseDelegatingSmartModel extends BaseSmartModel implements
     {
         return getDelegate().getTransforms();
     }
+
+    @Override
+    public boolean usesBlockLight()
+    {
+        return getDelegate().usesBlockLight();
+    }
 }

@@ -76,6 +76,12 @@ public abstract class BaseSmartModel implements BakedModel, IDataAwareBakedModel
 		return false;
 	}
 
+	@Override
+	public boolean usesBlockLight()
+	{
+		return true;
+	}
+
 	@NotNull
     @Override
 	public TextureAtlasSprite getParticleIcon()
