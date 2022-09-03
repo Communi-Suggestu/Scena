@@ -1,6 +1,10 @@
 package com.communi.suggestu.scena.forge.platform.client.model.loader;
 
+import com.communi.suggestu.scena.core.client.models.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.IDelegatingBakedModel;
+import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
+import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockModelDataPlatformDelegate;
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -19,9 +23,10 @@ import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
-public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBakedModel
+public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBakedModel, IDataAwareBakedModel
 {
     private final BakedModel delegate;
 
@@ -134,5 +139,23 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     public @NotNull List<BakedModel> getRenderPasses(final @NotNull ItemStack itemStack, final boolean fabulous)
     {
         return delegate.getRenderPasses(itemStack, fabulous);
+    }
+
+    @Override
+    public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IBlockModelData extraData, @Nullable final RenderType renderType)
+    {
+        if (!(extraData instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate))
+            return delegate.getQuads(state, side, rand, ModelData.EMPTY, renderType);
+
+        return delegate.getQuads(state, side, rand, blockModelDataPlatformDelegate.getDelegate(), renderType);
+    }
+
+    @Override
+    public @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data)
+    {
+        if (!(data instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate))
+            return Lists.newArrayList(delegate.getRenderTypes(state, rand, ModelData.EMPTY));
+
+        return Lists.newArrayList(delegate.getRenderTypes(state, rand, blockModelDataPlatformDelegate.getDelegate()));
     }
 }
