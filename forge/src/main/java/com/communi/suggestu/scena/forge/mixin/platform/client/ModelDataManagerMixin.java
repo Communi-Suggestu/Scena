@@ -6,6 +6,7 @@ import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockMod
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelDataManager;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -23,6 +24,10 @@ public abstract class ModelDataManagerMixin
     private ModelData getModelDataRetrieval(final BlockEntity blockEntity) {
         if (blockEntity instanceof IBlockEntityWithModelData blockEntityWithModelData) {
             final IBlockModelData blockModelData = blockEntityWithModelData.getBlockModelData();
+            if (blockModelData == null) {
+                return ModelData.EMPTY;
+            }
+
             if (!(blockModelData instanceof ForgeBlockModelDataPlatformDelegate platformDelegate)) {
                 throw new IllegalStateException("Block model data is not compatible with the current platform.");
             }

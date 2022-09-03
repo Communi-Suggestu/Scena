@@ -159,8 +159,18 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data)
     {
-        if (!(data instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate))
+        if (!(data instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate)) {
+            if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel) {
+                return dataAwareBakedModel.getSupportedRenderTypes(state, rand, IBlockModelData.empty());
+            }
+
             return Lists.newArrayList(delegate.getRenderTypes(state, rand, ModelData.EMPTY));
+
+        }
+
+        if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel) {
+            return dataAwareBakedModel.getSupportedRenderTypes(state, rand, data);
+        }
 
         return Lists.newArrayList(delegate.getRenderTypes(state, rand, blockModelDataPlatformDelegate.getDelegate()));
     }
