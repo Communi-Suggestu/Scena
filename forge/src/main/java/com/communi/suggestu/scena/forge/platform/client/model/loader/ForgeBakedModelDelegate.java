@@ -44,7 +44,11 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final ModelData data, @Nullable final RenderType renderType)
     {
-        return delegate.getQuads(state, side, rand, data, renderType);
+        if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel) {
+            return dataAwareBakedModel.getQuads(state, side, rand, new ForgeBlockModelDataPlatformDelegate(data), renderType);
+        }
+
+        return delegate.getQuads(state, side, rand);
     }
 
     @Override
