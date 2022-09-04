@@ -61,6 +61,11 @@ jarJar {
     }
 }
 
+reobf {
+    jarJar {}
+}
+
 tasks.jarJar.archiveClassifier.set("");
 tasks.jar.archiveClassifier.set("slim");
+tasks.assemble.dependsOn tasks.jarJar
 
