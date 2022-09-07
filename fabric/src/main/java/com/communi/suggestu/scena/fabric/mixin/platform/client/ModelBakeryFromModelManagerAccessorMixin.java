@@ -6,7 +6,6 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.apache.commons.lang3.Validate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,9 +32,10 @@ public abstract class ModelBakeryFromModelManagerAccessorMixin extends SimplePre
     @Override
     public ModelBakery getModelBakery()
     {
-        return Validate.notNull(
-                currentBakery,
-                "ModelBakery has not been initialized yet"
-        );
+        if (currentBakery == null) {
+            throw new IllegalStateException("ModelBakery is not available yet");
+        }
+
+        return currentBakery;
     }
 }

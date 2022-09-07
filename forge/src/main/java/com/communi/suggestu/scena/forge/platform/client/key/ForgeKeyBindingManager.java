@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;

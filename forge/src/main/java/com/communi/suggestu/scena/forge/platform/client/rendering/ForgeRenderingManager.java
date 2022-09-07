@@ -30,7 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
