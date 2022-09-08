@@ -1,3 +1,10 @@
+import groovy.json.JsonOutput
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Jar
+
 project.group = "com.communi-suggestu.scena"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
 
@@ -114,19 +121,14 @@ subprojects { subProject ->
     }
 
     subProject.ext.addCoreProject = {
-        subProject.dependencies.implementation (subProject.project(":scena-core")) { dependency ->
-            dependency.transitive = false
+        def coreProject = subProject.project(":scena-core")
 
-            subProject.afterEvaluate { evaluatedSubProject ->
-                if (subProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
-                    subProject.jarJar.pin(dependency, subProject.project(":scena-core").version)
-                    subProject.jarJar.ranged(dependency, "[${subProject.project(":scena-core").version}]")
-                }
-            }
+        subProject.dependencies.implementation(coreProject) {
+            transitive = false
         }
 
-        subProject.tasks.jar.from subProject.project(":scena-core").sourceSets.main.resources
-        subProject.tasks.processResources.from subProject.project(":scena-core").sourceSets.main.resources
+        subProject.tasks.jar.from coreProject.sourceSets.main.output
+        subProject.tasks.processResources.from coreProject.sourceSets.main.resources
         subProject.tasks.processResources.inputs.property "version", subProject.version
         subProject.tasks.processResources.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
