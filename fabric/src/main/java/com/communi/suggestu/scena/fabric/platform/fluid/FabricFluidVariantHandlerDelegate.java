@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.fabric.platform.fluid;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -81,8 +82,16 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
     @Override
     public Optional<ResourceLocation> getStillTexture(final FluidInformation variant)
     {
+
         return DistExecutor.unsafeRunForDist(
-                () -> () -> Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::getName),
+                () -> () -> {
+                    final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
+                    if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
+                        return renderDelegate.getDelegate().getStillTexture(variant);
+                    }
+
+                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::getName);
+                },
                 () -> Optional::empty
         );
     }
@@ -91,7 +100,14 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
     public Optional<ResourceLocation> getFlowingTexture(final FluidInformation variant)
     {
         return DistExecutor.unsafeRunForDist(
-                () -> () -> Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::getName),
+                () -> () -> {
+                    final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
+                    if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
+                        return renderDelegate.getDelegate().getFlowingTexture(variant);
+                    }
+
+                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::getName);
+                },
                 () -> Optional::empty
         );
     }

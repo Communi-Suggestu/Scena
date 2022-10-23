@@ -24,7 +24,7 @@ public class FabricExtendedBlockModel extends BlockModel
 
     public FabricExtendedBlockModel(final IBlockModelAccessor blockModel, final IModelSpecification<?> specification)
     {
-        super(blockModel.getParentLocation(), Collections.emptyList(), blockModel.getTextureMap(), blockModel.isHasAmbientOcclusion(), blockModel.getGuiLight(), blockModel.getTransforms(), blockModel.getOverrides());
+        super(blockModel.parentLocation(), Collections.emptyList(), blockModel.textureMap(), blockModel.usesAmbientOcclusion(), blockModel.guiLight(), blockModel.transforms(), blockModel.overrides());
         this.specification = specification;
     }
 

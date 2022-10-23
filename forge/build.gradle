@@ -64,6 +64,12 @@ reobf {
     jarJar {}
 }
 
+afterEvaluate {
+    tasks.jar.finalizedBy tasks.reobfJar
+    tasks.jarJar.finalizedBy tasks.reobfJarJar
+    tasks.reobfJarJar.enabled = true
+}
+
 tasks.jarJar.archiveClassifier.set("");
 tasks.jar.archiveClassifier.set("slim");
 tasks.assemble.dependsOn tasks.jarJar

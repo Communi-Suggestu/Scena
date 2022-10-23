@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -44,31 +43,31 @@ public class FabricModelBakingContextDelegate implements IModelBakingContext
     @Override
     public boolean isGui3d()
     {
-        return sourceAccessor.getGuiLight().lightLikeBlock();
+        return sourceAccessor.guiLight().lightLikeBlock();
     }
 
     @Override
     public boolean useBlockLight()
     {
-        return sourceAccessor.getGuiLight().lightLikeBlock();
+        return sourceAccessor.guiLight().lightLikeBlock();
     }
 
     @Override
     public boolean useAmbientOcclusion()
     {
-        return sourceAccessor.isHasAmbientOcclusion();
+        return sourceAccessor.usesAmbientOcclusion();
     }
 
     @Override
     public ItemTransforms getTransforms()
     {
-        return sourceAccessor.getTransforms();
+        return sourceAccessor.transforms();
     }
 
     @Override
     public ItemOverrides getItemOverrides()
     {
         final IModelBakeryAccessor modelBakeryAccessor = (IModelBakeryAccessor) Minecraft.getInstance().getModelManager();
-        return sourceAccessor.getOverrides(modelBakeryAccessor.getModelBakery(), source);
+        return sourceAccessor.overrides(modelBakeryAccessor.getModelBakery(), source);
     }
 }

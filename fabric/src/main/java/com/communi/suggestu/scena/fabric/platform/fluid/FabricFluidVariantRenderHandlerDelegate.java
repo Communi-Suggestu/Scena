@@ -33,4 +33,9 @@ public class FabricFluidVariantRenderHandlerDelegate implements FluidVariantRend
     {
         return delegate.getTintColor(makeInformation(fluidVariant));
     }
+
+    public IFluidVariantHandler getDelegate()
+    {
+        return delegate;
+    }
 }

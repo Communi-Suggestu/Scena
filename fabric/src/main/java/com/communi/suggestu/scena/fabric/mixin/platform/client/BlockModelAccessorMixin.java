@@ -21,75 +21,89 @@ import java.util.Map;
 @Mixin(BlockModel.class)
 public abstract class BlockModelAccessorMixin implements IBlockModelAccessor
 {
-    @Shadow @Final private List<BlockElement> elements;
-    @Shadow @Final @Nullable
-    private BlockModel.GuiLight guiLight;
-    @Shadow @Final public boolean hasAmbientOcclusion;
-    @Shadow @Final private ItemTransforms transforms;
-    @Shadow @Final private List<ItemOverride> overrides;
-    @Shadow public String name;
-    @Shadow @Final public Map<String, Either<Material, String>> textureMap;
-    @Shadow @Nullable public BlockModel parent;
-    @Shadow @Nullable protected ResourceLocation parentLocation;
-    @Shadow protected abstract ItemOverrides getItemOverrides(ModelBakery modelBakery, BlockModel model);
+    @Shadow
+    public String name;
+    @Shadow @Final
+    protected Map<String, Either<Material, String>> textureMap;
+    @Shadow @Nullable
+    protected BlockModel parent;
+    @Shadow @Nullable
+    protected ResourceLocation parentLocation;
+    @Shadow
+    protected abstract ItemOverrides getItemOverrides(ModelBakery modelBakery, BlockModel model);
+
+    @Shadow
+    public abstract List<BlockElement> getElements();
+
+    @Shadow
+    public abstract BlockModel.GuiLight getGuiLight();
+
+    @Shadow
+    public abstract boolean hasAmbientOcclusion();
+
+    @Shadow
+    public abstract ItemTransforms getTransforms();
+
+    @Shadow
+    public abstract List<ItemOverride> getOverrides();
 
     @Override
-    public List<BlockElement> getElements()
+    public List<BlockElement> elements()
     {
-        return elements;
+        return getElements();
     }
 
     @Override
-    public BlockModel.GuiLight getGuiLight()
+    public BlockModel.GuiLight guiLight()
     {
-        return guiLight;
+        return getGuiLight();
     }
 
     @Override
-    public boolean isHasAmbientOcclusion()
+    public boolean usesAmbientOcclusion()
     {
-        return hasAmbientOcclusion;
+        return hasAmbientOcclusion();
     }
 
     @Override
-    public ItemTransforms getTransforms()
+    public ItemTransforms transforms()
     {
-        return transforms;
+        return getTransforms();
     }
 
     @Override
-    public List<ItemOverride> getOverrides()
+    public List<ItemOverride> overrides()
     {
-        return overrides;
+        return getOverrides();
     }
 
     @Override
-    public String getName()
+    public String name()
     {
         return name;
     }
 
     @Override
-    public Map<String, Either<Material, String>> getTextureMap()
+    public Map<String, Either<Material, String>> textureMap()
     {
         return textureMap;
     }
 
     @Override
-    public BlockModel getParent()
+    public BlockModel parent()
     {
         return parent;
     }
 
     @Override
-    public ResourceLocation getParentLocation()
+    public ResourceLocation parentLocation()
     {
         return parentLocation;
     }
 
     @Override
-    public ItemOverrides getOverrides(final ModelBakery modelBakery, final BlockModel model)
+    public ItemOverrides overrides(final ModelBakery modelBakery, final BlockModel model)
     {
-        return this.getItemOverrides(modelBakery, model);
+        return getItemOverrides(modelBakery, model);
     }
 }

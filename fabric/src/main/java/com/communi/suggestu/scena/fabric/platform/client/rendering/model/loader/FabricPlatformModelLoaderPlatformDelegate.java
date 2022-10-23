@@ -5,6 +5,8 @@ import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification
 import com.communi.suggestu.scena.core.util.TransformationUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
@@ -39,7 +41,6 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
                             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
                             .registerTypeHierarchyAdapter(UnbakedModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
                             .registerTypeHierarchyAdapter(BlockModel.class, new FabricExtendedBlockModelDeserializer(name.toString(), delegate))
-                            .registerTypeAdapter(BlockModel.class, this)
                             .registerTypeAdapter(BlockElement.class, new BlockElement.Deserializer() {})
                             .registerTypeAdapter(BlockElementFace.class, new BlockElementFace.Deserializer() {})
                             .registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer() {})
@@ -65,12 +66,19 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
             final InputStream inputStream = resource.get().open();
             final InputStreamReader streamReader = new InputStreamReader(inputStream);
 
-            final UnbakedModel modelSpecification = gson.fromJson(streamReader, UnbakedModel.class);
+            final JsonElement specificationData = gson.fromJson(streamReader, JsonElement.class);
 
             streamReader.close();
             inputStream.close();
 
-            return modelSpecification;
+            if (!specificationData.isJsonObject())
+                return null;
+
+            final JsonObject modelSpecification = specificationData.getAsJsonObject();
+            if (!modelSpecification.has("loader"))
+                return null;
+
+            return this.gson.fromJson(modelSpecification, UnbakedModel.class);
         }
         catch (IOException e)
         {

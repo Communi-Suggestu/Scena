@@ -16,23 +16,23 @@ import java.util.Map;
 public interface IBlockModelAccessor
 {
 
-    List<BlockElement> getElements();
+    List<BlockElement> elements();
 
-    BlockModel.GuiLight getGuiLight();
+    BlockModel.GuiLight guiLight();
 
-    boolean isHasAmbientOcclusion();
+    boolean usesAmbientOcclusion();
 
-    ItemTransforms getTransforms();
+    ItemTransforms transforms();
 
-    List<ItemOverride> getOverrides();
+    List<ItemOverride> overrides();
 
-    String getName();
+    String name();
 
-    Map<String, Either<Material, String>> getTextureMap();
+    Map<String, Either<Material, String>> textureMap();
 
-    BlockModel getParent();
+    BlockModel parent();
 
-    ResourceLocation getParentLocation();
+    ResourceLocation parentLocation();
 
-    ItemOverrides getOverrides(ModelBakery modelBakery, BlockModel model);
+    ItemOverrides overrides(ModelBakery modelBakery, BlockModel model);
 }
