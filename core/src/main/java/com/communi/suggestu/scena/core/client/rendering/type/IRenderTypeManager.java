@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -66,6 +67,18 @@ public interface IRenderTypeManager
      */
     @NotNull
     Collection<RenderType> getRenderTypesFor(BakedModel model, BlockState state, RandomSource rand, IBlockModelData data);
+
+    /**
+     * Retrieves the {@linkplain RenderType render types} for the given model, itemstack and if we are running in fabulous or not.
+     *
+     * @param model The model to get the types for.
+     * @param stack The stack to get the types for.
+     * @param isFabulous True when fabulous is enabled, false when not.
+     * @return The render types for the given block state, data and model.
+     */
+    @NotNull
+    Collection<RenderType> getRenderTypesFor(BakedModel model, ItemStack stack, boolean isFabulous);
+
 
     /**
      * A registrar for fallback render types for blocks, in case the platform does not support model based render types.
