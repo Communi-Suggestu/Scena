@@ -2,7 +2,7 @@ package com.communi.suggestu.scena.core.registries;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class SimpleChiselsAndBitsRegistryEntry<V> implements IChiselsAndBitsRegistryEntry
+public class SimpleCustomRegistryEntry<V> implements ICustomRegistryEntry
 {
     private ResourceLocation name;
 

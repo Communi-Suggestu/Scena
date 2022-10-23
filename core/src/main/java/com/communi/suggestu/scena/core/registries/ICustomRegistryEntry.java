@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Represents an object which is part of a registry.
  */
-public interface IChiselsAndBitsRegistryEntry
+public interface ICustomRegistryEntry
 {
     /**
      * The name of the object in the registry.

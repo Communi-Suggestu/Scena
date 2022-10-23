@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class CustomRegistry<T extends IChiselsAndBitsRegistryEntry> implements IChiselsAndBitsRegistry<T>
+public class CustomRegistry<T extends ICustomRegistryEntry> implements ICustomRegistry<T>
 {
     private final BiMap<ResourceLocation, T> registerMap = HashBiMap.create();
 
@@ -53,10 +53,10 @@ public class CustomRegistry<T extends IChiselsAndBitsRegistryEntry> implements I
         }
     }
 
-    public static final class Builder<E extends IChiselsAndBitsRegistryEntry> implements IChiselsAndBitsRegistry.Builder<E> {
+    public static final class Builder<E extends ICustomRegistryEntry> implements ICustomRegistry.Builder<E> {
 
         @Override
-        public IChiselsAndBitsRegistry<E> build()
+        public ICustomRegistry<E> build()
         {
             return new CustomRegistry<>();
         }

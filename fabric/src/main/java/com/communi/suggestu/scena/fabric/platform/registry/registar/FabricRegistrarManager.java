@@ -1,8 +1,8 @@
 package com.communi.suggestu.scena.fabric.platform.registry.registar;
 
 import com.communi.suggestu.scena.fabric.platform.registry.registar.delegates.FabricVanillaRegistryRegistrarDelegate;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.ICustomRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
@@ -24,7 +24,7 @@ public final class FabricRegistrarManager implements IRegistrarManager
     }
 
     @Override
-    public <T extends IChiselsAndBitsRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(
+    public <T extends ICustomRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(
       final Class<T> typeClass, final String modId)
     {
         return CustomRegistryManager.getInstance().createNewRegistrar(typeClass, modId);
@@ -64,7 +64,7 @@ public final class FabricRegistrarManager implements IRegistrarManager
     }
 
     @Override
-    public <T extends IChiselsAndBitsRegistryEntry> IChiselsAndBitsRegistry.Builder<T> simpleBuilderFor()
+    public <T extends ICustomRegistryEntry> ICustomRegistry.Builder<T> simpleBuilderFor()
     {
         return CustomRegistryManager.getInstance().createNewSimpleBuilder();
     }

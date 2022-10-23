@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * Represents a registry that can be used to register expandable systems to.
  * @param <T> The type of the element in the registry.
  */
-public interface IChiselsAndBitsRegistry<T extends IChiselsAndBitsRegistryEntry>
+public interface ICustomRegistry<T extends ICustomRegistryEntry>
 {
 
     /**
@@ -48,7 +48,7 @@ public interface IChiselsAndBitsRegistry<T extends IChiselsAndBitsRegistryEntry>
      *
      * @param <T> The type contained in the registry.
      */
-    interface Builder<T extends IChiselsAndBitsRegistryEntry> {
+    interface Builder<T extends ICustomRegistryEntry> {
 
         /**
          * Creates a new registry builder for the given registry type.
@@ -56,7 +56,7 @@ public interface IChiselsAndBitsRegistry<T extends IChiselsAndBitsRegistryEntry>
          * @param <T> The type contained in the registry.
          * @return The registry builder.
          */
-        static <T extends IChiselsAndBitsRegistryEntry> Builder<T> simple()
+        static <T extends ICustomRegistryEntry> Builder<T> simple()
         {
             return IRegistrarManager.getInstance().simpleBuilderFor();
         }
@@ -66,6 +66,6 @@ public interface IChiselsAndBitsRegistry<T extends IChiselsAndBitsRegistryEntry>
          *
          * @return The new registry.
          */
-        IChiselsAndBitsRegistry<T> build();
+        ICustomRegistry<T> build();
     }
 }

@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.fabric.platform.registry.registar.delegates;
 
-import com.communi.suggestu.scena.core.registries.SimpleChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.SimpleCustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.core.Registry;
@@ -28,7 +28,7 @@ public class FabricVanillaRegistryRegistrarDelegate<R extends T, T> implements I
     public <I extends R> IRegistryObject<I> register(final String name, final Supplier<? extends I> factory)
     {
         final I entry = factory.get();
-        if (entry instanceof SimpleChiselsAndBitsRegistryEntry registryEntry)
+        if (entry instanceof SimpleCustomRegistryEntry registryEntry)
             registryEntry.setRegistryName(new ResourceLocation(modId, name));
 
         Registry.register(this.vanillaRegistry, new ResourceLocation(modId, name), entry);

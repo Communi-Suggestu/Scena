@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred;
 
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 
 import java.util.function.Supplier;
 
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  *
  * @param <T> The type of the entry in the registry.
  */
-public interface ICustomRegistrar<T extends IChiselsAndBitsRegistryEntry> extends IRegistrar<T>
+public interface ICustomRegistrar<T extends ICustomRegistryEntry> extends IRegistrar<T>
 {
     /**
      * Returns a new registrar for the type given in the namespace of the mod id.
@@ -20,7 +20,7 @@ public interface ICustomRegistrar<T extends IChiselsAndBitsRegistryEntry> extend
      * @param <T> The type in the registry.
      * @return The registrar for a registry of the given type in the given namespace.
      */
-    static <T extends IChiselsAndBitsRegistryEntry, R extends T> ICustomRegistrar<R> create(Class<T> typeClass, String modId)
+    static <T extends ICustomRegistryEntry, R extends T> ICustomRegistrar<R> create(Class<T> typeClass, String modId)
     {
         return IRegistrarManager.getInstance().createCustomRegistrar(typeClass, modId);
     }
@@ -31,5 +31,5 @@ public interface ICustomRegistrar<T extends IChiselsAndBitsRegistryEntry> extend
      * @param registryBuilder A supplier which can configure and return a registry builder to build the registry.
      * @return A supplier for the registry.
      */
-    Supplier<IChiselsAndBitsRegistry<T>> makeRegistry(Supplier<IChiselsAndBitsRegistry.Builder<T>> registryBuilder);
+    Supplier<ICustomRegistry<T>> makeRegistry(Supplier<ICustomRegistry.Builder<T>> registryBuilder);
 }

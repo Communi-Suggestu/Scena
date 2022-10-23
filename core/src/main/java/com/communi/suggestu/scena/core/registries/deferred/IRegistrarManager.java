@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred;
 
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -28,7 +28,7 @@ public interface IRegistrarManager
      * @param <T> The type in the registry.
      * @return The registrar for a registry of the given type in the given namespace.
      */
-    <T extends IChiselsAndBitsRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(Class<T> typeClass, String modId);
+    <T extends ICustomRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(Class<T> typeClass, String modId);
 
     /**
      * Returns a new registrar for the type given in the namespace of the mod id.
@@ -46,5 +46,5 @@ public interface IRegistrarManager
      * @param <T> The type contained in the registry.
      * @return The registry builder.
      */
-    <T extends IChiselsAndBitsRegistryEntry> IChiselsAndBitsRegistry.Builder<T> simpleBuilderFor();
+    <T extends ICustomRegistryEntry> ICustomRegistry.Builder<T> simpleBuilderFor();
 }

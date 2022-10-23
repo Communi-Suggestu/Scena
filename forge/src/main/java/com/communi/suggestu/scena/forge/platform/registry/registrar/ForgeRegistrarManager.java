@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.registry.registrar;
 
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.ICustomRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
@@ -27,7 +27,7 @@ public class ForgeRegistrarManager implements IRegistrarManager
     }
 
     @Override
-    public <T extends IChiselsAndBitsRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(
+    public <T extends ICustomRegistryEntry, R extends T> ICustomRegistrar<R> createCustomRegistrar(
       final Class<T> typeClass, final String modId)
     {
         return CustomRegistryManager.getInstance().createNewRegistrar(typeClass, modId);
@@ -46,7 +46,7 @@ public class ForgeRegistrarManager implements IRegistrarManager
     }
 
     @Override
-    public <T extends IChiselsAndBitsRegistryEntry> IChiselsAndBitsRegistry.Builder<T> simpleBuilderFor()
+    public <T extends ICustomRegistryEntry> ICustomRegistry.Builder<T> simpleBuilderFor()
     {
         return CustomRegistryManager.getInstance().createNewSimpleBuilder();
     }

@@ -1,8 +1,8 @@
 package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 
 import com.communi.suggestu.scena.core.registries.AbstractCustomRegistryEntry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.ICustomRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.resources.ResourceLocation;
@@ -11,10 +11,10 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Supplier;
 
-public class CustomRegistrar<T extends IChiselsAndBitsRegistryEntry> implements ICustomRegistrar<T>
+public class CustomRegistrar<T extends ICustomRegistryEntry> implements ICustomRegistrar<T>
 {
 
-    private IChiselsAndBitsRegistry<T> registry               = null;
+    private ICustomRegistry<T> registry               = null;
     private final Collection<Supplier<T>>    preBuildValueSuppliers = new ConcurrentLinkedDeque<>();
     private final String                     owner;
 
@@ -23,7 +23,7 @@ public class CustomRegistrar<T extends IChiselsAndBitsRegistryEntry> implements 
     }
 
     @Override
-    public Supplier<IChiselsAndBitsRegistry<T>> makeRegistry(final Supplier<IChiselsAndBitsRegistry.Builder<T>> registryBuilder)
+    public Supplier<ICustomRegistry<T>> makeRegistry(final Supplier<ICustomRegistry.Builder<T>> registryBuilder)
     {
         if (registry == null)
         {

@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistry;
-import com.communi.suggestu.scena.core.registries.IChiselsAndBitsRegistryEntry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistry;
+import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.ICustomRegistrar;
 import com.google.common.collect.Maps;
 
@@ -23,7 +23,7 @@ public class CustomRegistryManager
     {
     }
 
-    public <R extends T, T extends IChiselsAndBitsRegistryEntry> ICustomRegistrar<R> createNewRegistrar(final Class<T> typeClass, final String modId)
+    public <R extends T, T extends ICustomRegistryEntry> ICustomRegistrar<R> createNewRegistrar(final Class<T> typeClass, final String modId)
     {
         if (registrarMap.containsKey(typeClass) && registrarMap.get(typeClass).containsKey(modId))
             return (ICustomRegistrar<R>) registrarMap.get(typeClass).get(modId);
@@ -34,7 +34,7 @@ public class CustomRegistryManager
         return registrar;
     }
 
-    public <T extends IChiselsAndBitsRegistryEntry> IChiselsAndBitsRegistry.Builder<T> createNewSimpleBuilder()
+    public <T extends ICustomRegistryEntry> ICustomRegistry.Builder<T> createNewSimpleBuilder()
     {
         return new CustomRegistry.Builder<>();
     }
