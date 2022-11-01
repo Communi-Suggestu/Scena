@@ -9,6 +9,7 @@ import com.communi.suggestu.scena.core.dist.IDistributionManager;
 import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
+import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
@@ -20,6 +21,7 @@ import com.communi.suggestu.scena.forge.platform.creativetab.ForgeCreativeTabMan
 import com.communi.suggestu.scena.forge.platform.distribution.ForgeDistributionManager;
 import com.communi.suggestu.scena.forge.platform.entity.ForgeEntityInformationManager;
 import com.communi.suggestu.scena.forge.platform.entity.ForgePlayerInventoryManager;
+import com.communi.suggestu.scena.forge.platform.event.ForgeGameEvents;
 import com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager;
 import com.communi.suggestu.scena.forge.platform.item.DyeItemHelper;
 import com.communi.suggestu.scena.forge.platform.item.ForgeItemComparisonHelper;
@@ -125,5 +127,10 @@ public final class ForgeScenaPlatform implements IScenaPlatform
     public @NotNull IBlockEntityManager getBlockEntityManager()
     {
         return new IBlockEntityManager() {};
+    }
+
+    @Override
+    public @NotNull IGameEvents getGameEvents() {
+        return ForgeGameEvents.getInstance();
     }
 }

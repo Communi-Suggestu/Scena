@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.core.dist.IDistributionManager;
 import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
+import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
@@ -149,6 +150,14 @@ public interface IScenaPlatform
      */
     @NotNull
     IBlockEntityManager getBlockEntityManager();
+
+    /**
+     * The game events for the current platform.
+     *
+     * @return The game events.
+     */
+    @NotNull
+    IGameEvents getGameEvents();
 
 
     class Holder {

@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.client;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
+import com.communi.suggestu.scena.core.client.event.IClientEvents;
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
 import com.communi.suggestu.scena.core.client.integration.IOptifineCompatibilityManager;
 import com.communi.suggestu.scena.core.client.integration.ReflectiveOptifineCompatibilityManager;
@@ -97,4 +98,7 @@ public interface IClientManager
 
     @NotNull
     ITextureManager getTextureManager();
+
+    @NotNull
+    IClientEvents getClientEvents();
 }

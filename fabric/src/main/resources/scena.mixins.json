@@ -4,11 +4,15 @@
   "package": "com.communi.suggestu.scena.fabric.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "platform.common.ChunkMapChunkLoadMixin",
+    "platform.common.ItemEntityEventMixin",
     "platform.common.LivingEntityEquipmentSlotMixin"
   ],
   "client": [
     "platform.client.BlockModelAccessorMixin",
-    "platform.client.ModelBakeryFromModelManagerAccessorMixin"
+    "platform.client.ClientChunkCacheChunkLoadMixin",
+    "platform.client.ModelBakeryFromModelManagerAccessorMixin",
+    "platform.client.MouseHandlerEventMixin"
   ],
   "injectors": {
     "defaultRequire": 1
