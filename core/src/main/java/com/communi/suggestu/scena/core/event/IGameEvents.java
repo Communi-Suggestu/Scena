@@ -20,7 +20,7 @@ public interface IGameEvents {
      * The entry point for an entity pickup event.
      * @return The entry point for the entity pickup event.
      */
-    IEventEntryPoint<IEntityItemPickupEvent> getEntityItemPickupEvent();
+    IEventEntryPoint<IItemEntityPickupEvent> getItemEntityPickupEvent();
 
     /**
      * The entry point for when a player left-clicks a block.

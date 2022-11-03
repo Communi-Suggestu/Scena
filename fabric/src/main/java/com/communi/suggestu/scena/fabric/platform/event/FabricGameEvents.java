@@ -16,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -30,10 +31,10 @@ public final class FabricGameEvents implements IGameEvents {
         return INSTANCE;
     }
 
-    public static final Event<IEntityItemPickupEvent> ENTITY_ITEM_PICKUP = EventFactory.createArrayBacked(IEntityItemPickupEvent.class, callbacks -> (final ItemStack stackToPickup, final Player player) -> {
+    public static final Event<IItemEntityPickupEvent> ENTITY_ITEM_PICKUP = EventFactory.createArrayBacked(IItemEntityPickupEvent.class, callbacks -> (final ItemEntity entityToPickup, final Player player) -> {
         boolean handled = false;
-        for (IEntityItemPickupEvent callback : callbacks) {
-            if (callback.handle(stackToPickup, player)) {
+        for (IItemEntityPickupEvent callback : callbacks) {
+            if (callback.handle(entityToPickup, player)) {
                 handled = true;
             }
 
@@ -54,7 +55,7 @@ public final class FabricGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IEntityItemPickupEvent> getEntityItemPickupEvent() {
+    public IEventEntryPoint<IItemEntityPickupEvent> getItemEntityPickupEvent() {
         return FabricEventEntryPoint.create(ENTITY_ITEM_PICKUP, Function.identity());
     }
 

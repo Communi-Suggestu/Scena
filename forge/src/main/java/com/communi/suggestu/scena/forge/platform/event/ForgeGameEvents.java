@@ -20,8 +20,8 @@ public final class ForgeGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IEntityItemPickupEvent> getEntityItemPickupEvent() {
-        return EventBusEventEntryPoint.<IEntityItemPickupEvent, EntityItemPickupEvent>forge((event, handler) -> handler.handle(event.getItem().getItem(), event.getEntity()));
+    public IEventEntryPoint<IItemEntityPickupEvent> getItemEntityPickupEvent() {
+        return EventBusEventEntryPoint.<IItemEntityPickupEvent, EntityItemPickupEvent>forge((event, handler) -> handler.handle(event.getItem(), event.getEntity()));
     }
 
     @Override
