@@ -22,7 +22,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IClientTickStartedEvent> getClientTickStartedEvent() {
-        return EventBusEventEntryPoint.<IClientTickStartedEvent, TickEvent.ClientTickEvent>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(TickEvent.ClientTickEvent.class, (event, handler) -> {
             if (event.phase != TickEvent.Phase.START)
                 return;
 
@@ -32,14 +32,14 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return EventBusEventEntryPoint.<IDrawHighlightEvent, RenderHighlightEvent.Block>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(RenderHighlightEvent.Block.class, (event, handler) -> {
             event.setCanceled(handler.handle());
         });
     }
 
     @Override
     public IEventEntryPoint<IHudRenderEvent> getHUDRenderEvent() {
-        return EventBusEventEntryPoint.<IHudRenderEvent, RenderGuiOverlayEvent.Post>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(RenderGuiOverlayEvent.Post.class, (event, handler) -> {
             if (event.getOverlay() != GuiOverlayManager.getOverlays().get(GuiOverlayManager.getOverlays().size() - 1))
                 return;
 
@@ -49,7 +49,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IScrollEvent> getScrollEvent() {
-        return EventBusEventEntryPoint.<IScrollEvent, InputEvent.MouseScrollingEvent>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(InputEvent.MouseScrollingEvent.class, (event, handler) -> {
             event.setCanceled(handler.handle(event.getScrollDelta()));
         });
     }

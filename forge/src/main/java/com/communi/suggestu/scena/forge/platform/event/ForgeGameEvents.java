@@ -21,12 +21,12 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IItemEntityPickupEvent> getItemEntityPickupEvent() {
-        return EventBusEventEntryPoint.<IItemEntityPickupEvent, EntityItemPickupEvent>forge((event, handler) -> handler.handle(event.getItem(), event.getEntity()));
+        return EventBusEventEntryPoint.forge(EntityItemPickupEvent.class, (event, handler) -> handler.handle(event.getItem(), event.getEntity()));
     }
 
     @Override
     public IEventEntryPoint<IPlayerLeftClickBlockEvent> getPlayerLeftClickEvent() {
-        return EventBusEventEntryPoint.<IPlayerLeftClickBlockEvent, PlayerInteractEvent.LeftClickBlock>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(PlayerInteractEvent.LeftClickBlock.class, (event, handler) -> {
             final IPlayerLeftClickBlockEvent.Result current = new IPlayerLeftClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()));
 
             final IPlayerLeftClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
@@ -38,7 +38,7 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IPlayerRightClickBlockEvent> getPlayerRightClickEvent() {
-        return EventBusEventEntryPoint.<IPlayerRightClickBlockEvent, PlayerInteractEvent.RightClickBlock>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(PlayerInteractEvent.RightClickBlock.class, (event, handler) -> {
             final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
 
             final IPlayerRightClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
@@ -52,7 +52,7 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IPlayerJoinedWorldEvent> getPlayerJoinedWorldEvent() {
-        return EventBusEventEntryPoint.<IPlayerJoinedWorldEvent, EntityJoinLevelEvent>forge((event, handler) -> {
+        return EventBusEventEntryPoint.forge(EntityJoinLevelEvent.class, (event, handler) -> {
             if (!(event.getEntity() instanceof Player player))
                 return;
 
@@ -62,27 +62,27 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IPlayerLoggedInEvent> getPlayerLoggedInEvent() {
-        return EventBusEventEntryPoint.<IPlayerLoggedInEvent, PlayerEvent.PlayerLoggedInEvent>forge((event, handler) -> handler.handle(event.getEntity()));
+        return EventBusEventEntryPoint.forge(PlayerEvent.PlayerLoggedInEvent.class, (event, handler) -> handler.handle(event.getEntity()));
     }
 
     @Override
     public IEventEntryPoint<IRegisterCommandsEvent> getRegisterCommandsEvent() {
-        return EventBusEventEntryPoint.<IRegisterCommandsEvent, RegisterCommandsEvent>forge((event, handler) -> handler.handle(event.getDispatcher(), event.getBuildContext()));
+        return EventBusEventEntryPoint.forge(RegisterCommandsEvent.class, (event, handler) -> handler.handle(event.getDispatcher(), event.getBuildContext()));
     }
 
     @Override
     public IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent() {
-        return EventBusEventEntryPoint.<IServerAboutToStartEvent, ServerAboutToStartEvent>forge((event, handler) -> handler.handle(event.getServer()));
+        return EventBusEventEntryPoint.forge(ServerAboutToStartEvent.class, (event, handler) -> handler.handle(event.getServer()));
     }
 
     @Override
     public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
-        return EventBusEventEntryPoint.<IGatherTooltipEvent, ItemTooltipEvent>forge((event, handler) -> handler.handle(event.getItemStack(), event.getToolTip()));
+        return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(event.getItemStack(), event.getToolTip()));
     }
 
     @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
-        return EventBusEventEntryPoint.<IChunkLoadEvent, ChunkEvent.Load>forge((event, handler) -> handler.handle(event.getLevel(), event.getChunk()));
+        return EventBusEventEntryPoint.forge(ChunkEvent.Load.class, (event, handler) -> handler.handle(event.getLevel(), event.getChunk()));
     }
 
     private ForgeGameEvents() {
