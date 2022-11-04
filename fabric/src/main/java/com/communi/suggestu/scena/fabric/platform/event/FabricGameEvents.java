@@ -85,7 +85,7 @@ public final class FabricGameEvents implements IGameEvents {
                         player.getItemInHand(hand),
                         hitResult.getBlockPos(),
                         hitResult.getDirection(),
-                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT)
+                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
                 );
     
                 return mapResult(result);
@@ -97,7 +97,7 @@ public final class FabricGameEvents implements IGameEvents {
                         player.getItemInHand(hand),
                         BlockPos.ZERO,
                         Direction.DOWN,
-                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT)
+                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
                 );
 
                 return new InteractionResultHolder<>(mapResult(result), player.getItemInHand(hand));

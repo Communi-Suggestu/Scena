@@ -39,12 +39,14 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IPlayerRightClickBlockEvent> getPlayerRightClickEvent() {
         return EventBusEventEntryPoint.<IPlayerRightClickBlockEvent, PlayerInteractEvent.RightClickBlock>forge((event, handler) -> {
-            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()));
+            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
 
             final IPlayerRightClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
             event.setCanceled(result.handled() || event.isCanceled());
             event.setResult(Event.Result.valueOf(result.result().name()));
+            event.setUseItem(Event.Result.valueOf(result.useItemResult().name()));
+            event.setUseBlock(Event.Result.valueOf(result.useBlockResult().name()));
         });
     }
 
