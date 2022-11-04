@@ -30,6 +30,11 @@ public final class EventBusEventEntryPoint<T extends IEvent, F extends Event> im
 
     @Override
     public void register(T handler) {
-        eventBus.addListener((Consumer<F>) event -> invoker.accept(event, handler));
+        eventBus.addListener(new Consumer<F>() {
+            @Override
+            public void accept(F event) {
+                invoker.accept(event, handler);
+            }
+        });
     }
 }
