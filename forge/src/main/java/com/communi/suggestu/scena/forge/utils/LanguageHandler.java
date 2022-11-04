@@ -2,9 +2,11 @@ package com.communi.suggestu.scena.forge.utils;
 
 import com.communi.suggestu.scena.core.dist.Dist;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +76,7 @@ public final class LanguageHandler
     private static class LanguageCache
     {
         private static LanguageCache       instance;
-        private        Map<String, String> languageMap;
+        private        Map<String, String> languageMap = Maps.newConcurrentMap();
 
         private LanguageCache()
         {
@@ -87,7 +89,7 @@ public final class LanguageHandler
             final String defaultLocale = "en_us";
 
             //noinspection ConstantConditions Trust me, Minecraft.getInstance() can be null, when you run Data Generators!
-            String locale = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> (Minecraft.getInstance() == null || Minecraft.getInstance().options == null) ? defaultLocale : Minecraft.getInstance().options.languageCode);
+            String locale = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> (Minecraft.getInstance() == null || Minecraft.getInstance().options == null || Minecraft.getInstance().options.languageCode == null) ? defaultLocale : Minecraft.getInstance().options.languageCode);
 
             if (locale == null)
             {
@@ -99,12 +101,16 @@ public final class LanguageHandler
             {
                 is = Thread.currentThread().getContextClassLoader().getResourceAsStream(String.format(path, defaultLocale));
             }
+            if (is == null) {
+                return;
+            }
 
             try
             {
-                languageMap = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8), new TypeToken<Map<String, String>>()
+                final Map<String, String> newLanguageMap = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8), new TypeToken<Map<String, String>>()
                 {}.getType());
                 is.close();
+                this.languageMap.putAll(newLanguageMap);
             }
             catch (IOException | NullPointerException e)
             {
@@ -119,7 +125,7 @@ public final class LanguageHandler
 
         private String translateKey(final String key)
         {
-            boolean isMCloaded = false;
+            boolean isMCloaded = DistExecutor.unsafeRunForDist(() -> () -> Language.getInstance().getClass().equals(ClientLanguage.class), () -> () -> false);
             if (isMCloaded)
             {
                 return Language.getInstance().getOrDefault(key);
