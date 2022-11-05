@@ -55,4 +55,8 @@ public final class FabricClientEvents implements IClientEvents {
         return FabricEventEntryPoint.create(SCROLL, Function.identity());
     }
 
+    @Override
+    public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
+        return FabricEventEntryPoint.create(WorldRenderEvents.AFTER_TRANSLUCENT, handler -> (context) -> handler.handle(context.worldRenderer(), context.matrixStack(), context.tickDelta()));
+    }
 }

@@ -36,4 +36,11 @@ public interface IClientEvents {
      * @return The entry point for the scroll event.
      */
     IEventEntryPoint<IScrollEvent> getScrollEvent();
+
+    /**
+     * The entry point for the post render world event.
+     *
+     * @return The entry point for the post render world event.
+     */
+    IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent();
 }

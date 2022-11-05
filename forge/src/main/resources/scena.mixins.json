@@ -5,12 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "scena.refmap.json",
   "mixins": [
+    "common.FluidTypeFluidMixin",
     "common.LivingEntityEquipmentSlotMixin",
-    "common.WorldlyBlockGrassGrowMixin",
-    "common.FluidTypeFluidMixin"
+    "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
     "client.BlockEntityWithoutLevelRendererMixin",
+    "client.LevelRendererBeforeDebugRenderingHookMixin",
     "client.ModelDataManagerMixin",
     "client.ModelManagerMixin"
   ],
