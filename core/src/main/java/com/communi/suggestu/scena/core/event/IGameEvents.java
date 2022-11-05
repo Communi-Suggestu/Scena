@@ -77,4 +77,11 @@ public interface IGameEvents {
      * @return The entry point for the chunk loaded event.
      */
     IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent();
+
+    /**
+     * The entry point for when the common configuration has been loaded.
+     *
+     * @return The entry point for the common configuration loaded event.
+     */
+    IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent();
 }

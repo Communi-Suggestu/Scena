@@ -51,6 +51,12 @@ public final class FabricGameEvents implements IGameEvents {
         }
     });
 
+    public static final Event<ICommonConfigurationLoaded> COMMON_CONFIGURATION_LOADED = EventFactory.createArrayBacked(ICommonConfigurationLoaded.class, callbacks -> () -> {
+        for (ICommonConfigurationLoaded callback : callbacks) {
+            callback.handle();
+        }
+    });
+
     private FabricGameEvents() {
     }
 
@@ -133,6 +139,11 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return FabricEventEntryPoint.create(CHUNK_LOAD, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent() {
+        return null;
     }
 
     private static InteractionResult mapResult(

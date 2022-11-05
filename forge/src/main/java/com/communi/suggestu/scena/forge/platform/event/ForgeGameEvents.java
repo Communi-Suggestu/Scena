@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
     private static final ForgeGameEvents INSTANCE = new ForgeGameEvents();
@@ -83,6 +84,11 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return EventBusEventEntryPoint.forge(ChunkEvent.Load.class, (event, handler) -> handler.handle(event.getLevel(), event.getChunk()));
+    }
+
+    @Override
+    public IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent() {
+        return EventBusEventEntryPoint.mod(FMLCommonSetupEvent.class, (event, handler) -> handler.handle());
     }
 
     private ForgeGameEvents() {

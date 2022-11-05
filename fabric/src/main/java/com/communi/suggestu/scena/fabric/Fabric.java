@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.fabric;
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.init.PlatformInitializationHandler;
 import com.communi.suggestu.scena.fabric.platform.FabricScenaPlatform;
+import com.communi.suggestu.scena.fabric.platform.event.FabricGameEvents;
 import com.communi.suggestu.scena.fabric.platform.server.FabricServerLifecycleManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -19,6 +20,8 @@ public class Fabric implements ModInitializer {
         PlatformInitializationHandler.getInstance().init(platform);
 
         setupEvents();
+
+        FabricGameEvents.COMMON_CONFIGURATION_LOADED.invoker().handle();
 
         LOGGER.info("Initialized scena-fabric");
 	}
