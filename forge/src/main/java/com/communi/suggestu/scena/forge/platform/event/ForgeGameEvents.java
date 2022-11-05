@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
@@ -88,7 +89,7 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent() {
-        return EventBusEventEntryPoint.mod(FMLCommonSetupEvent.class, (event, handler) -> handler.handle());
+        return EventBusEventEntryPoint.mod(ModConfigEvent.Loading.class, (event, handler) -> handler.handle());
     }
 
     private ForgeGameEvents() {
