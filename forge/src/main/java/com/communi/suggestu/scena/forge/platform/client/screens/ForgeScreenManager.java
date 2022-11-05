@@ -22,9 +22,9 @@ public final class ForgeScreenManager implements IScreenManager {
 
 
     @Override
-    public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(MenuType<? extends M> type, MenuScreens.ScreenConstructor<M, U> constructor) {
+    public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(MenuType<? extends M> type, ScreenConstructor<M, U> constructor) {
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(EventPriority.NORMAL, false, FMLClientSetupEvent.class, clientSetupEvent -> clientSetupEvent.enqueueWork(() -> {
-            MenuScreens.register(type, constructor);
+            MenuScreens.register(type, constructor::create);
         }));
     }
 }
