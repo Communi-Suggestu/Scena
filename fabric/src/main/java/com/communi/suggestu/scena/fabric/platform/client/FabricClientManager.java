@@ -9,6 +9,7 @@ import com.communi.suggestu.scena.core.client.models.data.IModelDataKey;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.communi.suggestu.scena.core.client.screens.IScreenManager;
 import com.communi.suggestu.scena.core.client.textures.ITextureManager;
 import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEvents;
 import com.communi.suggestu.scena.fabric.platform.client.keys.FabricKeyBindingManager;
@@ -18,6 +19,7 @@ import com.communi.suggestu.scena.fabric.platform.client.rendering.FabricRenderi
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.data.FabricModelDataManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.data.ModelDataBuilder;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.data.ModelDataKey;
+import com.communi.suggestu.scena.fabric.platform.client.screens.FabricScreenManager;
 import com.communi.suggestu.scena.fabric.platform.client.texture.FabricTextureManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,5 +87,10 @@ public final class FabricClientManager implements IClientManager
     @Override
     public @NotNull IClientEvents getClientEvents() {
         return FabricClientEvents.getInstance();
+    }
+
+    @Override
+    public @NotNull IScreenManager getScreenManager() {
+        return FabricScreenManager.getInstance();
     }
 }

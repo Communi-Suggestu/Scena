@@ -18,6 +18,8 @@ public class Forge
         IScenaPlatform platform = ForgeScenaPlatform.getInstance();
         PlatformInitializationHandler.getInstance().init(platform);
 
+
+
         LOGGER.info("Initialized scena-forge");
 	}
 }
