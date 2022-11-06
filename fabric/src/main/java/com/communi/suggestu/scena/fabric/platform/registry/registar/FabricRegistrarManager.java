@@ -34,6 +34,7 @@ public final class FabricRegistrarManager implements IRegistrarManager
     @Override
     public <T, R extends T> IRegistrar<R> createRegistrar(final ResourceKey<? extends Registry<T>> typeClass, final String modId)
     {
+
         final ResourceKey registryName = typeClass;
 
         if (registryName == Registry.ITEM_REGISTRY) {
@@ -58,6 +59,12 @@ public final class FabricRegistrarManager implements IRegistrarManager
 
         if (registryName == Registry.RECIPE_SERIALIZER_REGISTRY) {
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.RECIPE_SERIALIZER);
+        }
+
+        final Registry<T> registry = (Registry<T>) Registry.REGISTRY.get((ResourceKey) typeClass);
+
+        if (registry != null) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, registry);
         }
 
         throw new IllegalArgumentException("The registry type class: " + typeClass.location() + " is not supported.");
