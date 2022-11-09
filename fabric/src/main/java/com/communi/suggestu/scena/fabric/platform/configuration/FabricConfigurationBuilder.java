@@ -80,8 +80,25 @@ public final class FabricConfigurationBuilder implements IConfigurationBuilder
                 source,
                 key,
                 jsonElement -> {
-                    if (!jsonElement.isJsonArray())
-                        throw new JsonParseException("Vector4f: " + key + " is not an array");
+                    if (!jsonElement.isJsonArray()) {
+                        if (!jsonElement.isJsonObject()) {
+                            throw new JsonParseException("Vector4f: " + key + " is not an array or an object with x,y,z,w as parameters.");
+                        }
+
+                        final JsonObject jsonObject = jsonElement.getAsJsonObject();
+                        if (jsonObject.keySet().size() != 4) {
+                            throw new JsonParseException("Vector4f: " + key + " is not an array, or an object with x,y,z,w as parameters.");
+                        }
+                        if (!jsonObject.has("x") || !jsonObject.has("y") || !jsonObject.has("z") || !jsonObject.has("w")) {
+                            throw new JsonParseException("Vector4f: " + key + " is not an array, or an object with x,y,z,w as parameters.");
+                        }
+
+                        jsonElement = new JsonArray();
+                        ((JsonArray) jsonElement).add(jsonObject.get("x"));
+                        ((JsonArray) jsonElement).add(jsonObject.get("y"));
+                        ((JsonArray) jsonElement).add(jsonObject.get("z"));
+                        ((JsonArray) jsonElement).add(jsonObject.get("w"));
+                    }
 
                     final JsonArray jsonArray = jsonElement.getAsJsonArray();
                     final List<Float> list = new ArrayList<>();
