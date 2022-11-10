@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
@@ -57,6 +58,13 @@ public final class ForgeClientEvents implements IClientEvents {
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
         return EventBusEventEntryPoint.forge(ForgeScenaRenderWorldLastEvent.class, (event, handler) -> {
             handler.handle(event.getLevelRenderer(), event.getPoseStack(), event.getPartialTicks());
+        });
+    }
+
+    @Override
+    public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {
+        return EventBusEventEntryPoint.forge(RegisterColorHandlersEvent.Block.class, (event, handler) -> {
+            handler.handle();
         });
     }
 }

@@ -43,4 +43,11 @@ public interface IClientEvents {
      * @return The entry point for the post render world event.
      */
     IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent();
+
+    /**
+     * The entry point for the resource registration event.
+     *
+     * @return The entry point for the resource registration event.
+     */
+    IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent();
 }

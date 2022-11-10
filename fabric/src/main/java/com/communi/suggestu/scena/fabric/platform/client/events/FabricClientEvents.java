@@ -32,6 +32,12 @@ public final class FabricClientEvents implements IClientEvents {
         return false;
     });
 
+    public static final Event<IResourceRegistrationEvent> RESOURCE_REGISTRATION = EventFactory.createArrayBacked(IResourceRegistrationEvent.class, callbacks -> () -> {
+        for (IResourceRegistrationEvent callback : callbacks) {
+            callback.handle();
+        }
+    });
+
     private FabricClientEvents() {
     }
 
@@ -58,5 +64,10 @@ public final class FabricClientEvents implements IClientEvents {
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
         return FabricEventEntryPoint.create(WorldRenderEvents.AFTER_TRANSLUCENT, handler -> (context) -> handler.handle(context.worldRenderer(), context.matrixStack(), context.tickDelta()));
+    }
+
+    @Override
+    public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {
+        return FabricEventEntryPoint.create(RESOURCE_REGISTRATION, Function.identity());
     }
 }

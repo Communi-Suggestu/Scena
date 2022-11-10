@@ -12,6 +12,7 @@
     "platform.client.BlockModelAccessorMixin",
     "platform.client.ClientChunkCacheChunkLoadMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
+    "platform.client.PaintingTextureManagerConstructionHandler",
     "platform.client.MouseHandlerEventMixin"
   ],
   "injectors": {
