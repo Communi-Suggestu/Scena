@@ -37,6 +37,14 @@ public class FabricExtendedBlockModel extends BlockModel
     }
 
     @Override
+    public BakedModel bake(ModelBakery bakery, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState transform, ResourceLocation location, boolean guiLight3d) {
+        final FabricModelBakingContextDelegate context = new FabricModelBakingContextDelegate(this);
+
+        final BakedModel bakedModel = specification.bake(context, bakery, spriteGetter, transform, location);
+        return new FabricBakedModelDelegate(bakedModel);
+    }
+
+    @Override
     public Collection<Material> getMaterials(final Function<ResourceLocation, UnbakedModel> modelGetter, final Set<Pair<String, String>> missingTextureErrors)
     {
         final Set<Material> resultingMaterials = new HashSet<>(super.getMaterials(modelGetter, missingTextureErrors));
@@ -44,4 +52,6 @@ public class FabricExtendedBlockModel extends BlockModel
 
         return resultingMaterials;
     }
+
+
 }
