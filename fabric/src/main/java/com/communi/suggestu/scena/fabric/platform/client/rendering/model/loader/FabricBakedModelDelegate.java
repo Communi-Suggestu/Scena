@@ -127,14 +127,9 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         final IBlockModelData finalBlockModelData = blockModelData;
         renderContext.fallbackConsumer().accept(new QuadDelegatingBakedModel(
           dataAwareBakedModel,
-          (stateIn, side, rand) -> {
-              final Collection<RenderType> renderTypes = IRenderTypeManager.getInstance().getRenderTypesFor(this, stateIn, rand, finalBlockModelData);
-              final RenderType renderType = renderTypes.isEmpty() ? null : renderTypes.iterator().next();
-
-              return dataAwareBakedModel.getQuads(
-                      stateIn, side, rand, finalBlockModelData, renderType
-              );
-          })
+          (stateIn, side, rand) -> dataAwareBakedModel.getQuads(
+                  stateIn, side, rand, finalBlockModelData, null
+          ))
         );
     }
 
