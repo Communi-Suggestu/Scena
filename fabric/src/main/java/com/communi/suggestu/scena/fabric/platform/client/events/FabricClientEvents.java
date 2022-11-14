@@ -48,7 +48,7 @@ public final class FabricClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return FabricEventEntryPoint.create(WorldRenderEvents.BEFORE_BLOCK_OUTLINE, handler -> (context, hitResult) -> handler.handle());
+        return FabricEventEntryPoint.create(WorldRenderEvents.BEFORE_BLOCK_OUTLINE, handler -> (context, hitResult) -> !handler.handle());
     }
 
     @Override
