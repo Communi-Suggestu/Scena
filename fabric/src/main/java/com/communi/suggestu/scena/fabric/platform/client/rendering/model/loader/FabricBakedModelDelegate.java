@@ -106,7 +106,7 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
             attachmentData = renderAttachedBlockView.getBlockEntityRenderAttachment(blockPos);
         }
 
-        IBlockModelData blockModelData = null;
+        IBlockModelData blockModelData;
         if (attachmentData instanceof IBlockModelData blockModelDataAttachment) {
             blockModelData = blockModelDataAttachment;
         }
@@ -114,12 +114,10 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
             final BlockEntity blockEntity = blockAndTintGetter.getBlockEntity(blockPos);
             if (!(blockEntity instanceof IBlockEntityWithModelData) || !(getDelegate() instanceof IDataAwareBakedModel)) {
                 renderContext.fallbackConsumer().accept(getDelegate());
+                return;
             }
 
-            if (blockEntity instanceof IBlockEntityWithModelData)
-            {
-                blockModelData = ((IBlockEntityWithModelData) blockEntity).getBlockModelData();
-            }
+            blockModelData = ((IBlockEntityWithModelData) blockEntity).getBlockModelData();
         }
 
         final IDataAwareBakedModel dataAwareBakedModel = (IDataAwareBakedModel) getDelegate();
