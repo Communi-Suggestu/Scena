@@ -3,13 +3,17 @@ package com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader
 import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
-import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -26,8 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedModel, FabricBakedModel
@@ -121,14 +124,29 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         }
 
         final IDataAwareBakedModel dataAwareBakedModel = (IDataAwareBakedModel) getDelegate();
+        emitBlockQuads(dataAwareBakedModel, blockModelData, blockState, blockPos, supplier, renderContext);
+    }
 
-        final IBlockModelData finalBlockModelData = blockModelData;
-        renderContext.fallbackConsumer().accept(new QuadDelegatingBakedModel(
-          dataAwareBakedModel,
-          (stateIn, side, rand) -> dataAwareBakedModel.getQuads(
-                  stateIn, side, rand, finalBlockModelData, null
-          ))
-        );
+    public void emitBlockQuads(
+            final IDataAwareBakedModel dataAwareBakedModel, final IBlockModelData blockModelData, final BlockState blockState, final BlockPos blockPos, final Supplier<RandomSource> supplier, final RenderContext renderContext) {
+        final Collection<RenderType> renderTypes = dataAwareBakedModel.getSupportedRenderTypes(blockState, supplier.get(), blockModelData);
+
+        for (Direction direction : Direction.values()) {
+            renderTypes.forEach(renderType -> emitBlockQuads(dataAwareBakedModel, blockModelData, blockState, blockPos, direction, supplier, renderContext, renderType));
+        }
+    }
+
+    public void emitBlockQuads(
+            final IDataAwareBakedModel dataAwareBakedModel, final IBlockModelData blockModelData, final BlockState blockState, final BlockPos blockPos, final Direction direction, final Supplier<RandomSource> supplier, final RenderContext renderContext, RenderType renderType) {
+        final List<BakedQuad> quads = dataAwareBakedModel.getQuads(blockState, direction, supplier.get(), blockModelData, renderType);
+
+        final RenderMaterial material = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).materialFinder().blendMode(0, BlendMode.fromRenderLayer(renderType)).find();
+
+        quads.forEach(quad -> {
+            final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
+            meshBuilder.getEmitter().fromVanilla(quad, material, direction);
+            renderContext.meshConsumer().accept(meshBuilder.build());
+        });
     }
 
     @Override
