@@ -135,6 +135,8 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         for (Direction direction : Direction.values()) {
             renderTypes.forEach(renderType -> emitBlockQuads(dataAwareBakedModel, blockModelData, blockState, blockPos, direction, supplier, renderContext, renderType));
         }
+
+        renderTypes.forEach(renderType -> emitBlockQuads(dataAwareBakedModel, blockModelData, blockState, blockPos, null, supplier, renderContext, renderType));
     }
 
     public void emitBlockQuads(
