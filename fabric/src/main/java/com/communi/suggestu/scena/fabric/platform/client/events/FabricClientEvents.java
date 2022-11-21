@@ -2,8 +2,10 @@ package com.communi.suggestu.scena.fabric.platform.client.events;
 
 import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.event.FabricEventEntryPoint;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.Event;
@@ -69,5 +71,10 @@ public final class FabricClientEvents implements IClientEvents {
     @Override
     public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {
         return FabricEventEntryPoint.create(RESOURCE_REGISTRATION, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
+        return FabricEventEntryPoint.create(ItemTooltipCallback.EVENT, handler -> (stack, context, lines) -> handler.handle(stack, lines));
     }
 }

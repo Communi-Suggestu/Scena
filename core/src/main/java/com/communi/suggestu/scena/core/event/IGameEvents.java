@@ -65,13 +65,6 @@ public interface IGameEvents {
     IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent();
 
     /**
-     * The entry point for when tooltips of an itemstack are gathered.
-     *
-     * @return The entry point for the tooltip gather event.
-     */
-    IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent();
-
-    /**
      * The entry point for when a chunk is loaded.
      *
      * @return The entry point for the chunk loaded event.

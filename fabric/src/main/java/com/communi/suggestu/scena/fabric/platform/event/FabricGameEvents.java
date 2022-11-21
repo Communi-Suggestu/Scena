@@ -132,11 +132,6 @@ public final class FabricGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
-        return FabricEventEntryPoint.create(ItemTooltipCallback.EVENT, handler -> (stack, context, lines) -> handler.handle(stack, lines));
-    }
-
-    @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return FabricEventEntryPoint.create(CHUNK_LOAD, Function.identity());
     }

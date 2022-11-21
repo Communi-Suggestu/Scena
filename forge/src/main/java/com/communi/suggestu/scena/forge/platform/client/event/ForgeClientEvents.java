@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.forge.platform.client.event;
 
 import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -9,6 +10,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public final class ForgeClientEvents implements IClientEvents {
     private static final ForgeClientEvents INSTANCE = new ForgeClientEvents();
@@ -66,5 +68,10 @@ public final class ForgeClientEvents implements IClientEvents {
         return EventBusEventEntryPoint.mod(RegisterColorHandlersEvent.Block.class, (event, handler) -> {
             handler.handle();
         });
+    }
+
+    @Override
+    public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
+        return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(event.getItemStack(), event.getToolTip()));
     }
 }

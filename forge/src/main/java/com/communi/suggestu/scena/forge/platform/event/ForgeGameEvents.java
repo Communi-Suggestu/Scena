@@ -78,11 +78,6 @@ public final class ForgeGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
-        return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(event.getItemStack(), event.getToolTip()));
-    }
-
-    @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return EventBusEventEntryPoint.forge(ChunkEvent.Load.class, (event, handler) -> handler.handle(event.getLevel(), event.getChunk()));
     }

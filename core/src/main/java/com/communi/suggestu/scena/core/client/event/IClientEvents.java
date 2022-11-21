@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.core.client.event;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 
 public interface IClientEvents {
 
@@ -50,4 +51,11 @@ public interface IClientEvents {
      * @return The entry point for the resource registration event.
      */
     IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent();
+
+    /**
+     * The entry point for when tooltips of an itemstack are gathered.
+     *
+     * @return The entry point for the tooltip gather event.
+     */
+    IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent();
 }
