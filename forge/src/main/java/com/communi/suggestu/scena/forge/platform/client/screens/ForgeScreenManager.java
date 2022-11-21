@@ -43,10 +43,10 @@ public final class ForgeScreenManager implements IScreenManager {
     }
 
     @SubscribeEvent
-    public void onFMLClientSetup(FMLClientSetupEvent event) {
-        registeredMenuRegistrars.set(true);
+    public static void onFMLClientSetup(FMLClientSetupEvent event) {
+        getInstance().registeredMenuRegistrars.set(true);
 
-        menuRegistrars.forEach(registrar -> registrar.accept(new IMenuRegistrar() {
+        getInstance().menuRegistrars.forEach(registrar -> registrar.accept(new IMenuRegistrar() {
             @Override
             public <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(MenuType<? extends M> type, ScreenConstructor<M, U> constructor) {
                 MenuScreens.register(type, constructor::create);
