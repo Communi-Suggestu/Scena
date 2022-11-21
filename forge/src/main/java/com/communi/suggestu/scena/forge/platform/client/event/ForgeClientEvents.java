@@ -63,7 +63,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {
-        return EventBusEventEntryPoint.forge(RegisterColorHandlersEvent.Block.class, (event, handler) -> {
+        return EventBusEventEntryPoint.mod(RegisterColorHandlersEvent.Block.class, (event, handler) -> {
             handler.handle();
         });
     }
