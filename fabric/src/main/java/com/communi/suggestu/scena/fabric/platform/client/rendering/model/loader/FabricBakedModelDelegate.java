@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
@@ -144,7 +145,9 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
 
         quads.forEach(quad -> {
             final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
-            meshBuilder.getEmitter().fromVanilla(quad, material, direction);
+            final QuadEmitter emitter = meshBuilder.getEmitter();
+            emitter.fromVanilla(quad, material, direction);
+            emitter.emit();
             renderContext.meshConsumer().accept(meshBuilder.build());
         });
     }
