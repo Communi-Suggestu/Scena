@@ -1,5 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.event;
 
+import com.communi.suggestu.scena.core.dist.Dist;
+import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.event.*;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -11,6 +13,7 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -76,6 +79,14 @@ public final class FabricGameEvents implements IGameEvents {
                     direction,
                     new IPlayerLeftClickBlockEvent.Result(false, ProcessingResult.DEFAULT)
             );
+
+            if (result.result() != ProcessingResult.DEFAULT) {
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                    if (Minecraft.getInstance() != null && Minecraft.getInstance().gameMode != null) {
+                        Minecraft.getInstance().gameMode.destroyDelay = 3;
+                    }
+                });
+            }
 
             return mapResult(result);
         });

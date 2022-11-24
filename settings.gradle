@@ -8,7 +8,7 @@ pluginManagement.repositories.mavenLocal()
 
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.minecraftforge.gradle"), "5.1.+")
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("org.parchmentmc.librarian.forgegradle"), "1.+")
-pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "0.13-SNAPSHOT")
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "1.+")
 
 pluginManagement.resolutionStrategy.eachPlugin {
     if (requested.id.id == "org.spongepowered.mixin") {
