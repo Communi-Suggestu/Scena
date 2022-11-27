@@ -154,6 +154,29 @@ public class DistExecutor
                 throw new IllegalArgumentException("UNSIDED?");
         }
     }
+
+    /**
+     * Use only when you know what you're doing
+     * and understand why the verifier can cause unexpected ClassNotFoundException crashes even when code is apparently
+     * not sided. Ensure you test both sides fully to be confident in using this.
+     *
+     * @param clientTarget The supplier runnable to run when on the {@link Dist#CLIENT}
+     * @param serverTarget The supplier runnable to run when on the {@link Dist#DEDICATED_SERVER}
+     * @param <T> The common type to return
+     * @return The returned instance
+     */
+    public static <T> T unsafeExecuteForDist(Supplier<Runnable> clientTarget, Supplier<Runnable> serverTarget) {
+        switch (Dist.current())
+        {
+            case CLIENT:
+                clientTarget.get().run();
+            case DEDICATED_SERVER:
+                serverTarget.get().run();
+            default:
+                throw new IllegalArgumentException("UNSIDED?");
+        }
+    }
+
     /**
      * Executes one of the two suppliers, based on which side is active.
      *
