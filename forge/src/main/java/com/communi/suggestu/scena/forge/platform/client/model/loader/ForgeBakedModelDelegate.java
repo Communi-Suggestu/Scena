@@ -154,8 +154,17 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IBlockModelData extraData, @Nullable final RenderType renderType)
     {
-        if (!(extraData instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate))
+        if (!(extraData instanceof ForgeBlockModelDataPlatformDelegate blockModelDataPlatformDelegate)) {
+            if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel) {
+                return dataAwareBakedModel.getQuads(state, side, rand, extraData, renderType);
+            }
+
             return delegate.getQuads(state, side, rand, ModelData.EMPTY, renderType);
+        }
+
+        if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel) {
+            return dataAwareBakedModel.getQuads(state, side, rand, blockModelDataPlatformDelegate, renderType);
+        }
 
         return delegate.getQuads(state, side, rand, blockModelDataPlatformDelegate.getDelegate(), renderType);
     }
@@ -182,6 +191,9 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous)
     {
+        if (delegate instanceof IDataAwareBakedModel dataAwareBakedModel)
+            return dataAwareBakedModel.getSupportedRenderTypes(stack, fabulous);
+
         return Lists.newArrayList(delegate.getRenderTypes(stack, fabulous));
     }
 
