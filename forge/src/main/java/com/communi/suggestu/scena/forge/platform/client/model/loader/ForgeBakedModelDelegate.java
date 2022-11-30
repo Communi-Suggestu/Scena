@@ -5,6 +5,7 @@ import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.ITransformAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
+import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockModelDataPlatformDelegate;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -114,7 +115,7 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     @Override
     public @NotNull BakedModel applyTransform(final ItemTransforms.@NotNull TransformType transformType, final @NotNull PoseStack poseStack, final boolean applyLeftHandTransform)
     {
-        return delegate.applyTransform(transformType, poseStack, applyLeftHandTransform);
+        return ForgeModelManager.getInstance().adaptToPlatform(delegate.applyTransform(transformType, poseStack, applyLeftHandTransform));
     }
 
     @Override
@@ -146,7 +147,7 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     public @NotNull List<BakedModel> getRenderPasses(final @NotNull ItemStack itemStack, final boolean fabulous)
     {
         if (delegate instanceof ICompoundItemBakedModel compoundItemBakedModel)
-            return compoundItemBakedModel.getRenderPasses(itemStack, fabulous);
+            return compoundItemBakedModel.getRenderPasses(itemStack, fabulous).stream().map(ForgeModelManager.getInstance()::adaptToPlatform).toList();
 
         return List.of(this);
     }
