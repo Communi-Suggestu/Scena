@@ -105,6 +105,17 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
     public void emitBlockQuads(
       final BlockAndTintGetter blockAndTintGetter, final BlockState blockState, final BlockPos blockPos, final Supplier<RandomSource> supplier, final RenderContext renderContext)
     {
+        if (!(getDelegate() instanceof final IDataAwareBakedModel dataAwareBakedModel)) {
+            if (getDelegate() instanceof FabricBakedModel fabricBakedModel) {
+                fabricBakedModel.emitBlockQuads(blockAndTintGetter, blockState, blockPos, supplier, renderContext);
+            }
+            else {
+                renderContext.fallbackConsumer().accept(getDelegate());
+            }
+
+            return;
+        }
+
         Object attachmentData = null;
         if (blockAndTintGetter instanceof RenderAttachedBlockView renderAttachedBlockView) {
             attachmentData = renderAttachedBlockView.getBlockEntityRenderAttachment(blockPos);
@@ -124,7 +135,6 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
             blockModelData = ((IBlockEntityWithModelData) blockEntity).getBlockModelData();
         }
 
-        final IDataAwareBakedModel dataAwareBakedModel = (IDataAwareBakedModel) getDelegate();
         emitBlockQuads(dataAwareBakedModel, blockModelData, blockState, blockPos, supplier, renderContext);
     }
 
@@ -158,15 +168,19 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
     public void emitItemQuads(final ItemStack itemStack, final Supplier<RandomSource> supplier, final RenderContext renderContext)
     {
         final BakedModel itemModel = getDelegate().getOverrides().
-          resolve(
-            getDelegate(),
-            itemStack,
-            Minecraft.getInstance().level,
-            Minecraft.getInstance().player,
-            supplier.get().nextInt()
-          );
+                resolve(
+                        getDelegate(),
+                        itemStack,
+                        Minecraft.getInstance().level,
+                        Minecraft.getInstance().player,
+                        supplier.get().nextInt()
+                );
+
+        renderContext.pushTransform(quad -> true);
 
         renderContext.fallbackConsumer().accept(itemModel);
+
+        renderContext.popTransform();
     }
 
     @FunctionalInterface
