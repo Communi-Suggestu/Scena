@@ -117,13 +117,20 @@ public interface IRenderingManager
      */
     void registerBlockEntityRenderer(final Consumer<IBlockEntityRendererRegistrar> callback);
 
-
     /**
      * Gives access to this platform's model manager.
      *
      * @return The model manager
      */
     IModelManager getModelManager();
+
+    /**
+     * Adapts the given vertex color so that it can be used on this platform.
+     *
+     * @param color The color to adapt in default minecraft format ARGB.
+     * @return The adapted color.
+     */
+    int adaptVertexColor(final int color);
 
     /**
      * A registrar for the {@link BlockEntityWithoutLevelRenderer}s.

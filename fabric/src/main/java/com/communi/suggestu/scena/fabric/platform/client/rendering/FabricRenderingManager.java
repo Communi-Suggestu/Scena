@@ -105,4 +105,14 @@ public final class FabricRenderingManager implements IRenderingManager
     {
         return FabricModelManager.getInstance();
     }
+
+    @Override
+    public int adaptVertexColor(int color) {
+        final int a = (color >> 24) & 0xFF;
+        final int r = (color >> 16) & 0xFF;
+        final int g = (color >> 8) & 0xFF;
+        final int b = color & 0xFF;
+
+        return (a << 24) | (b << 16) | (g << 8) | r;
+    }
 }

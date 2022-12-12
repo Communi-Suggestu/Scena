@@ -151,6 +151,11 @@ public class ForgeRenderingManager implements IRenderingManager
         return ForgeModelManager.getInstance();
     }
 
+    @Override
+    public int adaptVertexColor(int color) {
+        return color;
+    }
+
     public Optional<BlockEntityWithoutLevelRenderer> getRenderer(final Item item) {
         return Optional.ofNullable(this.bewlrs.get(item));
     }
