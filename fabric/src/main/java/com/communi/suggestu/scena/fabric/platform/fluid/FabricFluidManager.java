@@ -10,8 +10,6 @@ import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -22,9 +20,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +52,7 @@ public class FabricFluidManager implements IFluidManager
     @Override
     public FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler)
     {
-        final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registry.FLUID_REGISTRY, name.getNamespace());
+        final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registries.FLUID, name.getNamespace());
         final IRegistryObject<Fluid> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
 
         final IFluidVariantHandler handler = variantHandler.get();
@@ -61,12 +60,6 @@ public class FabricFluidManager implements IFluidManager
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), fluidRegistration.get());
-
-            ClientSpriteRegistryCallback.event(TextureAtlas.LOCATION_BLOCKS).register((atlasTexture, registry) -> {
-                registry.register(handler.getStillTexture(new FluidInformation(fluidRegistration.get())).orElseThrow());
-                registry.register(handler.getFlowingTexture(new FluidInformation(fluidRegistration.get())).orElseThrow());
-            });
-
             FluidVariantRendering.register(fluidRegistration.get(), new FabricFluidVariantRenderHandlerDelegate(handler));
         });
 

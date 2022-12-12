@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.fabric.platform.configuration;
 import com.communi.suggestu.scena.core.config.IConfigurationBuilder;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
-import com.mojang.math.Vector4f;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;

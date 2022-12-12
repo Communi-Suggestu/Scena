@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.config;
 
-import com.mojang.math.Vector4f;
+
+import org.joml.Vector4f;
 
 import java.util.List;
 import java.util.function.Supplier;

@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.util;
 
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Transformation;
+
+import org.joml.Matrix4f;
 
 import java.nio.FloatBuffer;
 
@@ -14,9 +14,9 @@ public class MatrixUtils
     }
 
     public static void multiplyBackward(Matrix4f current, Matrix4f other) {
-        Matrix4f copy = other.copy();
-        copy.multiply(current);
-        current.load(copy);
+        Matrix4f copy = new Matrix4f(other);
+        copy.mul(current);
+        current.set(copy);
     }
 
     public static void setTranslation(Matrix4f m, final float x, final float y, final float z) {
@@ -27,7 +27,7 @@ public class MatrixUtils
                 0, 0, 0, 1
         };
 
-        m.load(FloatBuffer.wrap(translationMatrix));
+        m.set(FloatBuffer.wrap(translationMatrix));
     }
 
 }

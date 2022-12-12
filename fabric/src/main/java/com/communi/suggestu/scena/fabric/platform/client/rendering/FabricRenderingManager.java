@@ -58,7 +58,7 @@ public final class FabricRenderingManager implements IRenderingManager
     @Override
     public ResourceLocation getFlowingFluidTexture(final FluidInformation fluidInformation)
     {
-        return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).getName();
+        return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).contents().name();
     }
 
     @Override
@@ -70,7 +70,7 @@ public final class FabricRenderingManager implements IRenderingManager
     @Override
     public ResourceLocation getStillFluidTexture(final FluidInformation fluidInformation)
     {
-        return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).getName();
+        return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).contents().name();
     }
 
     @Override

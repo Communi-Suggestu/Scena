@@ -1,6 +1,5 @@
 package com.communi.suggestu.scena.core.client.models;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -8,18 +7,21 @@ import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Vector3f;
 
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+@SuppressWarnings("resource")
 public class UnbakedGeometryHelper
 {
 
@@ -37,7 +39,7 @@ public class UnbakedGeometryHelper
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
      */
-    public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite)
+    public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents sprite)
     {
         return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, sprite);
     }
@@ -50,17 +52,17 @@ public class UnbakedGeometryHelper
      */
     public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite)
     {
-        var elements = createUnbakedItemElements(layerIndex, sprite);
+        var elements = createUnbakedItemElements(layerIndex, sprite.contents());
         elements.remove(0); // Remove north and south faces
 
-        int width = sprite.getWidth(), height = sprite.getHeight();
+        int width = sprite.contents().width(), height = sprite.contents().height();
         var bits = new BitSet(width * height);
 
         // For every frame in the texture, mark all the opaque pixels (this is what vanilla does too)
-        sprite.getUniqueFrames().forEach(frame -> {
+        sprite.contents().getUniqueFrames().forEach(frame -> {
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
-                    if (!sprite.isTransparent(frame, x, y))
+                    if (!sprite.contents().isTransparent(frame, x, y))
                         bits.set(x + y * width);
         });
 

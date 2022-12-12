@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -68,7 +69,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
     }
 
     @Override
-    public BakedModel bake(IModelBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+    public BakedModel bake(IModelBakingContext context, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
     {
         if (logWarning)
             LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"parts\" field in its composite model instead of \"children\". This field will be removed in 1.20.");
@@ -86,19 +87,6 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         var bakedParts = bakedPartsBuilder.build();
 
         return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(), bakedParts);
-    }
-
-    @Override
-    public Collection<Material> getTextures(IModelBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-    {
-        Set<Material> textures = new HashSet<>();
-        final Optional<Material> particleTexture = context.getMaterial("particle");
-        particleTexture.ifPresent(textures::add);
-        for (BlockModel part : children.values())
-        {
-            textures.addAll(part.getMaterials(modelGetter, missingTextureErrors));
-        }
-        return textures;
     }
 
     public static class Baked implements IDataAwareBakedModel

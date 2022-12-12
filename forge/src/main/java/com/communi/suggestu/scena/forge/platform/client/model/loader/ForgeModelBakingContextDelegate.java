@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.geometry.BlockGeometryBakingContext;
@@ -16,12 +17,16 @@ import java.util.function.Function;
 public class ForgeModelBakingContextDelegate implements IModelBakingContext
 {
 
-    final Function<ResourceLocation, UnbakedModel> unbakedModelGetter;
-    final IGeometryBakingContext delegate;
+    private final Function<ResourceLocation, UnbakedModel> unbakedModelGetter;
+    private final ModelBaker modelBaker;
+    private final IGeometryBakingContext delegate;
 
-    public ForgeModelBakingContextDelegate(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter, final IGeometryBakingContext delegate) {
+
+    public ForgeModelBakingContextDelegate(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter, ModelBaker baker, final IGeometryBakingContext delegate) {
         this.unbakedModelGetter = unbakedModelGetter;
-        this.delegate = delegate;}
+        this.modelBaker = baker;
+        this.delegate = delegate;
+    }
 
     @Override
     public UnbakedModel getUnbakedModel(final ResourceLocation unbakedModel)
@@ -69,7 +74,7 @@ public class ForgeModelBakingContextDelegate implements IModelBakingContext
     {
         if (delegate instanceof BlockGeometryBakingContext geometryBakingContext) {
             return geometryBakingContext.owner.getOverrides(
-                    Minecraft.getInstance().getModelManager().getModelBakery(),
+                    modelBaker,
                     geometryBakingContext.owner,
                     material -> Minecraft.getInstance().getTextureAtlas(material.atlasLocation()).apply(material.texture())
             );

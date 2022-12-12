@@ -9,8 +9,11 @@ accessible   class      net/minecraft/client/renderer/block/model/ItemTransform$
 accessible   class      net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer
 accessible   class      net/minecraft/client/renderer/block/model/ItemOverride$Deserializer
 accessible   method     net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V
-accessible   method     net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)Ljava/util/List; # processFrames
 accessible   field      com/mojang/blaze3d/vertex/VertexFormat offsets Lit/unimi/dsi/fastutil/ints/IntList;
 accessible   method     net/minecraft/client/renderer/block/model/ItemOverrides <init> ()V
 accessible   class      net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
 accessible   field      net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
+accessible   class      net/minecraft/world/item/CreativeModeTab$TabVisibility
+accessible   method     net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/SpriteContents;)Ljava/util/List; # processFrames
+accessible   class      net/minecraft/client/resources/model/ModelManager$ReloadState
+accessible   method     net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType; # create

@@ -10,7 +10,6 @@ import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.screens.IScreenManager;
-import com.communi.suggestu.scena.core.client.textures.ITextureManager;
 import com.communi.suggestu.scena.forge.platform.client.color.ForgeColorManager;
 import com.communi.suggestu.scena.forge.platform.client.event.ForgeClientEvents;
 import com.communi.suggestu.scena.forge.platform.client.fluid.ForgeClientFluidManager;
@@ -20,7 +19,6 @@ import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeModelDat
 import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeModelPropertyPlatformDelegate;
 import com.communi.suggestu.scena.forge.platform.client.rendering.ForgeRenderingManager;
 import com.communi.suggestu.scena.forge.platform.client.screens.ForgeScreenManager;
-import com.communi.suggestu.scena.forge.platform.client.texture.ForgeTextureManager;
 import net.minecraftforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,12 +75,6 @@ public class ForgeClientManager implements IClientManager
     public @NotNull IClientFluidManager getFluidManager()
     {
         return ForgeClientFluidManager.getInstance();
-    }
-
-    @Override
-    public @NotNull ITextureManager getTextureManager()
-    {
-        return ForgeTextureManager.getInstance();
     }
 
     @Override

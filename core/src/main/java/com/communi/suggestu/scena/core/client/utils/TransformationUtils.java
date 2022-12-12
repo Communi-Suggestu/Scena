@@ -2,7 +2,8 @@ package com.communi.suggestu.scena.core.client.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public final class TransformationUtils
 {

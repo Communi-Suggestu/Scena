@@ -3,13 +3,13 @@ package com.communi.suggestu.scena.core.client.models.baked.base;
 import com.communi.suggestu.scena.core.client.models.baked.ITransformAwareBakedModel;
 import com.communi.suggestu.scena.core.client.utils.TransformationUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public abstract class BaseBakedPerspectiveModel implements BakedModel, ITransformAwareBakedModel
 {
@@ -41,7 +41,7 @@ public abstract class BaseBakedPerspectiveModel implements BakedModel, ITransfor
 	{
 		final Vector3f translation = new Vector3f( transX, transY, transZ );
 		final Vector3f scale = new Vector3f( scaleXYZ, scaleXYZ, scaleXYZ );
-		final Quaternion rotation = new Quaternion(rotX, rotY, rotZ, true);
+		final Quaternionf rotation = com.communi.suggestu.scena.core.util.TransformationUtils.quatFromXYZ(rotX, rotY, rotZ, true);
 
 		return new Transformation(translation, rotation, scale, null);
 	}
@@ -104,9 +104,9 @@ public abstract class BaseBakedPerspectiveModel implements BakedModel, ITransfor
         public @NotNull ItemTransform getTransform(final @NotNull TransformType transformType)
         {
             return new ItemTransform(
-              Vector3f.ZERO,
-              Vector3f.ZERO,
-              Vector3f.ZERO
+              new Vector3f(),
+              new Vector3f(),
+              new Vector3f()
             ) {
 
                 @Override

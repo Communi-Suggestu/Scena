@@ -8,6 +8,8 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
 import com.communi.suggestu.scena.core.registries.deferred.impl.custom.CustomRegistryManager;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 
 public final class FabricRegistrarManager implements IRegistrarManager
@@ -37,31 +39,31 @@ public final class FabricRegistrarManager implements IRegistrarManager
 
         final ResourceKey registryName = typeClass;
 
-        if (registryName == Registry.ITEM_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.ITEM);
+        if (registryName == Registries.ITEM) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.ITEM);
         }
 
-        if (registryName ==  Registry.BLOCK_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.BLOCK);
+        if (registryName ==  Registries.BLOCK) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.BLOCK);
         }
 
-        if (registryName == Registry.FLUID_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.FLUID);
+        if (registryName == Registries.FLUID) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.FLUID);
         }
 
-        if (registryName == Registry.BLOCK_ENTITY_TYPE_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.BLOCK_ENTITY_TYPE);
+        if (registryName == Registries.BLOCK_ENTITY_TYPE) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.BLOCK_ENTITY_TYPE);
         }
 
-        if (registryName == Registry.MENU_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.MENU);
+        if (registryName == Registries.MENU) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.MENU);
         }
 
-        if (registryName == Registry.RECIPE_SERIALIZER_REGISTRY) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) Registry.RECIPE_SERIALIZER);
+        if (registryName == Registries.RECIPE_SERIALIZER) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.RECIPE_SERIALIZER);
         }
 
-        final Registry<T> registry = (Registry<T>) Registry.REGISTRY.get((ResourceKey) typeClass);
+        final Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.get((ResourceKey) typeClass);
 
         if (registry != null) {
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, registry);

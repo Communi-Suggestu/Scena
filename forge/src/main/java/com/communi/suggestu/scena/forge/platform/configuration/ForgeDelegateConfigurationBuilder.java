@@ -4,11 +4,11 @@ import com.communi.suggestu.scena.core.config.IConfigurationBuilder;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.math.Vector4f;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.communi.suggestu.scena.forge.utils.LanguageHandler;
 import net.minecraft.locale.Language;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;

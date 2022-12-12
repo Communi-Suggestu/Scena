@@ -6,6 +6,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -90,7 +91,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
                         return renderDelegate.getDelegate().getStillTexture(variant);
                     }
 
-                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::getName);
+                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::contents).map(SpriteContents::name);
                 },
                 () -> Optional::empty
         );
@@ -106,7 +107,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
                         return renderDelegate.getDelegate().getFlowingTexture(variant);
                     }
 
-                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::getName);
+                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::contents).map(SpriteContents::name);
                 },
                 () -> Optional::empty
         );

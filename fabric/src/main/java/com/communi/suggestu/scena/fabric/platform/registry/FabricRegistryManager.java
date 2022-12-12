@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
 import com.communi.suggestu.scena.core.registries.ISizedIdMap;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,13 +32,13 @@ public final class FabricRegistryManager implements IPlatformRegistryManager
     @Override
     public IPlatformRegistry<Item> getItemRegistry()
     {
-        return new FabricRegistryPlatformDelegate<>(Registry.ITEM);
+        return new FabricRegistryPlatformDelegate<>(BuiltInRegistries.ITEM);
     }
 
     @Override
     public IPlatformRegistry<Block> getBlockRegistry()
     {
-        return new FabricRegistryPlatformDelegate<>(Registry.BLOCK);
+        return new FabricRegistryPlatformDelegate<>(BuiltInRegistries.BLOCK);
     }
 
     @Override
@@ -49,7 +50,7 @@ public final class FabricRegistryManager implements IPlatformRegistryManager
     @Override
     public IPlatformRegistry<Fluid> getFluids()
     {
-        return new FabricRegistryPlatformDelegate<>(Registry.FLUID);
+        return new FabricRegistryPlatformDelegate<>(BuiltInRegistries.FLUID);
     }
 
     private FabricRegistryManager()

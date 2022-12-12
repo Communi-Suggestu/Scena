@@ -1,3 +1,5 @@
+import org.gradle.api.internal.file.copy.CopyAction
+
 plugins {
     id 'net.minecraftforge.gradle'
     id 'org.spongepowered.mixin'
@@ -10,7 +12,7 @@ configurations.implementation.extendsFrom configurations.includedLibraries
 project.addCoreProject()
 
 project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
-project.minecraft.accessTransformer = project(':scena-common').file("accesstransformer.cfg")
+project.minecraft.accessTransformer = project(':scena-common').file("forge.accesstransformer.cfg")
 
 project.minecraft.runs {
     client { clientRun ->
@@ -35,7 +37,9 @@ project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.saecularia
     jarJar.ranged(it, project.supportedSaeculariaCaudicesVersionRange)
 }
 
-project.tasks.processResources.from project(":scena-common").file("accesstransformer.cfg")
+project.tasks.processResources.from(project(":scena-common").file("forge.accesstransformer.cfg"), (CopySpec spec) -> {
+    spec.into("accesstransformer.cfg")
+})
 
 project.mixin.config "scena.mixins.json"
 project.mixin.add project.sourceSets.main, "scena.refmap.json"
