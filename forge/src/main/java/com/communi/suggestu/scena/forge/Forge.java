@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.init.PlatformInitializationHandler;
 import com.communi.suggestu.scena.forge.platform.ForgeScenaPlatform;
 import com.communi.suggestu.scena.forge.utils.Constants;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,6 @@ public class Forge
 	{
         IScenaPlatform platform = ForgeScenaPlatform.getInstance();
         PlatformInitializationHandler.getInstance().init(platform);
-
-
 
         LOGGER.info("Initialized scena-forge");
 	}

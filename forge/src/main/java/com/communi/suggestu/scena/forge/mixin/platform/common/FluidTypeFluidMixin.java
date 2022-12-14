@@ -1,10 +1,7 @@
 package com.communi.suggestu.scena.forge.mixin.platform.common;
 
 import com.communi.suggestu.scena.core.fluid.FluidWithHandler;
-import com.communi.suggestu.scena.core.item.IWearableItem;
 import com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidTypeDelegate;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidType;
 import org.spongepowered.asm.mixin.Mixin;
