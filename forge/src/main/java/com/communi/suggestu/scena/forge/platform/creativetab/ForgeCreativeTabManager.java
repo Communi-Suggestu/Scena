@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.creativetab;
 
 import com.communi.suggestu.scena.core.creativetab.ICreativeTabManager;
+import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -19,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID)
 public final class ForgeCreativeTabManager implements ICreativeTabManager {
     private static final ForgeCreativeTabManager INSTANCE = new ForgeCreativeTabManager();
     private final Map<ResourceLocation, CreativeTabConstructionRegistration> creativeTabs = Maps.newConcurrentMap();
@@ -62,14 +65,14 @@ public final class ForgeCreativeTabManager implements ICreativeTabManager {
     }
 
     @SubscribeEvent
-    public void onCreativeModeTab(CreativeModeTabEvent.Register event) {
-        creativeTabsRegistered.set(true);
+    public static void onCreativeModeTab(CreativeModeTabEvent.Register event) {
+        getInstance().creativeTabsRegistered.set(true);
 
-        final List<ResourceLocation> unregistered = Lists.newArrayList(creativeTabs.keySet());
+        final List<ResourceLocation> unregistered = Lists.newArrayList(getInstance().creativeTabs.keySet());
 
         while (!unregistered.isEmpty()) {
             final ResourceLocation name = unregistered.remove(0);
-            final CreativeTabConstructionRegistration registration = creativeTabs.get(name);
+            final CreativeTabConstructionRegistration registration = getInstance().creativeTabs.get(name);
 
             if (registration == null) {
                 throw new IllegalStateException("Creative tab " + name + " was not registered!");
@@ -82,15 +85,15 @@ public final class ForgeCreativeTabManager implements ICreativeTabManager {
                     registration.configurator()
             );
 
-            registeredTabs.put(name, tab);
+            getInstance().registeredTabs.put(name, tab);
         }
     }
 
     @SubscribeEvent
-    public void onCreativeModeTab(CreativeModeTabEvent.BuildContents event) {
-        creativeTabsModified.set(true);
+    public static void onCreativeModeTab(CreativeModeTabEvent.BuildContents event) {
+        getInstance().creativeTabsModified.set(true);
 
-        for (final CreativeTabModificationRegistration registration : modificationRegistrations) {
+        for (final CreativeTabModificationRegistration registration : getInstance().modificationRegistrations) {
             final CreativeModeTab tab = registration.tabSupplier().get();
 
             if (event.getTab() == tab) {
