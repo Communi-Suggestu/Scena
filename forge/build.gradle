@@ -35,7 +35,9 @@ project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.saecularia
     jarJar.ranged(it, project.supportedSaeculariaCaudicesVersionRange)
 }
 
-project.tasks.processResources.from project(":scena-common").file("accesstransformer.cfg")
+project.tasks.processResources.from (project(":scena-common").file("accesstransformer.cfg")) {
+    into 'META-INF'
+}
 
 project.mixin.config "scena.mixins.json"
 project.mixin.add project.sourceSets.main, "scena.refmap.json"
