@@ -57,8 +57,10 @@ project.dependencies.runtimeOnly(project(':scena-core')) {
 }
 
 project.tasks.processResources.from(project(":scena-common").file("forge.accesstransformer.cfg"), (CopySpec spec) -> {
-    spec.into("accesstransformer.cfg")
+    spec.into("META-INF")
+    spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
 })
+project.tasks.processResources.outputs.upToDateWhen { false }
 
 project.mixin.config "scena.mixins.json"
 project.mixin.add project.sourceSets.main, "scena.refmap.json"
