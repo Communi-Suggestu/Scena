@@ -79,7 +79,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         @Override
         public BakedModel build()
         {
-            return builder.build();
+            return IModelManager.getInstance().adaptToPlatform(builder.build());
         }
     }
 
