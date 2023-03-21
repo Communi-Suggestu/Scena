@@ -1,14 +1,17 @@
 package com.communi.suggestu.scena.fabric.platform.configuration;
 
 import com.communi.suggestu.scena.core.config.IConfigurationBuilder;
+import com.communi.suggestu.scena.fabric.platform.client.rendering.model.IModelBakeryAccessor;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
+import net.minecraft.client.Minecraft;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class FabricConfigurationBuilder implements IConfigurationBuilder
@@ -115,7 +118,14 @@ public final class FabricConfigurationBuilder implements IConfigurationBuilder
 
                     return new Vector4f(list.get(0), list.get(1), list.get(2), list.get(3));
                 },
-                GSON::toJsonTree,
+                vector4f -> {
+                    final JsonArray jsonArray = new JsonArray();
+                    jsonArray.add(new JsonPrimitive(vector4f.x));
+                    jsonArray.add(new JsonPrimitive(vector4f.y));
+                    jsonArray.add(new JsonPrimitive(vector4f.z));
+                    jsonArray.add(new JsonPrimitive(vector4f.w));
+                    return jsonArray;
+                },
                 defaultValue
         );
 
