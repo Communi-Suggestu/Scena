@@ -25,11 +25,10 @@ public abstract class ModelBakeryFromModelManagerAccessorMixin implements IModel
     private ModelBakery currentBakery = null;
 
     @Inject(
-            method = "Lnet/minecraft/client/resources/model/ModelManager;loadModels(Lnet/minecraft/util/profiling/ProfilerFiller;Ljava/util/Map;Lnet/minecraft/client/resources/model/ModelBakery;)Lnet/minecraft/client/resources/model/ModelManager$ReloadState;",
+            method = "loadModels(Lnet/minecraft/util/profiling/ProfilerFiller;Ljava/util/Map;Lnet/minecraft/client/resources/model/ModelBakery;)Lnet/minecraft/client/resources/model/ModelManager$ReloadState;",
             at = @At(
                     value = "HEAD"
-            ),
-            cancellable = false
+            )
     )
     public void onApply(ProfilerFiller profilerFiller, Map<ResourceLocation, AtlasSet.StitchResult> map, ModelBakery modelBakery, CallbackInfoReturnable<ModelManager.ReloadState> cir) {
         this.currentBakery = modelBakery;

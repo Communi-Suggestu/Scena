@@ -35,6 +35,8 @@ public class FabricExtendedBlockModelDeserializer extends BlockModel.Deserialize
         this.delegate = delegate;
     }
 
+    @SuppressWarnings({"NullableProblems", "ConstantValue"})
+    @Nullable
     public BlockModel deserialize(JsonElement element, Type targetType, JsonDeserializationContext deserializationContext) throws JsonParseException
     {
         if (!element.isJsonObject())
@@ -47,7 +49,7 @@ public class FabricExtendedBlockModelDeserializer extends BlockModel.Deserialize
         if (!jsonobject.get("loader").getAsString().equals(name))
             return null;
 
-        final BlockModel model = super.deserialize(element, targetType, deserializationContext);
+        @Nullable final BlockModel model = super.deserialize(element, targetType, deserializationContext);
         if (model == null)
             return null;
 

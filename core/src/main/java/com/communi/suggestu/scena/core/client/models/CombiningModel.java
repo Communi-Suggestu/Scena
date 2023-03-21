@@ -86,7 +86,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         }
         var bakedParts = bakedPartsBuilder.build();
 
-        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(), bakedParts);
+        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(bakery), bakedParts);
     }
 
     public static class Baked implements IDataAwareBakedModel

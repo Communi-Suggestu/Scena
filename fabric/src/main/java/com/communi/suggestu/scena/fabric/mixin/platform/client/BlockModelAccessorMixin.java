@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +30,9 @@ public abstract class BlockModelAccessorMixin implements IBlockModelAccessor
     protected BlockModel parent;
     @Shadow @Nullable
     protected ResourceLocation parentLocation;
+
     @Shadow
-    protected abstract ItemOverrides getItemOverrides(ModelBakery modelBakery, BlockModel model);
+    protected abstract ItemOverrides getItemOverrides(ModelBaker modelBaker, BlockModel blockModel);
 
     @Shadow
     public abstract List<BlockElement> getElements();
@@ -102,7 +104,7 @@ public abstract class BlockModelAccessorMixin implements IBlockModelAccessor
     }
 
     @Override
-    public ItemOverrides overrides(final ModelBakery modelBakery, final BlockModel model)
+    public ItemOverrides overrides(final ModelBaker modelBakery, final BlockModel model)
     {
         return getItemOverrides(modelBakery, model);
     }

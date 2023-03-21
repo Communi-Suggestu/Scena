@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -34,7 +35,7 @@ public class FabricModelBakingContextDelegate implements IModelBakingContext
     public Optional<Material> getMaterial(final String name)
     {
         if (source.hasTexture(name)) {
-            return Optional.ofNullable(source.getMaterial(name));
+            return Optional.of(source.getMaterial(name));
         }
 
         return Optional.empty();
@@ -65,9 +66,8 @@ public class FabricModelBakingContextDelegate implements IModelBakingContext
     }
 
     @Override
-    public ItemOverrides getItemOverrides()
+    public ItemOverrides getItemOverrides(ModelBaker baker)
     {
-        final IModelBakeryAccessor modelBakeryAccessor = (IModelBakeryAccessor) Minecraft.getInstance().getModelManager();
-        return sourceAccessor.overrides(modelBakeryAccessor.getModelBakery(), source);
+        return sourceAccessor.overrides(baker, source);
     }
 }

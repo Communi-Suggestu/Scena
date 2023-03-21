@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ public class FabricExtendedBlockModel extends BlockModel
     }
 
     @Override
-    public BakedModel bake(ModelBaker modelBaker, BlockModel blockModel, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation, boolean bl) {
+    public @NotNull BakedModel bake(ModelBaker modelBaker, BlockModel blockModel, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation, boolean bl) {
         final FabricModelBakingContextDelegate context = new FabricModelBakingContextDelegate(this);
 
         final BakedModel bakedModel = specification.bake(context, modelBaker, function, modelState, resourceLocation);

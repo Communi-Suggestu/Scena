@@ -70,7 +70,7 @@ public class ForgeModelBakingContextDelegate implements IModelBakingContext
     }
 
     @Override
-    public ItemOverrides getItemOverrides()
+    public ItemOverrides getItemOverrides(ModelBaker modelBaker)
     {
         if (delegate instanceof BlockGeometryBakingContext geometryBakingContext) {
             return geometryBakingContext.owner.getOverrides(

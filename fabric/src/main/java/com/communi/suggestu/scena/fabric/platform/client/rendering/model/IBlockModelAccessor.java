@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.resources.ResourceLocation;
 
@@ -34,5 +35,5 @@ public interface IBlockModelAccessor
 
     ResourceLocation parentLocation();
 
-    ItemOverrides overrides(ModelBakery modelBakery, BlockModel model);
+    ItemOverrides overrides(ModelBaker modelBakery, BlockModel model);
 }

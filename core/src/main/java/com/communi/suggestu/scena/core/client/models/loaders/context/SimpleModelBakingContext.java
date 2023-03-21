@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -66,7 +67,7 @@ public class SimpleModelBakingContext implements IModelBakingContext
     }
 
     @Override
-    public ItemOverrides getItemOverrides()
+    public ItemOverrides getItemOverrides(ModelBaker baker)
     {
         return itemOverrides;
     }
