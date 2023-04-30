@@ -77,4 +77,18 @@ public interface IGameEvents {
      * @return The entry point for the common configuration loaded event.
      */
     IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent();
+
+    /**
+     * The entry point for when a server is about to tick.
+     *
+     * @return The entry point for the server about to tick event.
+     */
+    IEventEntryPoint<IServerTickEvent> getServerPreTickEvent();
+
+    /**
+     * The entry point for when a server has just finished a tick.
+     *
+     * @return The entry point for the server post tick event.
+     */
+    IEventEntryPoint<IServerTickEvent> getServerPostTickEvent();
 }

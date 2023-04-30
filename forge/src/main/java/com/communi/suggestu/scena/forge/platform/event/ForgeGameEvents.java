@@ -1,18 +1,29 @@
 package com.communi.suggestu.scena.forge.platform.event;
 
-import com.communi.suggestu.scena.core.event.*;
+import com.communi.suggestu.scena.core.event.IChunkLoadEvent;
+import com.communi.suggestu.scena.core.event.ICommonConfigurationLoaded;
+import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGameEvents;
+import com.communi.suggestu.scena.core.event.IItemEntityPickupEvent;
+import com.communi.suggestu.scena.core.event.IPlayerJoinedWorldEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLeftClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLoggedInEvent;
+import com.communi.suggestu.scena.core.event.IPlayerRightClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IRegisterCommandsEvent;
+import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
+import com.communi.suggestu.scena.core.event.IServerTickEvent;
+import com.communi.suggestu.scena.core.event.ProcessingResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
     private static final ForgeGameEvents INSTANCE = new ForgeGameEvents();
@@ -85,6 +96,26 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent() {
         return EventBusEventEntryPoint.mod(ModConfigEvent.Loading.class, (event, handler) -> handler.handle());
+    }
+
+    @Override
+    public IEventEntryPoint<IServerTickEvent> getServerPreTickEvent() {
+        return EventBusEventEntryPoint.forge(TickEvent.ServerTickEvent.class, (event, handler) -> {
+            if (event.phase != TickEvent.Phase.START)
+                return;
+
+            handler.onTick(event.getServer());
+        });
+    }
+
+    @Override
+    public IEventEntryPoint<IServerTickEvent> getServerPostTickEvent() {
+        return EventBusEventEntryPoint.forge(TickEvent.ServerTickEvent.class, (event, handler) -> {
+            if (event.phase != TickEvent.Phase.END)
+                return;
+
+            handler.onTick(event.getServer());
+        });
     }
 
     private ForgeGameEvents() {

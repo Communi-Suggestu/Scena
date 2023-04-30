@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -16,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -149,7 +151,17 @@ public final class FabricGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<ICommonConfigurationLoaded> getCommonConfigurationLoadedEvent() {
-        return null;
+        return FabricEventEntryPoint.create(COMMON_CONFIGURATION_LOADED, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IServerTickEvent> getServerPreTickEvent() {
+        return FabricEventEntryPoint.create(ServerTickEvents.START_SERVER_TICK, iServerTickEvent -> iServerTickEvent::onTick);
+    }
+
+    @Override
+    public IEventEntryPoint<IServerTickEvent> getServerPostTickEvent() {
+        return FabricEventEntryPoint.create(ServerTickEvents.END_SERVER_TICK, iServerTickEvent -> iServerTickEvent::onTick);
     }
 
     private static InteractionResult mapResult(
