@@ -19,11 +19,20 @@ public interface IEntityInformationManager
     }
 
     /**
-     * Determines the reach distance of the player.
+     * Determines the block reach distance of the player.
      * Might be constant or attribute dependent.
      *
      * @param player The player in question.
      * @return The reach distance for the given player.
      */
-    double getReachDistance(final Player player);
+    double getBlockReachDistance(final Player player);
+
+    /**
+     * Determines the entity reach distance of the player.
+     * Might be constant or attribute dependent.
+     *
+     * @param player The player in question.
+     * @return The reach distance for the given player.
+     */
+    double getEntityReachDistance(final Player player);
 }

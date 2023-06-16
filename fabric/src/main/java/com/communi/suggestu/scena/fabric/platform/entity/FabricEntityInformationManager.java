@@ -13,8 +13,13 @@ public class FabricEntityInformationManager implements IEntityInformationManager
     }
 
     @Override
-    public double getReachDistance(final Player player)
+    public double getBlockReachDistance(final Player player)
     {
+        return 5d;
+    }
+
+    @Override
+    public double getEntityReachDistance(Player player) {
         return 5d;
     }
 

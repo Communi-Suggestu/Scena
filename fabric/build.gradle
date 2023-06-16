@@ -19,7 +19,10 @@ project.dependencies.mappings loom.layered() { layer ->
 project.loom.accessWidenerPath = project(':scena-common').file("scena.accesswidener")
 project.tasks.processResources.from project(':scena-common').file("scena.accesswidener")
 project.tasks.processResources.filesMatching("fabric.mod.json") {
-    expand "version": project.version
+    expand ([
+            'version'                 : "${rootProject.version}",
+            'mcVersion'               : "${project.getAllSupportedMcVersionsAsStringArray()}",
+    ])
 }
 
 project.remapJar.addNestedDependencies = true

@@ -19,6 +19,6 @@ public final class FabricItemComparisonHelper implements IItemComparisonHelper
     @Override
     public boolean canItemStacksStack(final ItemStack left, final ItemStack right)
     {
-        return ItemStack.isSame(left, right) && left.getOrCreateTag().equals(right.getOrCreateTag());
+        return ItemStack.matches(left, right);
     }
 }

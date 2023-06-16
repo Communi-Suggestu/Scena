@@ -5,25 +5,25 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 
-public class ForgeEntityInformationManager implements IEntityInformationManager
-{
+public class ForgeEntityInformationManager implements IEntityInformationManager {
     private static final ForgeEntityInformationManager INSTANCE = new ForgeEntityInformationManager();
 
-    public static ForgeEntityInformationManager getInstance()
-    {
+    private ForgeEntityInformationManager() {
+    }
+
+    public static ForgeEntityInformationManager getInstance() {
         return INSTANCE;
     }
 
-
-    private ForgeEntityInformationManager()
-    {
+    @Override
+    public double getBlockReachDistance(final Player player) {
+        final AttributeInstance reachAttribute = player.getAttribute(ForgeMod.BLOCK_REACH.get());
+        return reachAttribute == null ? 5d : reachAttribute.getValue();
     }
 
-
     @Override
-    public double getReachDistance(final Player player)
-    {
-        final AttributeInstance reachAttribute = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
+    public double getEntityReachDistance(Player player) {
+        final AttributeInstance reachAttribute = player.getAttribute(ForgeMod.ENTITY_REACH.get());
         return reachAttribute == null ? 5d : reachAttribute.getValue();
     }
 }

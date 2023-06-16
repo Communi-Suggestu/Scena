@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.creativetab;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
@@ -26,17 +27,12 @@ public interface ICreativeTabManager {
     }
 
     /**
-     * Register a new tab.
+     * Can be invoked to modify an existing tab.
      *
-     * @param configurator The tab configurator to register
-     * @param name         The name of the tab.
-     * @param afters       A list of tab names (String, ResourceLocations) or tabs that need to appear before this tab in the creative mode menu.
-     * @param befores      A list of tab names (String, ResourceLocations) or tabs that need to appear after this tab in the creative mode menu.
-     * @return The configured tab supplier, might not be immediately available.
+     * @param key The key that identifies the tab.
+     * @param adapterConsumer The adapter which can be used to modify the tab.
      */
-    Supplier<CreativeModeTab> register(@NotNull final Consumer<CreativeModeTab.Builder> configurator, @NotNull final ResourceLocation name, @NotNull final List<Object> afters, @NotNull final List<Object> befores);
-
-    void modifyTab(final Supplier<CreativeModeTab> tabSupplier, DisplayItemsAdapter adapterConsumer);
+    void modifyTab(final ResourceKey<CreativeModeTab> key, DisplayItemsAdapter adapterConsumer);
 
     /**
      * Defines an adapter which can be used to modify the contents of a creative tab.

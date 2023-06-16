@@ -4,10 +4,16 @@ license="GLGPLv3"
 
 [[mods]] #mandatory
 modId="scena"
-version="${file.jarVersion}"
+version="${version}"
 displayName="Scena"
 authors="OrionOnline"
 logoFile="logo-forge.png"
 description='''
 Cross-Platform Minecraft Modding System
 '''
+[[dependencies.scena]]
+modId="minecraft"
+mandatory=true
+versionRange="${mcVersion}"
+ordering="NONE"
+side="BOTH"

@@ -20,9 +20,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -77,7 +74,7 @@ public class FabricFluidManager implements IFluidManager
     public Optional<FluidInformation> get(final ItemStack stack)
     {
         try(Transaction ignored = Transaction.openOuter()) {
-            final Storage<FluidVariant> target = FluidStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack));
+            final Storage<FluidVariant> target = FluidStorage.ITEM.find(stack, ContainerItemContext.withConstant(stack));
             if (target == null)
                 return Optional.empty();
 
@@ -107,7 +104,7 @@ public class FabricFluidManager implements IFluidManager
 
             return contained.map(fluid -> {
                 final FluidVariant variant = makeVariant(fluid);
-                final ContainerItemContext containerContext = ContainerItemContext.withInitial(stack);
+                final ContainerItemContext containerContext = ContainerItemContext.withConstant(stack);
 
                 Objects.requireNonNull(FluidStorage.ITEM.find(stack, containerContext))
                   .extract(variant, amount, context);
@@ -127,7 +124,7 @@ public class FabricFluidManager implements IFluidManager
 
             return contained.map(fluid -> {
                 final FluidVariant variant = makeVariant(fluid);
-                final ContainerItemContext containerContext = ContainerItemContext.withInitial(stack);
+                final ContainerItemContext containerContext = ContainerItemContext.withConstant(stack);
 
                 Objects.requireNonNull(FluidStorage.ITEM.find(stack, containerContext))
                   .insert(variant, fluidInformation.amount(), context);

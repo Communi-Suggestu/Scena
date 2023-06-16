@@ -45,7 +45,7 @@ public final class ForgeClientEvents implements IClientEvents {
             if (event.getOverlay() != GuiOverlayManager.getOverlays().get(GuiOverlayManager.getOverlays().size() - 1))
                 return;
 
-            handler.handle(event.getPoseStack());
+            handler.handle(event.getGuiGraphics());
         });
     }
 

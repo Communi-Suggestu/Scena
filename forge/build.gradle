@@ -45,8 +45,6 @@ project.minecraft.runs { runSpecContainer ->
     }
 }
 
-
-
 project.dependencies.minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
 project.dependencies.annotationProcessor "org.spongepowered:mixin:${project.mixinAnnotationProcessorVersion}:processor"
 project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-forge:${project.saeculariaCaudicesVersion}") {
@@ -61,6 +59,12 @@ project.tasks.processResources.from(project(":scena-common").file("forge.accesst
     spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
 })
 project.tasks.processResources.outputs.upToDateWhen { false }
+project.tasks.processResources.filesMatching("META-INF/mods.toml") {
+    expand ([
+            'version'                 : "${rootProject.version}",
+            'mcVersion'               : "${project.getSupportedVersionRange()}",
+    ])
+}
 
 project.mixin.config "scena.mixins.json"
 project.mixin.add project.sourceSets.main, "scena.refmap.json"

@@ -130,6 +130,22 @@ subprojects { subProject ->
         }
     }
 
+    subProject.ext.getAllSupportedMcVersionsAsStringArray = {
+        if (subProject.additionalMinecraftVersions == "") {
+            return "${subProject.minecraftVersion}"
+        }
+
+        return "${subProject.minecraftVersion}\", \"${subProject.additionalMinecraftVersions.split(",").join("\", \"")}"
+    }
+
+    subProject.ext.getSupportedVersionRange = {
+        if (subProject.additionalMinecraftVersions == "") {
+            return "[${subProject.minecraftVersion}]"
+        }
+
+        return "[${subProject.additionalMinecraftVersions.split(",")[0]}, ${subProject.minecraftVersion}]"
+    }
+
     subProject.afterEvaluate {
         if(subProject.tasks.build.enabled) {
             subProject.publishing {

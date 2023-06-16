@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.creativetab.ICreativeTabManager;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -25,17 +26,8 @@ public final class FabricCreativeTabManager implements ICreativeTabManager {
     }
 
     @Override
-    public Supplier<CreativeModeTab> register(@NotNull Consumer<CreativeModeTab.Builder> configurator, @NotNull ResourceLocation name, @NotNull List<Object> afters, @NotNull List<Object> befores) {
-        final CreativeModeTab.Builder builder = FabricItemGroup.builder(name);
-        configurator.accept(builder);
-        final CreativeModeTab tab = builder.build();
-
-        return () -> tab;
-    }
-
-    @Override
-    public void modifyTab(Supplier<CreativeModeTab> tabSupplier, DisplayItemsAdapter adapterConsumer) {
-        ItemGroupEvents.modifyEntriesEvent(tabSupplier.get()).register(entries -> adapterConsumer.accept(entries.getEnabledFeatures(), new Adapter(entries), entries.shouldShowOpRestrictedItems()));
+    public void modifyTab(final ResourceKey<CreativeModeTab> key, DisplayItemsAdapter adapterConsumer) {
+        ItemGroupEvents.modifyEntriesEvent(key).register(entries -> adapterConsumer.accept(entries.getEnabledFeatures(), new Adapter(entries), entries.shouldShowOpRestrictedItems()));
     }
 
     public static final class Adapter implements ICreativeTabManager.CreativeModeTabPopulator {

@@ -14,9 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public class ForgeFluidManager implements IFluidManager
     @Override
     public Optional<FluidInformation> get(final ItemStack stack)
     {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
+        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
                  .map(handler -> handler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE))
                  .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? new CompoundTag() : fluidStack.getOrCreateTag()));
     }
@@ -67,7 +67,7 @@ public class ForgeFluidManager implements IFluidManager
     @Override
     public ItemStack extractFrom(final ItemStack stack, final long amount)
     {
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
+        stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
           .ifPresent(handler -> handler.drain((int) amount, IFluidHandler.FluidAction.EXECUTE));
 
         return stack;
@@ -76,7 +76,7 @@ public class ForgeFluidManager implements IFluidManager
     @Override
     public ItemStack insertInto(final ItemStack stack, final FluidInformation fluidInformation)
     {
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
+        stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
           .ifPresent(handler -> handler.fill(buildFluidStack(fluidInformation), IFluidHandler.FluidAction.EXECUTE));
 
         return stack;
