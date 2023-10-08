@@ -21,7 +21,7 @@ subprojects { subProject ->
 
     subProject.java.toolchain.languageVersion.set(JavaLanguageVersion.of(project.javaVersion))
 
-    subProject.tasks.jar.baseName = "${rootProject.name}-${subProject.name}"
+    subProject.tasks.jar.archiveBaseName = "${rootProject.name}-${subProject.name}"
     subProject.tasks.jar.manifest.attributes([
                     'Maven-Artifact'          : "${rootProject.group}:${subProject.archivesBaseName}:${subProject.version}",
                     "Specification-Title"     : rootProject.name,
