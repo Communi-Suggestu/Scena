@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[1,)"
 license="GLGPLv3"
 
 [[mods]] #mandatory
@@ -13,13 +13,13 @@ Cross-Platform Minecraft Modding System
 '''
 [[dependencies.scena]]
 modId="minecraft"
-mandatory=true
+required=true
 versionRange="${mcVersion}"
 ordering="NONE"
 side="BOTH"
 [[dependencies.scena]]
 modId="neoforge"
-mandatory=true
+required=true
 versionRange="[${loaderVersion},)"
 ordering="NONE"
 side="BOTH"
