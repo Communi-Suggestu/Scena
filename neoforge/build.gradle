@@ -46,6 +46,7 @@ project.tasks.processResources.filesMatching("META-INF/mods.toml") {
     expand ([
             'version'                 : "${rootProject.version}",
             'mcVersion'               : "${project.getSupportedVersionRange()}",
+            'loaderVersion'           : "${project.forgeVersion}",
     ])
 }
 jarJar {

@@ -17,3 +17,11 @@ mandatory=true
 versionRange="${mcVersion}"
 ordering="NONE"
 side="BOTH"
+[[dependencies.scena]]
+modId="neoforge"
+mandatory=true
+versionRange="[${loaderVersion},)"
+ordering="NONE"
+side="BOTH"
+[[mixins]]
+config="scena.mixins.json"
