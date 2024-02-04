@@ -161,26 +161,26 @@ public class FluidCuboidUtils
         float minV;
         float maxV;
 
-        double size = 16f;
+        float size = 16f;
         if (flowing)
         {
             size = 8f;
         }
 
-        double xt1 = 0;
-        double xt2 = w;
+        float xt1 = 0;
+        float xt2 = w;
         while (xt2 > 1f)
         {
             xt2 -= 1f;
         }
-        double yt1 = 0;
-        double yt2 = h;
+        float yt1 = 0;
+        float yt2 = h;
         while (yt2 > 1f)
         {
             yt2 -= 1f;
         }
-        double zt1 = 0;
-        double zt2 = d;
+        float zt1 = 0;
+        float zt2 = d;
         while (zt2 > 1f)
         {
             zt2 -= 1f;
@@ -189,8 +189,8 @@ public class FluidCuboidUtils
         // flowing stuff should start from the bottom, not from the start
         if (flowing)
         {
-            double tmp = 1d - yt1;
-            yt1 = 1d - yt2;
+            float tmp = 1f - yt1;
+            yt1 = 1f - yt2;
             yt2 = tmp;
         }
 

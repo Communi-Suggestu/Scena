@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;
+import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -106,20 +107,11 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
       final BlockAndTintGetter blockAndTintGetter, final BlockState blockState, final BlockPos blockPos, final Supplier<RandomSource> supplier, final RenderContext renderContext)
     {
         if (!(getDelegate() instanceof final IDataAwareBakedModel dataAwareBakedModel)) {
-            if (getDelegate() instanceof FabricBakedModel fabricBakedModel) {
-                fabricBakedModel.emitBlockQuads(blockAndTintGetter, blockState, blockPos, supplier, renderContext);
-            }
-            else {
-                renderContext.fallbackConsumer().accept(getDelegate());
-            }
-
+            getDelegate().emitBlockQuads(blockAndTintGetter, blockState, blockPos, supplier, renderContext);
             return;
         }
 
-        Object attachmentData = null;
-        if (blockAndTintGetter instanceof RenderAttachedBlockView renderAttachedBlockView) {
-            attachmentData = renderAttachedBlockView.getBlockEntityRenderAttachment(blockPos);
-        }
+        Object attachmentData = blockAndTintGetter.getBlockEntityRenderData(blockPos);
 
         IBlockModelData blockModelData;
         if (attachmentData instanceof IBlockModelData blockModelDataAttachment) {
@@ -128,7 +120,7 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         else {
             final BlockEntity blockEntity = blockAndTintGetter.getBlockEntity(blockPos);
             if (!(blockEntity instanceof IBlockEntityWithModelData) || !(getDelegate() instanceof IDataAwareBakedModel)) {
-                renderContext.fallbackConsumer().accept(getDelegate());
+                getDelegate().emitBlockQuads(blockAndTintGetter, blockState, blockPos, supplier, renderContext);
                 return;
             }
 
@@ -178,7 +170,9 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
 
         renderContext.pushTransform(quad -> true);
 
-        renderContext.fallbackConsumer().accept(itemModel);
+        if (itemModel != null) {
+            itemModel.emitItemQuads(itemStack, supplier, renderContext);
+        }
 
         renderContext.popTransform();
     }

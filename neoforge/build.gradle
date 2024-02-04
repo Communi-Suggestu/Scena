@@ -1,0 +1,62 @@
+
+plugins {
+    id 'net.neoforged.gradle.userdev'
+}
+
+configurations.create("includedLibraries")
+configurations.create("runtimeCoreProject")
+configurations.implementation.extendsFrom configurations.includedLibraries
+configurations.runtimeOnly.extendsFrom configurations.runtimeCoreProject
+
+project.addCoreProject()
+
+subsystems {
+    parchment {
+        minecraftVersion = project.parchmentMinecraftVersion
+        mappingsVersion = project.parchmentVersion
+    }
+}
+
+project.minecraft.accessTransformers.file project(":scena-common").file("forge.accesstransformer.cfg")
+
+project.runs { runSpecContainer ->
+    client { clientRun ->
+        jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
+        modSource project(":scena-core").sourceSets.main
+        dependencies {
+            runtime configurations.runtimeCoreProject
+        }
+    }
+}
+
+project.dependencies.implementation "net.neoforged:neoforge:${project.forgeVersion}"
+project.dependencies.includedLibraries ("com.communi-suggestu.saecularia-caudices:saecularia-caudices-neoforge:${project.saeculariaCaudicesVersion}") {
+    jarJar.ranged(it, project.supportedSaeculariaCaudicesVersionRange)
+}
+project.dependencies.runtimeOnly(project(':scena-core')) {
+    transitive = false
+}
+
+project.tasks.processResources.from(project(":scena-common").file("forge.accesstransformer.cfg"), (CopySpec spec) -> {
+    spec.into("META-INF")
+    spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
+})
+project.tasks.processResources.outputs.upToDateWhen { false }
+project.tasks.processResources.filesMatching("META-INF/mods.toml") {
+    expand ([
+            'version'                 : "${rootProject.version}",
+            'mcVersion'               : "${project.getSupportedVersionRange()}",
+    ])
+}
+jarJar {
+    fromRuntimeConfiguration()
+    dependencies {
+        include(dependency("com.communi-suggestu.saecularia-caudices:saecularia-caudices-forge"))
+        include(dependency("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core"))
+    }
+}
+
+tasks.jarJar.archiveClassifier.set("");
+tasks.jar.archiveClassifier.set("slim");
+tasks.assemble.dependsOn tasks.jarJar
+

@@ -31,6 +31,7 @@ public final class PlatformInitializationHandler
             initializers.add(initializeCallback);
     }
 
+
     public void init(final IScenaPlatform platform) {
         IScenaPlatform.Holder.setInstance(platform);
         isInitialized.set(true);

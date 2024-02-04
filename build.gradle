@@ -1,3 +1,7 @@
+plugins {
+    id "net.neoforged.gradle.common"
+}
+
 project.group = "com.communi-suggestu.scena"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
 
@@ -56,43 +60,8 @@ subprojects { subProject ->
 
     subProject.ext.setupEmbeddedPublishing = { mavenPublication ->
         subProject.afterEvaluate { evaluatedSubProject ->
-            if (evaluatedSubProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
+            if (evaluatedSubProject.getPlugins().hasPlugin("net.neoforged.gradle.userdev")) {
                 evaluatedSubProject.jarJar.component(mavenPublication)
-            }
-        }
-    }
-
-    subProject.ext.cleanMavenPublication = { mavenPublication ->
-        subProject.afterEvaluate { evaluatedSubProject ->
-            if (evaluatedSubProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
-                evaluatedSubProject.fg.component(mavenPublication)
-            }
-            else
-            {
-                //Replace all deobf dependencies with normal jar references.
-                mavenPublication.pom.withXml { xmlProvider ->
-                    def dependencies = asNode().dependencies
-                    def allDeps = dependencies.'*';
-
-                    // Remove forge, minecraft and ourselves as deps
-                    allDeps.findAll() { el ->
-                        (el.artifactId.text() == 'forge' && el.groupId.text() == 'net.minecraftforge') ||
-                                (el.artifactId.text() == 'joined' && el.groupId.text() == 'net.minecraft') ||
-                                (el.groupId.text() == 'com.communi-coresuggestu.scena')
-                    }.forEach() { el ->
-                        el.parent().remove(el)
-                    }
-
-                    //remove forgegradle's mapped suffix from versions & set as optional so anyone else doesn't inherit them
-                    allDeps.findAll() { el ->
-                        el.version.text().contains('_mapped_')
-                    }.each { el ->
-                        def version = el.version
-                        version.each {
-                            it.setValue(it.text().substring(0, it.text().indexOf('_mapped_')))
-                        }
-                    }
-                }
             }
         }
     }
@@ -107,12 +76,6 @@ subprojects { subProject ->
         subProject.tasks.test.enabled = false
     }
 
-    subProject.ext.disableForgeGradleCompiling = {
-        subProject.afterEvaluate{ evaluatedProject ->
-            evaluatedProject.tasks.reobfJar.enabled = false
-        }
-    }
-
     subProject.ext.addCoreProject = {
         def coreProject = subProject.project(":scena-core")
 
@@ -125,7 +88,7 @@ subprojects { subProject ->
         subProject.tasks.processResources.inputs.property "version", subProject.version
         subProject.tasks.processResources.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-        if (subProject.getPlugins().hasPlugin("net.minecraftforge.gradle")) {
+        if (subProject.getPlugins().hasPlugin("net.neoforged.neogradle.userdev")) {
             subProject.tasks.jarJar.from coreProject.sourceSets.main.output
         }
     }
@@ -175,7 +138,6 @@ subprojects { subProject ->
                             }
                         }
 
-                        subProject.cleanMavenPublication(pub)
                         subProject.setupEmbeddedPublishing(pub)
                     }
                 }
