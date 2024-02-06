@@ -5,7 +5,7 @@ plugins {
 project.group = "com.communi-suggestu.scena"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
 
-subprojects { subProject ->
+subprojects { Project subProject ->
     subProject.apply { configure ->
         configure.plugin("idea")
         configure.plugin("java")
@@ -36,7 +36,6 @@ subprojects { subProject ->
                 "Implementation-Vendor"   : rootProject.owner,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "Automatic-Module-Name"   : subProject.name.toLowerCase().replace("-", "_"),
-                "MixinConfigs": "${rootProject.name.toLowerCase()}.mixins.json",
                 "FMLModType": "GAMELIBRARY"
         ])
         jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -44,7 +43,7 @@ subprojects { subProject ->
 
     if (System.getenv().containsKey("LDTTeamJfrogUsername") && System.getenv().containsKey("LDTTeamJfrogPassword")) {
         subProject.publishing.repositories.maven {
-            name 'LDTTeamJfrog'
+            name = 'LDTTeamJfrog'
             credentials.username System.getenv().get("LDTTeamJfrogUsername")
             credentials.password System.getenv().get("LDTTeamJfrogPassword")
             url 'https://ldtteam.jfrog.io/ldtteam/mods-maven'
@@ -52,7 +51,7 @@ subprojects { subProject ->
     }
 
     subProject.publishing.repositories.maven {
-        name 'InternalDirectory'
+        name = 'InternalDirectory'
         url 'file://' + rootProject.file('repo').getAbsolutePath()
     }
 
@@ -113,6 +112,11 @@ subprojects { subProject ->
         }
 
         return "[${subProject.additionalMinecraftVersions.split(",")[0]}, ${subProject.minecraftVersion}]"
+
+    }
+
+    subProject.tasks.withType(GenerateModuleMetadata.class).configureEach {
+        enabled = false
     }
 
     subProject.afterEvaluate {
