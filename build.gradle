@@ -25,21 +25,22 @@ subprojects { subProject ->
 
     subProject.java.toolchain.languageVersion.set(JavaLanguageVersion.of(project.javaVersion))
 
-    subProject.tasks.jar.archiveBaseName = "${rootProject.name}-${subProject.name}"
-    subProject.tasks.jar.manifest.attributes([
-                    'Maven-Artifact'          : "${rootProject.group}:${subProject.archivesBaseName}:${subProject.version}",
-                    "Specification-Title"     : rootProject.name,
-                    "Specification-Vendor"    : rootProject.owner,
-                    "Specification-Version"   : rootProject.version,
-                    "Implementation-Title"    : rootProject.name,
-                    "Implementation-Version"  : rootProject.version,
-                    "Implementation-Vendor"   : rootProject.owner,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                    "Automatic-Module-Name"   : subProject.name.toLowerCase().replace("-", "_"),
-                    "MixinConfigs": "${rootProject.name.toLowerCase()}.mixins.json",
-                    "FMLModType": "GAMELIBRARY"
-            ])
-    subProject.tasks.jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    subProject.tasks.withType(Jar.class).configureEach { jarTask ->
+        jarTask.archiveBaseName = "${rootProject.name}-${subProject.name}"
+        jarTask.manifest.attributes([
+                "Specification-Title"     : rootProject.name,
+                "Specification-Vendor"    : rootProject.owner,
+                "Specification-Version"   : rootProject.version,
+                "Implementation-Title"    : rootProject.name,
+                "Implementation-Version"  : rootProject.version,
+                "Implementation-Vendor"   : rootProject.owner,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Automatic-Module-Name"   : subProject.name.toLowerCase().replace("-", "_"),
+                "MixinConfigs": "${rootProject.name.toLowerCase()}.mixins.json",
+                "FMLModType": "GAMELIBRARY"
+        ])
+        jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 
     if (System.getenv().containsKey("LDTTeamJfrogUsername") && System.getenv().containsKey("LDTTeamJfrogPassword")) {
         subProject.publishing.repositories.maven {
@@ -77,19 +78,24 @@ subprojects { subProject ->
     }
 
     subProject.ext.addCoreProject = {
-        def coreProject = subProject.project(":scena-core")
 
-        subProject.dependencies.implementation(coreProject) {
-            transitive = false
+        subProject.dependencies.implementation (subProject.project(":core")) {
+            exclude group: 'net.minecraft', module: 'joined'
         }
 
-        subProject.tasks.jar.from coreProject.sourceSets.main.output
-        subProject.tasks.processResources.from coreProject.sourceSets.main.resources
-        subProject.tasks.processResources.inputs.property "version", subProject.version
-        subProject.tasks.processResources.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        if (subProject.getPlugins().hasPlugin("net.neoforged.gradle.userdev")) {
+            subProject.jarJar.enable()
 
-        if (subProject.getPlugins().hasPlugin("net.neoforged.neogradle.userdev")) {
-            subProject.tasks.jarJar.from coreProject.sourceSets.main.output
+            subProject.dependencies.jarJar (subProject.project(":core")) {
+                jarJar.ranged(it, "[${subProject.version}]")
+                jarJar.pin(it, subProject.version)
+                exclude group: 'net.minecraft', module: 'joined'
+            }
+        }
+        else if (subProject.getPlugins().hasPlugin("fabric-loom")) {
+            subProject.dependencies.include (subProject.project(":core")) {
+                exclude group: 'net.minecraft', module: 'joined'
+            }
         }
     }
 

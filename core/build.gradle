@@ -2,7 +2,7 @@ plugins {
     id ("net.neoforged.gradle.vanilla")
 }
 
-project.minecraft.accessTransformers.file project(":scena-common").file("accesstransformer.cfg")
+project.minecraft.accessTransformers.file project(":common").file("accesstransformer.cfg")
 
 project.dependencies.implementation "net.minecraft:client:${project.minecraftVersion}"
 

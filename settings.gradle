@@ -10,7 +10,7 @@ pluginManagement.repositories.maven { url = 'https://maven.fabricmc.net/' }
 pluginManagement.repositories.gradlePluginPortal()
 pluginManagement.repositories.mavenCentral()
 
-var neogradleVersion = "7.0.88"
+var neogradleVersion = "7.0.91"
 
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.common"), neogradleVersion)
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.userdev"), neogradleVersion)
@@ -23,10 +23,3 @@ include("common")
 include("core")
 include("fabric")
 include("neoforge")
-
-projectDescriptorRegistry.allProjects.each {project ->
-    if (project == rootProject)
-        return;
-
-    project.name = "${rootProject.name}-${project.name}"
-}
