@@ -32,24 +32,7 @@ project.tasks.processResources.from(project(":common").file("forge.accesstransfo
     spec.into("META-INF")
     spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
 })
-project.tasks.processResources.outputs.upToDateWhen { false }
-project.tasks.processResources.filesMatching("META-INF/mods.toml") {
-    expand([
-            "version"                                : project.version,
-            "name"                                   : rootProject.name.toString(),
-            "id"                                     : rootProject.modId,
-            "description"                            : (rootProject.description == null ? "" : rootProject.description).toString(),
-            "author"                                 : rootProject.author.toString(),
-            "sources"                                : rootProject.githubUrl.toString(),
-            "package"                                : "${rootProject.group}.${project.name.toLowerCase()}".toString(),
-            "forgeVersion"                           : project.forgeVersion,
-            "minecraftVersion"                       : project.minecraftVersion,
-            "supportedSaeculariaCaudicesVersionRange": buildSupportedVersionRange(rootProject.saeculariaCaudicesVersion),
-            "saeculariaCaudicesVersion"              : project.saeculariaCaudicesVersion,
-            "fabricVersion"                          : project.fabricVersion,
-            "fabricLoaderVersion"                    : project.fabricLoaderVersion,
-    ])
-}
+project.setupResourceProcessing(project.tasks.processResources)
 
 tasks.jarJar.configuration project.configurations.includedLibraries
 tasks.jarJar.archiveClassifier.set("")

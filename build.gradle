@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id "net.neoforged.gradle.common"
 }
@@ -124,6 +126,40 @@ subprojects { Project subProject ->
 
         return "[${subProject.additionalMinecraftVersions.split(",")[0]}, ${subProject.minecraftVersion}]"
 
+    }
+
+    subProject.ext.getIdentifiers = {
+        def propertiesToExpand = [
+                "version"                                : project.version,
+                "name"                                   : rootProject.name.toString(),
+                "id"                                     : rootProject.modId,
+                "description"                            : (rootProject.description == null ? "" : rootProject.description).toString(),
+                "author"                                 : rootProject.author.toString(),
+                "sources"                                : rootProject.githubUrl.toString(),
+                "package"                                : "${rootProject.group}.${subProject.name.toLowerCase()}".toString(),
+                "forgeVersion"                           : project.forgeVersion,
+                "minecraftVersion"                       : project.minecraftVersion,
+                "supportedSaeculariaCaudicesVersionRange": buildSupportedVersionRange(rootProject.saeculariaCaudicesVersion),
+                "saeculariaCaudicesVersion"              : project.saeculariaCaudicesVersion,
+                "fabricVersion"                          : project.fabricVersion,
+                "fabricLoaderVersion"                    : project.fabricLoaderVersion,
+        ]
+
+        return propertiesToExpand
+    }
+
+    subProject.ext.setupResourceProcessing = { copyTask ->
+        copyTask.rename({ fileName ->
+            if (fileName != "mixins.json") {
+                return fileName
+            } else {
+                return "${rootProject.name.toLowerCase()}.mixins.json"
+            }
+        })
+        copyTask.filesMatching(["META-INF/mods.toml", "pack.mcmeta", "mixins.json", "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
+            filter(ReplaceTokens, tokens: getIdentifiers())
+        }
+        copyTask.getInputs().properties(getIdentifiers())
     }
 
     subProject.tasks.withType(GenerateModuleMetadata.class).configureEach {
