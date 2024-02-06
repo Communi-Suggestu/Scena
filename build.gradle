@@ -76,9 +76,20 @@ subprojects { Project subProject ->
         subProject.tasks.test.enabled = false
     }
 
+    subProject.ext.determineNextMajorVersion = { v ->
+        def components = v.split("\\.")
+        def major = components[0].toInteger()
+        return "${major + 1}.0.0".toString()
+    }
+
+    subProject.ext.buildSupportedVersionRange = { v ->
+        def nextMajorComponent = determineNextMajorVersion(v)
+        return "[${v},${nextMajorComponent})".toString()
+    }
+
     subProject.ext.addCoreProject = {
 
-        subProject.dependencies.implementation (subProject.project(":core")) {
+        subProject.dependencies.api (subProject.project(":core")) {
             exclude group: 'net.minecraft', module: 'joined'
         }
 

@@ -3,25 +3,31 @@ loaderVersion="[1,)"
 license="GLGPLv3"
 
 [[mods]] #mandatory
-modId="scena"
-version="${version}"
-displayName="Scena"
-authors="OrionOnline"
+modId="@id@"
+version="@version@"
+displayName="@name@"
+authors="@author@"
 logoFile="logo-forge.png"
 description='''
-Cross-Platform Minecraft Modding System
+@description@
 '''
-[[dependencies.scena]]
-modId="minecraft"
-required=true
-versionRange="${mcVersion}"
-ordering="NONE"
-side="BOTH"
-[[dependencies.scena]]
-modId="neoforge"
-required=true
-versionRange="[${loaderVersion},)"
-ordering="NONE"
-side="BOTH"
+[[dependencies.@id@]]
+    modId="neoforge" #mandatory
+    required=true #mandatory
+    versionRange="[@forgeVersion@,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.@id@]]
+    modId="minecraft" #mandatory
+    required=true #mandatory
+    versionRange="[@minecraftVersion@]"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.@id@]]
+    modId="saeculariacaudices"
+    required=true
+    versionRange="@supportedSaeculariaCaudicesVersionRange@"
+    ordering="AFTER"
+    side="BOTH"
 [[mixins]]
 config="scena.mixins.json"
