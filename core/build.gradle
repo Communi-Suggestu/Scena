@@ -5,6 +5,7 @@ plugins {
 project.minecraft.accessTransformers.file project(":common").file("accesstransformer.cfg")
 
 project.dependencies.implementation "net.minecraft:client:${project.minecraftVersion}"
+project.dependencies.api "com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}"
 
 subsystems {
     parchment {
