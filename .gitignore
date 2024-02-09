@@ -210,3 +210,4 @@ local.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 **/run/**
+**/runs/**

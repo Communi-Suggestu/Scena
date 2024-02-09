@@ -13,3 +13,11 @@ subsystems {
         mappingsVersion = project.parchmentVersion
     }
 }
+
+sourceSets {
+    configureEach {
+        runs {
+            modIdentifier "scena"
+        }
+    }
+}

@@ -14,14 +14,28 @@ subsystems {
     }
 }
 
-project.minecraft.accessTransformers.file project(":common").file("forge.accesstransformer.cfg")
-
-project.runs { runSpecContainer ->
-    client { clientRun ->
-        jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
-        modSource project(":core").sourceSets.main
+sourceSets {
+    configureEach {
+        runs {
+            modIdentifier "scena"
+        }
     }
 }
+
+project.minecraft.accessTransformers.file project(":common").file("forge.accesstransformer.cfg")
+
+project.runs {
+    client { }
+
+    server { }
+
+    configureEach { run ->
+        run.modSource project(":core").sourceSets.main
+        run.modSource sourceSets.main
+        run.jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
+    }
+}
+
 
 project.dependencies.implementation "net.neoforged:neoforge:${project.forgeVersion}"
 project.dependencies.includedLibraries("com.communi-suggestu.saecularia-caudices:saecularia-caudices-neoforge:${project.saeculariaCaudicesVersion}") {
@@ -38,4 +52,3 @@ tasks.jarJar.configuration project.configurations.includedLibraries
 tasks.jarJar.archiveClassifier.set("")
 tasks.jar.archiveClassifier.set("slim")
 tasks.assemble.dependsOn tasks.jarJar
-

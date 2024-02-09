@@ -12,7 +12,7 @@
   "client": [
     "client.BlockEntityWithoutLevelRendererMixin",
     "client.LevelRendererBeforeDebugRenderingHookMixin",
-    "client.ModelDataManagerMixin"
+    "client.ActiveModelDataManagerMixin"
   ],
   "server": [],
   "injectors": {
