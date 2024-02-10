@@ -11,21 +11,21 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-@SuppressWarnings({"unchecked", "OptionalUsedAsFieldOrParameterType"})
+@SuppressWarnings({"unchecked"})
 public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IRegistryObject<T>
 {
 
     private final ResourceLocation id;
-    private final Optional<T> delegate;
+    private final Supplier<Optional<T>> delegate;
 
-    public ForgeRegistryObjectPlatformDelegate(ResourceLocation id, final Optional<T> delegate) {
+    public ForgeRegistryObjectPlatformDelegate(ResourceLocation id, final Supplier<Optional<T>> delegate) {
         this.id = id;
         this.delegate = delegate;}
 
     @Override
     public @NotNull T get()
     {
-        return delegate.get();
+        return delegate.get().orElseThrow();
     }
 
     @Override
@@ -43,13 +43,13 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     @Override
     public boolean isPresent()
     {
-        return delegate.isPresent();
+        return delegate.get().isPresent();
     }
 
     @Override
     public void ifPresent(final Consumer<? super T> consumer)
     {
-        delegate.ifPresent((Consumer<Object>) o -> consumer.accept((T) o));
+        delegate.get().ifPresent((Consumer<Object>) o -> consumer.accept((T) o));
     }
 
     @Override
@@ -57,19 +57,19 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     {
         return new ForgeRegistryObjectPlatformDelegate<>(
                 id,
-                delegate.filter((Predicate<Object>) o -> predicate.test((T) o)));
+                () -> delegate.get().filter((Predicate<Object>) o -> predicate.test((T) o)));
     }
 
     @Override
     public <U> Optional<U> map(final Function<? super T, ? extends U> mapper)
     {
-        return delegate.map((Function<Object, U>) o -> mapper.apply((T) o));
+        return delegate.get().map((Function<Object, U>) o -> mapper.apply((T) o));
     }
 
     @Override
     public <U> Optional<U> flatMap(final Function<? super T, Optional<U>> mapper)
     {
-        return delegate.flatMap((Function<Object, Optional<U>>) o -> mapper.apply((T) o));
+        return delegate.get().flatMap((Function<Object, Optional<U>>) o -> mapper.apply((T) o));
     }
 
     @Override
@@ -81,13 +81,13 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     @Override
     public T orElse(final T other)
     {
-        return (T) delegate.orElse((T) other);
+        return (T) delegate.get().orElse((T) other);
     }
 
     @Override
     public T orElseGet(final Supplier<? extends T> other)
     {
-        return (T) delegate.orElseGet(other);
+        return (T) delegate.get().orElseGet(other);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     {
         try
         {
-            return (T) delegate.orElseThrow(exceptionSupplier);
+            return (T) delegate.get().orElseThrow(exceptionSupplier);
         }
         catch (Throwable e)
         {

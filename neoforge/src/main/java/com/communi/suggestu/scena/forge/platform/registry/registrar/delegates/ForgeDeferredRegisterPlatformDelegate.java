@@ -20,7 +20,7 @@ public class ForgeDeferredRegisterPlatformDelegate<T> implements IRegistrar<T>
         final DeferredHolder<T, I> holder = delegate.register(name, factory);
         return new ForgeRegistryObjectPlatformDelegate<>(
                 holder.getId(),
-                holder.asOptional()
+                holder::asOptional
                 );
     }
 }
