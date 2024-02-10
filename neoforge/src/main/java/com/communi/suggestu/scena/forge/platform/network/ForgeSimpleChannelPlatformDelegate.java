@@ -54,7 +54,7 @@ public class ForgeSimpleChannelPlatformDelegate implements INetworkChannel, IPay
         final NetworkMessageSpecification<T> spec = (NetworkMessageSpecification<T>) messageSpecifications.get(id);
         spec.executionHandler.execute(
                 message,
-                false,
+                context.flow().isServerbound(),
                 context.player().orElse(null),
                 runnable -> context.workHandler().execute(runnable)
         );
