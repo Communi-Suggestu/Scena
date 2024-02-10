@@ -40,24 +40,25 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IPlayerLeftClickBlockEvent> getPlayerLeftClickEvent() {
         return EventBusEventEntryPoint.forge(PlayerInteractEvent.LeftClickBlock.class, (event, handler) -> {
-            final IPlayerLeftClickBlockEvent.Result current = new IPlayerLeftClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()));
+            final IPlayerLeftClickBlockEvent.Result current = new IPlayerLeftClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
 
             final IPlayerLeftClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
             event.setCanceled(result.handled() || event.isCanceled());
-            event.setResult(Event.Result.valueOf(result.result().name()));
+            event.setUseItem(Event.Result.valueOf(result.useItemResult().name()));
+            event.setUseBlock(Event.Result.valueOf(result.useBlockResult().name()));
+
         });
     }
 
     @Override
     public IEventEntryPoint<IPlayerRightClickBlockEvent> getPlayerRightClickEvent() {
         return EventBusEventEntryPoint.forge(PlayerInteractEvent.RightClickBlock.class, (event, handler) -> {
-            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getResult().name()), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
+            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
 
             final IPlayerRightClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
             event.setCanceled(result.handled() || event.isCanceled());
-            event.setResult(Event.Result.valueOf(result.result().name()));
             event.setUseItem(Event.Result.valueOf(result.useItemResult().name()));
             event.setUseBlock(Event.Result.valueOf(result.useBlockResult().name()));
         });

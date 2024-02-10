@@ -3,7 +3,6 @@ package com.communi.suggestu.scena.fabric.platform.event;
 import com.communi.suggestu.scena.core.dist.Dist;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.event.*;
-import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.Event;
@@ -17,13 +16,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -79,10 +76,10 @@ public final class FabricGameEvents implements IGameEvents {
                     player.getItemInHand(hand),
                     pos,
                     direction,
-                    new IPlayerLeftClickBlockEvent.Result(false, ProcessingResult.DEFAULT)
+                    new IPlayerLeftClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
             );
 
-            if (result.result() != ProcessingResult.DEFAULT) {
+            if (result.useBlockResult() != ProcessingResult.DEFAULT) {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                     if (Minecraft.getInstance() != null && Minecraft.getInstance().gameMode != null) {
                         Minecraft.getInstance().gameMode.destroyDelay = 3;
@@ -104,10 +101,10 @@ public final class FabricGameEvents implements IGameEvents {
                         player.getItemInHand(hand),
                         hitResult.getBlockPos(),
                         hitResult.getDirection(),
-                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
+                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
                 );
     
-                return mapResult(result);
+                return mapBlockResult(result);
             }),
             FabricEventEntryPoint.create(UseItemCallback.EVENT, handler -> (Player player, Level world, InteractionHand hand) -> {
                 final IPlayerRightClickBlockEvent.Result result = handler.handle(
@@ -116,10 +113,10 @@ public final class FabricGameEvents implements IGameEvents {
                         player.getItemInHand(hand),
                         BlockPos.ZERO,
                         Direction.DOWN,
-                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
+                        new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
                 );
 
-                return new InteractionResultHolder<>(mapResult(result), player.getItemInHand(hand));
+                return new InteractionResultHolder<>(mapItemResult(result), player.getItemInHand(hand));
             })
         );
     }
@@ -167,7 +164,7 @@ public final class FabricGameEvents implements IGameEvents {
     private static InteractionResult mapResult(
             final IPlayerLeftClickBlockEvent.Result processingResult
     ) {
-        return switch (processingResult.result())
+        return switch (processingResult.useBlockResult())
                 {
                     case DENY -> InteractionResult.FAIL;
                     case DEFAULT -> InteractionResult.PASS;
@@ -175,15 +172,26 @@ public final class FabricGameEvents implements IGameEvents {
                 };
     }
 
-    private static InteractionResult mapResult(
+    private static InteractionResult mapBlockResult(
             final IPlayerRightClickBlockEvent.Result processingResult
     ) {
-        return switch (processingResult.result())
+        return switch (processingResult.useBlockResult())
                 {
                     case DENY -> InteractionResult.FAIL;
                     case DEFAULT -> InteractionResult.PASS;
                     case ALLOW -> processingResult.handled() ? InteractionResult.SUCCESS : InteractionResult.PASS;
                 };
+    }
+
+    private static InteractionResult mapItemResult(
+            final IPlayerRightClickBlockEvent.Result processingResult
+    ) {
+        return switch (processingResult.useItemResult())
+        {
+            case DENY -> InteractionResult.FAIL;
+            case DEFAULT -> InteractionResult.PASS;
+            case ALLOW -> processingResult.handled() ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        };
     }
 
 }

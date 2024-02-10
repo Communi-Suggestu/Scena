@@ -16,9 +16,10 @@ public interface IPlayerLeftClickBlockEvent extends IEvent {
      * The processing result of this event.
      *
      * @param handled Indicates if the event was handled and further processing should happen.
-     * @param result The result of the event processing.
+     * @param useItemResult The state of the item result processing.
+     * @param useBlockResult The state of the block result processing.
      */
-    record Result(boolean handled, ProcessingResult result) {}
+    record Result(boolean handled, ProcessingResult useItemResult, ProcessingResult useBlockResult) {}
 
     /**
      * Invoked to handle the event.
