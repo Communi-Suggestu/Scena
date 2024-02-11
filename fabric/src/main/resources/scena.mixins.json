@@ -4,9 +4,12 @@
   "package": "com.communi.suggestu.scena.fabric.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "platform.common.ChunkAccessMixin",
     "platform.common.ChunkMapChunkLoadMixin",
     "platform.common.ItemEntityEventMixin",
-    "platform.common.LivingEntityEquipmentSlotMixin"
+    "platform.common.LevelChunkMixin",
+    "platform.common.LivingEntityEquipmentSlotMixin",
+    "platform.common.PlayerChunkSenderMixin"
   ],
   "client": [
     "platform.client.BlockModelAccessorMixin",

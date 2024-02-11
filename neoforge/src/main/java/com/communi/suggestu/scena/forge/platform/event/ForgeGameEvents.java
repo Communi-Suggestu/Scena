@@ -1,18 +1,6 @@
 package com.communi.suggestu.scena.forge.platform.event;
 
-import com.communi.suggestu.scena.core.event.IChunkLoadEvent;
-import com.communi.suggestu.scena.core.event.ICommonConfigurationLoaded;
-import com.communi.suggestu.scena.core.event.IEventEntryPoint;
-import com.communi.suggestu.scena.core.event.IGameEvents;
-import com.communi.suggestu.scena.core.event.IItemEntityPickupEvent;
-import com.communi.suggestu.scena.core.event.IPlayerJoinedWorldEvent;
-import com.communi.suggestu.scena.core.event.IPlayerLeftClickBlockEvent;
-import com.communi.suggestu.scena.core.event.IPlayerLoggedInEvent;
-import com.communi.suggestu.scena.core.event.IPlayerRightClickBlockEvent;
-import com.communi.suggestu.scena.core.event.IRegisterCommandsEvent;
-import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
-import com.communi.suggestu.scena.core.event.IServerTickEvent;
-import com.communi.suggestu.scena.core.event.ProcessingResult;
+import com.communi.suggestu.scena.core.event.*;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -23,6 +11,7 @@ import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
@@ -92,6 +81,11 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return EventBusEventEntryPoint.forge(ChunkEvent.Load.class, (event, handler) -> handler.handle(event.getLevel(), event.getChunk()));
+    }
+
+    @Override
+    public IEventEntryPoint<IChunkSentEvent> getChunkSentEvent() {
+        return EventBusEventEntryPoint.forge(ChunkWatchEvent.Sent.class , (event, handler) -> handler.handle(event.getPlayer(), event.getChunk(), event.getLevel()));
     }
 
     @Override

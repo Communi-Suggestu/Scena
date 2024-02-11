@@ -9,12 +9,14 @@ import com.communi.suggestu.scena.core.dist.IDistributionManager;
 import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
+import com.communi.suggestu.scena.forge.mixin.platform.common.ForgeBlockEntityPositionManager;
 import com.communi.suggestu.scena.forge.platform.client.ForgeClientManager;
 import com.communi.suggestu.scena.forge.platform.configuration.ForgeConfigurationManager;
 import com.communi.suggestu.scena.forge.platform.creativetab.ForgeCreativeTabManager;
@@ -133,6 +135,11 @@ public final class ForgeScenaPlatform implements IScenaPlatform
     @Override
     public @NotNull IGameEvents getGameEvents() {
         return ForgeGameEvents.getInstance();
+    }
+
+    @Override
+    public @NotNull IBlockEntityPositionManager getBlockEntityPositionManager() {
+        return ForgeBlockEntityPositionManager.getInstance();
     }
 
     public IEventBus getModBus() {

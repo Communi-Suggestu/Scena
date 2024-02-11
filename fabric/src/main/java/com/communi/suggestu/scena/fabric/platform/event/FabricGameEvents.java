@@ -53,6 +53,12 @@ public final class FabricGameEvents implements IGameEvents {
         }
     });
 
+    public static final Event<IChunkSentEvent> CHUNK_SENT = EventFactory.createArrayBacked(IChunkSentEvent.class, callbacks -> (player, chunk, level) -> {
+        for (IChunkSentEvent callback : callbacks) {
+            callback.handle(player, chunk, level);
+        }
+    });
+
     public static final Event<ICommonConfigurationLoaded> COMMON_CONFIGURATION_LOADED = EventFactory.createArrayBacked(ICommonConfigurationLoaded.class, callbacks -> () -> {
         for (ICommonConfigurationLoaded callback : callbacks) {
             callback.handle();
@@ -144,6 +150,11 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IChunkLoadEvent> getChunkLoadEvent() {
         return FabricEventEntryPoint.create(CHUNK_LOAD, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IChunkSentEvent> getChunkSentEvent() {
+        return FabricEventEntryPoint.create(CHUNK_SENT, Function.identity());
     }
 
     @Override

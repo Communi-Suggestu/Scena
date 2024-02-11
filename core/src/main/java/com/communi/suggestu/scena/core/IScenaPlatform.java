@@ -1,5 +1,6 @@
 package com.communi.suggestu.scena.core;
 
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.blockstate.ILevelBasedPropertyAccessor;
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.communi.suggestu.scena.core.config.IConfigurationManager;
@@ -158,6 +159,14 @@ public interface IScenaPlatform
      */
     @NotNull
     IGameEvents getGameEvents();
+
+    /**
+     * The block entity position manager for the current platform.
+     *
+     * @return The block entity position manager.
+     */
+    @NotNull
+    IBlockEntityPositionManager getBlockEntityPositionManager();
 
 
     class Holder {

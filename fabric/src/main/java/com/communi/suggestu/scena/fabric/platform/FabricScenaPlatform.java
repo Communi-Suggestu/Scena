@@ -2,11 +2,13 @@ package com.communi.suggestu.scena.fabric.platform;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.fabric.platform.client.FabricClientManager;
 import com.communi.suggestu.scena.fabric.platform.configuration.FabricConfigurationManager;
 import com.communi.suggestu.scena.fabric.platform.creativetab.FabricCreativeTabManager;
 import com.communi.suggestu.scena.fabric.platform.dist.FabricDistributionManager;
+import com.communi.suggestu.scena.fabric.platform.entity.FabricBlockEntityPositionManager;
 import com.communi.suggestu.scena.fabric.platform.entity.FabricEntityInformationManager;
 import com.communi.suggestu.scena.fabric.platform.event.FabricGameEvents;
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
@@ -132,5 +134,10 @@ public final class FabricScenaPlatform implements IScenaPlatform
     @Override
     public @NotNull IGameEvents getGameEvents() {
         return FabricGameEvents.getInstance();
+    }
+
+    @Override
+    public @NotNull IBlockEntityPositionManager getBlockEntityPositionManager() {
+        return FabricBlockEntityPositionManager.getInstance();
     }
 }
