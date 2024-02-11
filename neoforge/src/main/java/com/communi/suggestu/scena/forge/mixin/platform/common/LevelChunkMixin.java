@@ -1,5 +1,6 @@
 package com.communi.suggestu.scena.forge.mixin.platform.common;
 
+import com.communi.suggestu.scena.forge.platform.entity.IForgeBlockEntityPositionHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;

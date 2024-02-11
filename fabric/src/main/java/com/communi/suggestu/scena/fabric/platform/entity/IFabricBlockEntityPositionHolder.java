@@ -1,4 +1,4 @@
-package com.communi.suggestu.scena.fabric.mixin.platform.common;
+package com.communi.suggestu.scena.fabric.platform.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

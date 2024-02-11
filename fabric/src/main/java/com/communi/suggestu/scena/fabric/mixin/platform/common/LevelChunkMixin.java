@@ -1,5 +1,6 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.common;
 
+import com.communi.suggestu.scena.fabric.platform.entity.IFabricBlockEntityPositionHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;

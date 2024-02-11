@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.common;
 
 
+import com.communi.suggestu.scena.fabric.platform.entity.IFabricBlockEntityPositionHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
