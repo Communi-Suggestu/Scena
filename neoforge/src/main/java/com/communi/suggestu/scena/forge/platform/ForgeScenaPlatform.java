@@ -16,7 +16,7 @@ import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
-import com.communi.suggestu.scena.forge.mixin.platform.common.ForgeBlockEntityPositionManager;
+import com.communi.suggestu.scena.forge.platform.entity.ForgeBlockEntityPositionManager;
 import com.communi.suggestu.scena.forge.platform.client.ForgeClientManager;
 import com.communi.suggestu.scena.forge.platform.configuration.ForgeConfigurationManager;
 import com.communi.suggestu.scena.forge.platform.creativetab.ForgeCreativeTabManager;
