@@ -30,7 +30,7 @@ public class FabricBlockEntityPositionManager implements IBlockEntityPositionMan
 
     @Override
     public void add(BlockEntity blockEntity) {
-        if (blockEntity.getLevel() != null)
+        if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be added to the position manager");
 
         getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos())).scena$add(blockEntity.getClass(), blockEntity.getBlockPos());
@@ -38,7 +38,7 @@ public class FabricBlockEntityPositionManager implements IBlockEntityPositionMan
 
     @Override
     public void remove(BlockEntity blockEntity) {
-        if (blockEntity.getLevel() != null)
+        if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be removed from the position manager");
 
         getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos())).scena$remove(blockEntity.getClass(), blockEntity.getBlockPos());
