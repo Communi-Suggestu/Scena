@@ -118,7 +118,7 @@ subprojects { Project subProject ->
                         targetFile.newWriter().withWriter { w -> w << """
                             {
                               "schemaVersion": 1,
-                              "id": "${coreProject.group}.${coreProject.name}",
+                              "id": "${coreProject.group.group.replace(".", "_")}_${coreProject.name}",
                               "version": "${coreProject.version}",
                               "name": "${coreProject.name}",
                               "custom": {
