@@ -24,7 +24,7 @@ project.tasks.processResources.from project(':common').file("scena.accesswidener
 def interpolationProperties = [
         'version'                 : "${rootProject.version}",
         'mcVersion'               : "${project.getAllSupportedMcVersionsAsStringArray()}",
-        'saeculariaCaudicesVersionRange': "${buildSupportedVersionRange(project.saeculariaCaudicesVersion)}"
+        'saeculariaCaudicesVersionRange': "${project.saeculariaCaudicesVersion}"
 ]
 project.tasks.processResources.filesMatching("fabric.mod.json") {
     expand (interpolationProperties)
