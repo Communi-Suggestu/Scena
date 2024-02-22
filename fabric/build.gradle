@@ -20,12 +20,16 @@ project.dependencies.mappings loom.layered() { layer ->
 
 project.loom.accessWidenerPath = project(':common').file("scena.accesswidener")
 project.tasks.processResources.from project(':common').file("scena.accesswidener")
+
+def interpolationProperties = [
+        'version'                 : "${rootProject.version}",
+        'mcVersion'               : "${project.getAllSupportedMcVersionsAsStringArray()}",
+        'saeculariaCaudicesVersionRange': "${buildSupportedVersionRange(project.saeculariaCaudicesVersion)}"
+]
 project.tasks.processResources.filesMatching("fabric.mod.json") {
-    expand ([
-            'version'                 : "${rootProject.version}",
-            'mcVersion'               : "${project.getAllSupportedMcVersionsAsStringArray()}",
-    ])
+    expand (interpolationProperties)
 }
+project.tasks.processResources.inputs.properties(interpolationProperties)
 
 project.remapJar.addNestedDependencies = true
 
