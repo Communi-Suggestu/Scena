@@ -2,6 +2,8 @@ plugins {
     id 'fabric-loom'
 }
 
+project.ext.remapTaskClass = Class.forName('net.fabricmc.loom.task.RemapJarTask')
+
 project.addCoreProject()
 
 project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}"
