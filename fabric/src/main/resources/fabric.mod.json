@@ -30,7 +30,7 @@
     "fabric": "*",
     "minecraft": ["${mcVersion}"],
     "java": ">=17",
-    "saeculariacaudices": "${saeculariacaudicesVersionRange}"
+    "saeculariacaudices": "${saeculariaCaudicesVersionRange}"
   },
   "suggests": {
   }
