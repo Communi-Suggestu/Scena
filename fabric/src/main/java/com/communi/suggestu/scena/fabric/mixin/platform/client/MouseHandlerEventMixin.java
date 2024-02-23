@@ -16,7 +16,7 @@ public abstract class MouseHandlerEventMixin
       cancellable = true,
       at = @At(
         value = "FIELD",
-        target = "Lnet/minecraft/client/MouseHandler;accumulatedScroll:D",
+        target = "Lnet/minecraft/client/MouseHandler;accumulatedScrollY:D",
         ordinal = 7,
         shift = At.Shift.AFTER
       )
