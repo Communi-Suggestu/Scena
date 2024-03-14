@@ -19,28 +19,26 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class ForgeFluidManager implements IFluidManager
-{
+public class ForgeFluidManager implements IFluidManager {
+
     private static final ForgeFluidManager INSTANCE = new ForgeFluidManager();
 
-    public static ForgeFluidManager getInstance()
-    {
+    public static ForgeFluidManager getInstance() {
         return INSTANCE;
     }
 
-    private ForgeFluidManager()
-    {
+    private ForgeFluidManager() {
     }
 
     @Override
-    public FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler)
-    {
+    public FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler) {
         final IFluidVariantHandler handler = variantHandler.get();
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
         final IRegistryObject<FluidType> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
@@ -52,46 +50,39 @@ public class ForgeFluidManager implements IFluidManager
     }
 
     @Override
-    public Optional<IFluidVariantHandler> getVariantHandlerFor(final Fluid fluid)
-    {
+    public Optional<IFluidVariantHandler> getVariantHandlerFor(final Fluid fluid) {
         return Optional.of(new ForgeFluidVariantHandlerDelegate(fluid.getFluidType()));
     }
 
     @Override
-    public Optional<FluidInformation> get(final ItemStack stack)
-    {
+    public Optional<FluidInformation> get(final ItemStack stack) {
         return Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM))
                 .map(fluidHandler -> fluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE))
-                 .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? new CompoundTag() : fluidStack.getOrCreateTag()));
+                .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? new CompoundTag() : fluidStack.getOrCreateTag()));
     }
 
     @Override
-    public ItemStack extractFrom(final ItemStack stack, final long amount)
-    {
-        Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM))
-          .ifPresent(handler -> handler.drain((int) amount, IFluidHandler.FluidAction.EXECUTE));
+    public ItemStack extractFrom(final ItemStack stack, final long amount) {
+        final Optional<IFluidHandlerItem> handler = Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM));
+        handler.ifPresent(h -> h.drain((int) amount, IFluidHandler.FluidAction.EXECUTE));
 
-        return stack;
+        return handler.map(IFluidHandlerItem::getContainer).orElse(stack);
     }
 
     @Override
-    public ItemStack insertInto(final ItemStack stack, final FluidInformation fluidInformation)
-    {
-        Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM))
-          .ifPresent(handler -> handler.fill(buildFluidStack(fluidInformation), IFluidHandler.FluidAction.EXECUTE));
-
-        return stack;
+    public ItemStack insertInto(final ItemStack stack, final FluidInformation fluidInformation) {
+        final Optional<IFluidHandlerItem> handler = Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM));
+        handler.ifPresent(h -> h.fill(buildFluidStack(fluidInformation), IFluidHandler.FluidAction.EXECUTE));
+        return handler.map(IFluidHandlerItem::getContainer).orElse(stack);
     }
 
     @Override
-    public Component getDisplayName(final Fluid fluid)
-    {
+    public Component getDisplayName(final Fluid fluid) {
         return fluid.getFluidType().getDescription();
     }
 
     @NotNull
-    public static FluidStack buildFluidStack(final FluidInformation fluid)
-    {
+    public static FluidStack buildFluidStack(final FluidInformation fluid) {
         if (fluid.data() == null)
             return new FluidStack(fluid.fluid(), (int) fluid.amount());
 
@@ -99,13 +90,11 @@ public class ForgeFluidManager implements IFluidManager
     }
 
     @NotNull
-    public static FluidInformation buildFluidInformation(final FluidStack fluid)
-    {
+    public static FluidInformation buildFluidInformation(final FluidStack fluid) {
         if (fluid.getTag() == null)
             return new FluidInformation(fluid.getFluid(), (int) fluid.getAmount());
 
         return new FluidInformation(fluid.getFluid(), (int) fluid.getAmount(), fluid.getOrCreateTag());
     }
-
 
 }
