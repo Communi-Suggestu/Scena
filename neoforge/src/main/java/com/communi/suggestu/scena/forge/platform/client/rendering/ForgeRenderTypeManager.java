@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
 public class ForgeRenderTypeManager implements IRenderTypeManager
 {
-    private static final RandomSource RANDOM_SOURCE = new LegacyRandomSource(0);
+    private static final ThreadLocal<RandomSource> RANDOM_SOURCE = ThreadLocal.withInitial(RandomSource::createNewThreadLocalInstance);
     private static final ForgeRenderTypeManager INSTANCE = new ForgeRenderTypeManager();
 
     public static ForgeRenderTypeManager getInstance()
@@ -50,7 +50,7 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
     {
         return Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState).getRenderTypes(
                 blockState,
-                RANDOM_SOURCE,
+                RANDOM_SOURCE.get(),
                 ModelData.EMPTY
         ).contains(renderType);
     }
