@@ -10,7 +10,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
+import java.util.List;
 import java.util.function.Function;
 
 public final class FabricClientEvents implements IClientEvents {
@@ -75,6 +80,6 @@ public final class FabricClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
-        return FabricEventEntryPoint.create(ItemTooltipCallback.EVENT, handler -> (stack, context, lines) -> handler.handle(stack, lines));
+        return FabricEventEntryPoint.create(ItemTooltipCallback.EVENT, handler -> handler::handle);
     }
 }

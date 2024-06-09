@@ -89,7 +89,7 @@ public class FabricFluidManager implements IFluidManager
               new FluidInformation(
                 view.getResource().getFluid(),
                 view.getAmount(),
-                view.getResource().copyNbt()
+                view.getResource().getComponents()
               )
             );
         }
@@ -162,14 +162,14 @@ public class FabricFluidManager implements IFluidManager
             //We have a flowing fluid.
             //Let's make a none flowing variant of it.
             if (fluid.getFluid() instanceof FlowingFluid flowingFluid) {
-                return makeInformation(FluidVariant.of(flowingFluid.getSource(), fluid.copyNbt()), count);
+                return makeInformation(FluidVariant.of(flowingFluid.getSource(), fluid.getComponents()), count);
             }
         }
 
-        if (fluid.copyNbt() == null)
+        if (fluid.getComponents().isEmpty())
             return new FluidInformation(fluid.getFluid(), count);
 
-        return new FluidInformation(fluid.getFluid(), count, fluid.copyNbt());
+        return new FluidInformation(fluid.getFluid(), count, fluid.getComponents());
     }
 
     public static FluidInformation makeInformation(final FluidVariant fluid) {

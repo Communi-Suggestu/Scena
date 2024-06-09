@@ -247,28 +247,28 @@ public class FluidCuboidUtils
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
+                  .normal(matrices, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, 0, 0)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
+                  .normal(matrices, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, 0, d)
                   .color(r, g, b, a)
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
+                  .normal(matrices, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, 0, d)
                   .color(r, g, b, a)
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
+                  .normal(matrices, DOWN.getStepX(), DOWN.getStepY(), DOWN.getStepZ())
                   .endVertex();
             }
             case UP -> {
@@ -277,28 +277,28 @@ public class FluidCuboidUtils
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, UP.getStepX(), UP.getStepY(), UP.getStepZ())
+                  .normal(matrices, UP.getStepX(), UP.getStepY(), UP.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, h, d)
                   .color(r, g, b, a)
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, UP.getStepX(), UP.getStepY(), UP.getStepZ())
+                  .normal(matrices, UP.getStepX(), UP.getStepY(), UP.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, d)
                   .color(r, g, b, a)
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, UP.getStepX(), UP.getStepY(), UP.getStepZ())
+                  .normal(matrices, UP.getStepX(), UP.getStepY(), UP.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, 0)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, UP.getStepX(), UP.getStepY(), UP.getStepZ())
+                  .normal(matrices, UP.getStepX(), UP.getStepY(), UP.getStepZ())
                   .endVertex();
             }
             case NORTH -> {
@@ -307,28 +307,28 @@ public class FluidCuboidUtils
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
+                  .normal(matrices, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, h, 0)
                   .color(r, g, b, a)
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
+                  .normal(matrices, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, 0)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
+                  .normal(matrices, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, 0, 0)
                   .color(r, g, b, a)
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
+                  .normal(matrices, NORTH.getStepX(), NORTH.getStepY(), NORTH.getStepZ())
                   .endVertex();
             }
             case SOUTH -> {
@@ -337,28 +337,28 @@ public class FluidCuboidUtils
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
+                  .normal(matrices, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, 0, d)
                   .color(r, g, b, a)
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
+                  .normal(matrices, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, d)
                   .color(r, g, b, a)
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
+                  .normal(matrices, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, h, d)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
+                  .normal(matrices, SOUTH.getStepX(), SOUTH.getStepY(), SOUTH.getStepZ())
                   .endVertex();
             }
             case WEST -> {
@@ -367,28 +367,28 @@ public class FluidCuboidUtils
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
+                  .normal(matrices, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, 0, d)
                   .color(r, g, b, a)
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
+                  .normal(matrices, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, h, d)
                   .color(r, g, b, a)
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
+                  .normal(matrices, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, 0, h, 0)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
+                  .normal(matrices, WEST.getStepX(), WEST.getStepY(), WEST.getStepZ())
                   .endVertex();
             }
             case EAST -> {
@@ -397,28 +397,28 @@ public class FluidCuboidUtils
                   .uv(minU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
+                  .normal(matrices, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, 0)
                   .color(r, g, b, a)
                   .uv(minU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
+                  .normal(matrices, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, h, d)
                   .color(r, g, b, a)
                   .uv(maxU, minV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
+                  .normal(matrices, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
                   .endVertex();
                 renderer.vertex(worldMatrix, w, 0, d)
                   .color(r, g, b, a)
                   .uv(maxU, maxV)
                   .overlayCoords(overlay1, overlay2)
                   .uv2(light1, light2)
-                  .normal(normalMatrix, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
+                  .normal(matrices, EAST.getStepX(), EAST.getStepY(), EAST.getStepZ())
                   .endVertex();
             }
         }

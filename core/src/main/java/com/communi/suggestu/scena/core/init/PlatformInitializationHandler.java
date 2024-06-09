@@ -1,7 +1,8 @@
 package com.communi.suggestu.scena.core.init;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
-import com.google.common.collect.Lists;;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.Collections;

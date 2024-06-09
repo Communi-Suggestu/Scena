@@ -1,17 +1,17 @@
 package com.communi.suggestu.scena.core.fluid;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 
-public record FluidInformation(Fluid fluid, long amount, CompoundTag data)
+public record FluidInformation(Fluid fluid, long amount, DataComponentPatch data)
 {
     public FluidInformation(Fluid fluid) {
-        this(fluid, 1, new CompoundTag());
+        this(fluid, 1, DataComponentPatch.EMPTY);
     }
 
     public FluidInformation(Fluid fluid, long amount) {
-        this(fluid, amount, new CompoundTag());
+        this(fluid, amount, DataComponentPatch.EMPTY);
     }
 
     public FluidInformation withSource() {

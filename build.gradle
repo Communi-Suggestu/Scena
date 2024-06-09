@@ -61,14 +61,6 @@ subprojects { Project subProject ->
     subProject.dependencies.compileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
     subProject.dependencies.testCompileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
 
-    subProject.ext.setupEmbeddedPublishing = { mavenPublication ->
-        subProject.afterEvaluate { evaluatedSubProject ->
-            if (evaluatedSubProject.getPlugins().hasPlugin("net.neoforged.gradle.userdev")) {
-                evaluatedSubProject.jarJar.component(mavenPublication)
-            }
-        }
-    }
-
     subProject.ext.disableCompiling = {
         subProject.tasks.build.enabled = false
         subProject.tasks.jar.enabled = false
@@ -246,8 +238,6 @@ subprojects { Project subProject ->
                                 url = subProject.projectUrl
                             }
                         }
-
-                        subProject.setupEmbeddedPublishing(pub)
                     }
                 }
             }

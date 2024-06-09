@@ -11,6 +11,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.storage.ChunkStorage;
+import net.minecraft.world.level.chunk.storage.RegionStorageInfo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,8 +26,8 @@ import java.util.concurrent.CompletableFuture;
 @Mixin(ChunkMap.class)
 public abstract class ChunkMapChunkLoadMixin extends ChunkStorage {
 
-    public ChunkMapChunkLoadMixin(Path path, DataFixer dataFixer, boolean bl) {
-        super(path, dataFixer, bl);
+    public ChunkMapChunkLoadMixin(RegionStorageInfo info, Path folder, DataFixer fixerUpper, boolean sync) {
+        super(info, folder, fixerUpper, sync);
     }
 
     @Shadow @Final ServerLevel level;

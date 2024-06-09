@@ -1,7 +1,9 @@
 package com.communi.suggestu.scena.core.event;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
 
@@ -12,10 +14,12 @@ import java.util.List;
 public interface IGatherTooltipEvent extends IEvent {
 
     /**
-     * Invoked when a tooltip is being gathered.
+     * Handles the tooltip gathering event.
      *
-     * @param stack The stack to gather tooltip for.
-     * @param currentTooltip The current tooltip.
+     * @param stack The stack being hovered over.
+     * @param tooltipContext The context of the tooltip.
+     * @param tooltipType The type of tooltip.
+     * @param lines The lines of the tooltip.
      */
-    void handle(ItemStack stack, List<Component> currentTooltip);
+    void handle(ItemStack stack, Item.TooltipContext tooltipContext, TooltipFlag tooltipType, List<Component> lines);
 }
