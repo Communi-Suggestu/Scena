@@ -1,10 +1,14 @@
 package com.communi.suggestu.scena.fabric.platform.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.communi.suggestu.scena.core.network.INetworkChannel;
+import com.communi.suggestu.scena.core.network.INetworkChannelManager;
+import com.google.gson.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
+import net.minecraft.network.codec.StreamMemberEncoder;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
@@ -12,6 +16,9 @@ import java.util.function.Supplier;
 
 public class FabricConfigurationNetworkingUtils
 {
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
     private FabricConfigurationNetworkingUtils()
     {
@@ -37,5 +44,16 @@ public class FabricConfigurationNetworkingUtils
                 }
             });
         });
+    }
+
+
+    public record SyncedConfiguration(Map<String, FabricConfigurationSpec> specs) implements CustomPacketPayload {
+
+        public static final CustomPacketPayload.Type<SyncedConfiguration> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("scena", "synced_config"));
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
     }
 }

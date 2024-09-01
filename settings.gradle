@@ -10,7 +10,7 @@ pluginManagement.repositories.maven { url = 'https://maven.fabricmc.net/' }
 pluginManagement.repositories.gradlePluginPortal()
 pluginManagement.repositories.mavenCentral()
 
-var neogradleVersion = "8.+"
+var neogradleVersion = "7.+"
 
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.common"), neogradleVersion)
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.userdev"), neogradleVersion)

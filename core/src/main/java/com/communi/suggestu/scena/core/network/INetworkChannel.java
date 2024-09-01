@@ -2,11 +2,17 @@ package com.communi.suggestu.scena.core.network;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.function.*;
 
@@ -15,45 +21,58 @@ public interface INetworkChannel
 
     /**
      * Register a new network channel.
-     *
-     * @param name The name of the channel
-     * @param networkProtocolVersion The version of the protocol on this logical side of the channel.
-     * @param clientAcceptedVersions The versions of the client protocol that are accepted.
-     * @param serverAcceptedVersions The versions of the server protocol that are accepted.
      */
-    static INetworkChannel create(final ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
-        return INetworkChannelManager.getInstance().create(
-          name,
-          networkProtocolVersion,
-          clientAcceptedVersions,
-          serverAcceptedVersions
+    static INetworkChannel create() {
+        return INetworkChannelManager.getInstance().create();
+    }
+
+    /**
+     * Register a new network channel.
+     *
+     * @param type The type of the channel.
+     * @param codec The codec to use for the channel.
+     * @param handler The handler to use for the channel.
+     * @param <T> The type of the channel.
+     */
+    default <T extends CustomPacketPayload> void register(
+            final CustomPacketPayload.Type<T> type,
+            final StreamCodec<RegistryFriendlyByteBuf, T> codec,
+            final MessageExecutionHandler<T> handler
+            ) {
+        register(
+                type,
+                codec,
+                handler,
+                PayloadPhase.PLAY,
+                PayloadDirection.BOTH
         );
     }
 
     /**
-     * Registers a new message and its handler, so it can be transmitted over the channel.
+     * Register a new network channel.
      *
-     * @param id The id of the message.
-     * @param msgClass The message class.
-     * @param serializer The serializer for the message.
-     * @param creator The instantiation handler of the message.
-     * @param executionHandler The handler which is executed when the message arrives.
-     * @param <T> The type of the message.
+     * @param type The type of the channel.
+     * @param codec The codec to use for the channel.
+     * @param handler The handler to use for the channel.
+     * @param phase The phase of the channel.
+     * @param direction The direction of the channel.
+     * @param <T> The type of the channel.
+     * @param <B> The type of the buffer.
      */
-    <T> void register(
-      final int id,
-      final Class<T> msgClass,
-      final BiConsumer<T, FriendlyByteBuf> serializer,
-      final Function<FriendlyByteBuf, T> creator,
-      final MessageExecutionHandler<T> executionHandler
-    );
+    <T extends CustomPacketPayload, B extends FriendlyByteBuf> void register(
+            final CustomPacketPayload.Type<T> type,
+            final StreamCodec<B, T> codec,
+            final MessageExecutionHandler<T> handler,
+            final PayloadPhase<B> phase,
+            final PayloadDirection direction
+            );
 
     /**
      * Sends the packet to the server.
      *
      * @param msg The message send.
      */
-    void sendToServer(Object msg);
+    void sendToServer(CustomPacketPayload msg);
 
     /**
      * Sends the message to the player.
@@ -61,14 +80,24 @@ public interface INetworkChannel
      * @param msg The message to send.
      * @param player The player to send the message to.
      */
-    void sendToPlayer(Object msg, ServerPlayer player);
+    default void sendToPlayer(CustomPacketPayload msg, ServerPlayer player) {
+        sendToPlayer(msg, player.connection);
+    }
+
+    /**
+     * Sends the message to the player.
+     *
+     * @param msg The message to send.
+     * @param listener The listener to send the message to.
+     */
+    void sendToPlayer(CustomPacketPayload msg, ServerPacketListener listener);
 
     /**
      * Sends to everyone.
      *
      * @param msg message to send
      */
-    default void sendToEveryone(final Object msg)
+    default void sendToEveryone(final CustomPacketPayload msg)
     {
         IScenaPlatform.getInstance().getCurrentServer().getPlayerList().getPlayers().forEach(player -> sendToPlayer(msg, player));
     }
@@ -79,7 +108,7 @@ public interface INetworkChannel
      * @param msg   message to send
      * @param chunk target chunk to look at
      */
-    default void sendToTrackingChunk(final Object msg, final LevelChunk chunk)
+    default void sendToTrackingChunk(final CustomPacketPayload msg, final LevelChunk chunk)
     {
         ((ServerChunkCache)chunk.getLevel().getChunkSource()).chunkMap.getPlayers(chunk.getPos(), false).forEach(serverPlayer -> sendToPlayer(msg, serverPlayer));
     }
@@ -95,13 +124,13 @@ public interface INetworkChannel
          *
          * @param message The message that has been received.
          * @param serverSide Indicates if the current executing side is the server.
-         * @param player The player which send the data, null if not send by a player.
+         * @param player The player which send the data, null if not send by a player, maybe null during configuration phase
          * @param executor The executor to execute code on the game thread.
          */
         void execute(
           final T message,
           final boolean serverSide,
-          final Player player,
+          @UnknownNullability final Player player,
           final Consumer<Runnable> executor
         );
     }

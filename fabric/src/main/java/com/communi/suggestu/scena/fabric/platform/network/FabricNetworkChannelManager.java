@@ -2,10 +2,8 @@ package com.communi.suggestu.scena.fabric.platform.network;
 
 import com.communi.suggestu.scena.core.network.INetworkChannel;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
-import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 public final class FabricNetworkChannelManager implements INetworkChannelManager
 {
@@ -21,11 +19,9 @@ public final class FabricNetworkChannelManager implements INetworkChannelManager
     }
 
     @Override
-    public INetworkChannel create(
-      final ResourceLocation name, final Supplier<String> networkProtocolVersion, final Predicate<String> clientAcceptedVersions, final Predicate<String> serverAcceptedVersions)
-    {
-        return new FabricNetworkChannel(
-          name
-        );
+    public INetworkChannel create(Consumer<INetworkChannel> configurator) {
+        final FabricNetworkChannel channel = new FabricNetworkChannel();
+        configurator.accept(channel);
+        return channel;
     }
 }
