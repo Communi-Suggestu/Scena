@@ -30,6 +30,10 @@ import java.util.Map;
 
 public final class FabricConfigurationManager implements IConfigurationManager
 {
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+
     private static final ResourceLocation CONFIG_SYNC_CHANNEL_ID = new ResourceLocation("scena", "config_sync");
     private static final FabricConfigurationManager INSTANCE = new FabricConfigurationManager();
 
@@ -44,7 +48,6 @@ public final class FabricConfigurationManager implements IConfigurationManager
     private FabricConfigurationManager()
     {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
-          CONFIG_SYNC_CHANNEL_ID,
           GSON,
           () -> this.syncedSources
         ));
@@ -60,11 +63,7 @@ public final class FabricConfigurationManager implements IConfigurationManager
         });
 
         final String payload = GSON.toJson(targetObject);
-        final FriendlyByteBuf buffer = PacketByteBufs.create();
-
-        buffer.writeUtf(payload);
-
-        ServerPlayNetworking.send(serverPlayer, CONFIG_SYNC_CHANNEL_ID, buffer);
+        ServerPlayNetworking.send(serverPlayer, new FabricConfigurationNetworkingUtils.SyncedConfiguration(payload));
     }
 
     @Override

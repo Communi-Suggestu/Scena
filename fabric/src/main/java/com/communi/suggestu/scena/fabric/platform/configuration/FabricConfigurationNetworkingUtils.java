@@ -25,9 +25,9 @@ public class FabricConfigurationNetworkingUtils
         throw new IllegalStateException("Can not instantiate an instance of: FabricConfigurationNetworkingUtils. This is a utility class");
     }
 
-    public static void registerNetworkingChannel(final ResourceLocation channelName, final Gson gson, Supplier<Map<String, FabricConfigurationSpec>> syncedSourcesProvider) {
-        ClientPlayNetworking.registerGlobalReceiver(channelName, (minecraft, clientPacketListener, friendlyByteBuf, packetSender) -> {
-            final JsonElement jsonElement = gson.fromJson(friendlyByteBuf.readUtf(Integer.MAX_VALUE / 4), JsonElement.class);
+    public static void registerNetworkingChannel(final Gson gson, Supplier<Map<String, FabricConfigurationSpec>> syncedSourcesProvider) {
+        ClientPlayNetworking.registerGlobalReceiver(SyncedConfiguration.TYPE, (payload, context) -> {
+            final JsonElement jsonElement = gson.fromJson(payload.specs(), JsonElement.class);
             if (!jsonElement.isJsonObject())
                 throw new JsonParseException("The synced configs must be send in an object!");
 
@@ -47,7 +47,7 @@ public class FabricConfigurationNetworkingUtils
     }
 
 
-    public record SyncedConfiguration(Map<String, FabricConfigurationSpec> specs) implements CustomPacketPayload {
+    public record SyncedConfiguration(String specs) implements CustomPacketPayload {
 
         public static final CustomPacketPayload.Type<SyncedConfiguration> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("scena", "synced_config"));
 

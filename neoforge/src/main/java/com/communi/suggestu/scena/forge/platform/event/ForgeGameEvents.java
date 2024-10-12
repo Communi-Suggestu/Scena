@@ -5,7 +5,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -13,6 +12,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
     private static final ForgeGameEvents INSTANCE = new ForgeGameEvents();
@@ -95,20 +95,14 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IServerTickEvent> getServerPreTickEvent() {
-        return EventBusEventEntryPoint.forge(TickEvent.ServerTickEvent.class, (event, handler) -> {
-            if (event.phase != TickEvent.Phase.START)
-                return;
-
+        return EventBusEventEntryPoint.forge(ServerTickEvent.Pre.class, (event, handler) -> {
             handler.onTick(event.getServer());
         });
     }
 
     @Override
     public IEventEntryPoint<IServerTickEvent> getServerPostTickEvent() {
-        return EventBusEventEntryPoint.forge(TickEvent.ServerTickEvent.class, (event, handler) -> {
-            if (event.phase != TickEvent.Phase.END)
-                return;
-
+        return EventBusEventEntryPoint.forge(ServerTickEvent.Post.class, (event, handler) -> {
             handler.onTick(event.getServer());
         });
     }

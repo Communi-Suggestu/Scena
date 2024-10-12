@@ -9,6 +9,7 @@ import net.minecraft.client.KeyMapping;
 import com.google.common.collect.Lists;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
@@ -16,7 +17,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ForgeKeyBindingManager implements IKeyBindingManager
 {
     private static final ForgeKeyBindingManager INSTANCE = new ForgeKeyBindingManager();

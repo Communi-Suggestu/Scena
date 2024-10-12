@@ -24,12 +24,14 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBakedModel, IDataAwareBakedModel, ICompoundItemBakedModel
 {
     private final BakedModel delegate;
@@ -102,15 +104,8 @@ public final class ForgeBakedModelDelegate implements BakedModel, IDelegatingBak
     }
 
     @Override
-    public boolean useAmbientOcclusion(final @NotNull BlockState state)
-    {
-        return delegate.useAmbientOcclusion(state);
-    }
-
-    @Override
-    public boolean useAmbientOcclusion(final @NotNull BlockState state, final @NotNull RenderType renderType)
-    {
-        return delegate.useAmbientOcclusion(state, renderType);
+    public @NotNull TriState useAmbientOcclusion(@NotNull BlockState state, @NotNull ModelData data, @NotNull RenderType renderType) {
+        return delegate.useAmbientOcclusion(state, data, renderType);
     }
 
     @Override

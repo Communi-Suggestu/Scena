@@ -19,7 +19,7 @@ public final class FabricNetworkChannelManager implements INetworkChannelManager
     }
 
     @Override
-    public INetworkChannel create(Consumer<INetworkChannel> configurator) {
+    public INetworkChannel create(final String version, Consumer<INetworkChannel> configurator) {
         final FabricNetworkChannel channel = new FabricNetworkChannel();
         configurator.accept(channel);
         return channel;

@@ -2,8 +2,7 @@ package com.communi.suggestu.scena.core.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-
-import java.util.function.Consumer;
+import net.minecraft.network.codec.StreamCodec;
 
 public final class PayloadPhase<T extends FriendlyByteBuf> {
 

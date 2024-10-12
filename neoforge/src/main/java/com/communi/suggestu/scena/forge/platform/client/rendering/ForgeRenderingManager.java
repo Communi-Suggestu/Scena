@@ -15,13 +15,14 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -37,7 +38,7 @@ import java.util.function.Consumer;
 
 ;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
 public class ForgeRenderingManager implements IRenderingManager
 {
     private static final ForgeRenderingManager INSTANCE = new ForgeRenderingManager();
@@ -154,9 +155,10 @@ public class ForgeRenderingManager implements IRenderingManager
     @NotNull
     private FluidStack buildFluidStack(final FluidInformation fluid)
     {
-        if (fluid.data() == null)
+        if (fluid.data().isEmpty())
             return new FluidStack(fluid.fluid(), (int) fluid.amount());
 
-        return new FluidStack(fluid.fluid(), (int) fluid.amount(), fluid.data());
+        return new FluidStack(
+                new Holder.Direct<>(fluid.fluid()), (int) fluid.amount(), fluid.data());
     }
 }

@@ -2,61 +2,114 @@ package com.communi.suggestu.scena.forge.platform.network;
 
 import com.communi.suggestu.scena.core.network.INetworkChannel;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
+import com.communi.suggestu.scena.core.network.PayloadDirection;
+import com.communi.suggestu.scena.core.network.PayloadPhase;
 import com.communi.suggestu.scena.forge.utils.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.registration.HandlerThread;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ForgeNetworkChannelManager implements INetworkChannelManager
-{
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+public class ForgeNetworkChannelManager implements INetworkChannelManager {
     private static final ForgeNetworkChannelManager INSTANCE = new ForgeNetworkChannelManager();
 
-    public static ForgeNetworkChannelManager getInstance()
-    {
+    public static ForgeNetworkChannelManager getInstance() {
         return INSTANCE;
     }
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
-    private final ConcurrentMap<ResourceLocation, ForgeSimpleChannelPlatformDelegate> channels = new ConcurrentHashMap<>();
+    private final ConcurrentLinkedDeque<ForgeNetworkChannel> channels = new ConcurrentLinkedDeque<>();
 
-    private ForgeNetworkChannelManager()
-    {
-    }
-
-    @SubscribeEvent
-    public static void onRegisterNetworkChannels(final RegisterPayloadHandlerEvent event)
-    {
-        getInstance().initialized.set(true);
-        getInstance().channels.forEach((name, channel) -> {
-            final IPayloadRegistrar registrar = event.registrar(name.getNamespace());
-            registrar.versioned(channel.getVersion()).common(
-                    name,
-                    channel::read,
-                    channel
-            );
-        });
+    private ForgeNetworkChannelManager() {
     }
 
     @Override
-    public INetworkChannel create(
-      final ResourceLocation name, final Supplier<String> networkProtocolVersion, final Predicate<String> clientAcceptedVersions, final Predicate<String> serverAcceptedVersions)
-    {
-        if (initialized.get())
-        {
-            throw new IllegalStateException("Can not create a new network channel after the network channel manager has been initialized");
+    public INetworkChannel create(String version, Consumer<INetworkChannel> configurator) {
+        if (initialized.get()) {
+            throw new IllegalStateException("Cannot create a new network channel after initialization");
         }
 
-        final ForgeSimpleChannelPlatformDelegate delegate = new ForgeSimpleChannelPlatformDelegate(name, networkProtocolVersion.get());
-        channels.put(name, delegate);
-        return delegate;
+        final ForgeNetworkChannel channel = new ForgeNetworkChannel(version);
+        configurator.accept(channel);
+        channels.add(channel);
+        return channel;
+    }
+
+
+    @SubscribeEvent
+    public static void onRegisterNetworkChannels(final RegisterPayloadHandlersEvent event) {
+        getInstance().initialized.set(true);
+        getInstance().channels.forEach((channel) -> {
+            final PayloadRegistrar registrar = event.registrar(channel.version())
+                    .executesOn(HandlerThread.NETWORK);
+
+            channel.registrations().forEach(registration -> registerNetworkChannel(registration, registrar));
+        });
+    }
+
+    private static <T extends CustomPacketPayload, B extends FriendlyByteBuf> void registerNetworkChannel(
+            final ForgeNetworkChannel.Registration<T, B> registration,
+            final PayloadRegistrar registrar
+    ) {
+        final CustomPacketPayload.Type<T> type = registration.type();
+        final StreamCodec<B, T> codec = registration.codec();
+        final PayloadPhase<B> phase = registration.phase();
+        final PayloadDirection direction = registration.direction();
+
+        final Registrator<T, B> registrator = getRegistrator(registrar, phase, direction);
+        registrator.register(type, codec, (payload, context) -> registration.handler().execute(payload, context.flow() == PacketFlow.SERVERBOUND, context.player(), context::enqueueWork));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends CustomPacketPayload, B extends FriendlyByteBuf> Registrator<T, B> getRegistrator(
+            final PayloadRegistrar registrar,
+            final PayloadPhase<B> phase,
+            final PayloadDirection direction
+    ) {
+        if (phase == PayloadPhase.PLAY) {
+            if (direction == PayloadDirection.BOTH) {
+                return (type, reader, handler) -> registrar.playBidirectional(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+            }
+            if (direction == PayloadDirection.CLIENTBOUND) {
+                return (type, reader, handler) -> registrar.playToClient(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+            }
+            if (direction == PayloadDirection.SERVERBOUND) {
+                return (type, reader, handler) -> registrar.playToServer(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+            }
+
+            throw new IllegalArgumentException("Unknown direction: " + direction);
+        }
+
+        if (phase == PayloadPhase.CONFIG) {
+            if (direction == PayloadDirection.BOTH) {
+                return (type, reader, handler) -> registrar.configurationBidirectional(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+            }
+            if (direction == PayloadDirection.CLIENTBOUND) {
+                return (type, reader, handler) -> registrar.configurationToClient(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+            }
+            if (direction == PayloadDirection.SERVERBOUND) {
+                return (type, reader, handler) -> registrar.configurationToServer(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+            }
+
+            throw new IllegalArgumentException("Unknown direction: " + direction);
+        }
+
+        throw new IllegalArgumentException("Unknown phase: " + phase);
+    }
+
+    public interface Registrator<T extends CustomPacketPayload, B extends FriendlyByteBuf> {
+        void register(CustomPacketPayload.Type<T> type, StreamCodec<B, T> reader, IPayloadHandler<T> handler);
     }
 }

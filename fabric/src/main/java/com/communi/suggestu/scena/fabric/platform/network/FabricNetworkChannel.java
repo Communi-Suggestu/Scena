@@ -30,7 +30,6 @@ public final class FabricNetworkChannel implements INetworkChannel {
     public FabricNetworkChannel() {
     }
 
-
     @Override
     public <T extends CustomPacketPayload, B extends FriendlyByteBuf> void register(CustomPacketPayload.Type<T> type, StreamCodec<B, T> codec, MessageExecutionHandler<T> handler, PayloadPhase<B> phase, PayloadDirection direction) {
         getTypeRegistry(phase, direction).forEach(registry -> registry.register(type, codec));
@@ -109,41 +108,5 @@ public final class FabricNetworkChannel implements INetworkChannel {
         }
 
         throw new IllegalStateException("Payload type is not registered or wrong listener type.");
-    }
-
-    static final class NetworkMessageSpecification<T> {
-        private final int id;
-        private final Class<T> msgClass;
-        private final BiConsumer<T, FriendlyByteBuf> serializer;
-        private final Function<FriendlyByteBuf, T> creator;
-        private final MessageExecutionHandler<T> executionHandler;
-
-        private NetworkMessageSpecification(final int id, final Class<T> msgClass, final BiConsumer<T, FriendlyByteBuf> serializer, final Function<FriendlyByteBuf, T> creator, final MessageExecutionHandler<T> executionHandler) {
-            this.id = id;
-            this.msgClass = msgClass;
-            this.serializer = serializer;
-            this.creator = creator;
-            this.executionHandler = executionHandler;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public Class<T> getMsgClass() {
-            return msgClass;
-        }
-
-        public BiConsumer<T, FriendlyByteBuf> getSerializer() {
-            return serializer;
-        }
-
-        public Function<FriendlyByteBuf, T> getCreator() {
-            return creator;
-        }
-
-        public MessageExecutionHandler<T> getExecutionHandler() {
-            return executionHandler;
-        }
     }
 }

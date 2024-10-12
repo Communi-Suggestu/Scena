@@ -1,18 +1,18 @@
 package com.communi.suggestu.scena.forge.platform.client.color;
 
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
-import com.google.common.collect.Lists;
 import com.communi.suggestu.scena.forge.utils.Constants;
+import com.google.common.collect.Lists;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ForgeColorManager implements IColorManager
 {
     private static final ForgeColorManager INSTANCE = new ForgeColorManager();

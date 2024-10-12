@@ -1,16 +1,12 @@
 package com.communi.suggestu.scena.forge.platform.fluid;
 
-import com.communi.suggestu.scena.core.fluid.FluidInformation;
-import com.communi.suggestu.scena.core.fluid.FluidRegistration;
-import com.communi.suggestu.scena.core.fluid.FluidWithHandler;
-import com.communi.suggestu.scena.core.fluid.IFluidManager;
-import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
+import com.communi.suggestu.scena.core.fluid.*;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import com.google.common.base.Suppliers;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +54,7 @@ public class ForgeFluidManager implements IFluidManager {
     public Optional<FluidInformation> get(final ItemStack stack) {
         return Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM))
                 .map(fluidHandler -> fluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE))
-                .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? new CompoundTag() : fluidStack.getOrCreateTag()));
+                .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? DataComponentPatch.EMPTY : fluidStack.getComponentsPatch()));
     }
 
     @Override
@@ -86,15 +82,18 @@ public class ForgeFluidManager implements IFluidManager {
         if (fluid.data() == null)
             return new FluidStack(fluid.fluid(), (int) fluid.amount());
 
-        return new FluidStack(fluid.fluid(), (int) fluid.amount(), fluid.data());
+        return new FluidStack(
+                new Holder.Direct<>(fluid.fluid()),
+                (int) fluid.amount(),
+                fluid.data());
     }
 
     @NotNull
     public static FluidInformation buildFluidInformation(final FluidStack fluid) {
-        if (fluid.getTag() == null)
-            return new FluidInformation(fluid.getFluid(), (int) fluid.getAmount());
+        if (fluid.getComponentsPatch().isEmpty())
+            return new FluidInformation(fluid.getFluid(), fluid.getAmount());
 
-        return new FluidInformation(fluid.getFluid(), (int) fluid.getAmount(), fluid.getOrCreateTag());
+        return new FluidInformation(fluid.getFluid(), fluid.getAmount(), fluid.getComponentsPatch());
     }
 
 }

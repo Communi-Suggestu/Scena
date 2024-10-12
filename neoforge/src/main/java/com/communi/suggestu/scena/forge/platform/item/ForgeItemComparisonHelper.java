@@ -20,6 +20,6 @@ public class ForgeItemComparisonHelper implements IItemComparisonHelper
     @Override
     public boolean canItemStacksStack(final ItemStack left, final ItemStack right)
     {
-        return ItemHandlerHelper.canItemStacksStack(left, right);
+        return ItemStack.isSameItemSameComponents(left, right);
     }
 }

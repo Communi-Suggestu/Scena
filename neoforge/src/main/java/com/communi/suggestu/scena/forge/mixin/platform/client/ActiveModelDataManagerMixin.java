@@ -11,8 +11,7 @@ import net.neoforged.neoforge.client.model.data.ModelDataManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@SuppressWarnings("UnstableApiUsage")
-@Mixin(value = ModelDataManager.Active.class, remap = false)
+@Mixin(value = ModelDataManager.class, remap = false)
 public abstract class ActiveModelDataManagerMixin
 {
     @WrapOperation(

@@ -18,12 +18,13 @@ import java.util.function.*;
 
 public interface INetworkChannel
 {
-
     /**
      * Register a new network channel.
+     *
+     * @param version The version of the channel.
      */
-    static INetworkChannel create() {
-        return INetworkChannelManager.getInstance().create();
+    static INetworkChannel create(final String version) {
+        return INetworkChannelManager.getInstance().create(version);
     }
 
     /**

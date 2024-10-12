@@ -4,12 +4,7 @@ import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.client.gui.overlay.GuiOverlayManager;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 public final class ForgeClientEvents implements IClientEvents {
@@ -24,10 +19,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IClientTickStartedEvent> getClientTickStartedEvent() {
-        return EventBusEventEntryPoint.forge(TickEvent.ClientTickEvent.class, (event, handler) -> {
-            if (event.phase != TickEvent.Phase.START)
-                return;
-
+        return EventBusEventEntryPoint.forge(ClientTickEvent.Pre.class, (event, handler) -> {
             handler.handle();
         });
     }
@@ -41,10 +33,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IHudRenderEvent> getHUDRenderEvent() {
-        return EventBusEventEntryPoint.forge(RenderGuiOverlayEvent.Post.class, (event, handler) -> {
-            if (event.getOverlay() != GuiOverlayManager.getOverlays().get(GuiOverlayManager.getOverlays().size() - 1))
-                return;
-
+        return EventBusEventEntryPoint.forge(RenderGuiEvent.Post.class, (event, handler) -> {
             handler.handle(event.getGuiGraphics());
         });
     }
@@ -72,6 +61,8 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent() {
-        return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(event.getItemStack(), event.getToolTip()));
+        return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(
+                event.getItemStack(), event.getContext(), event.getFlags(), event.getToolTip()
+        ));
     }
 }
