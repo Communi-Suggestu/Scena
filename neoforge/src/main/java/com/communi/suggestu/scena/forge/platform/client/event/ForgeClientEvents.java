@@ -3,9 +3,17 @@ package com.communi.suggestu.scena.forge.platform.client.event;
 import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
+import com.communi.suggestu.scena.core.event.Settable;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ForgeClientEvents implements IClientEvents {
     private static final ForgeClientEvents INSTANCE = new ForgeClientEvents();
@@ -64,5 +72,20 @@ public final class ForgeClientEvents implements IClientEvents {
         return EventBusEventEntryPoint.forge(ItemTooltipEvent.class, (event, handler) -> handler.handle(
                 event.getItemStack(), event.getContext(), event.getFlags(), event.getToolTip()
         ));
+    }
+
+    @Override
+    public IEventEntryPoint<IGatherTooltipComponentsEvent> getGatherTooltipComponentsEvent() {
+        return EventBusEventEntryPoint.forge(RenderTooltipEvent.GatherComponents.class, (event, handler) -> {
+            final Settable<Integer> maxWidth = new Settable<>(event::getMaxWidth, event::setMaxWidth);
+            final List<TooltipComponent> components = new ArrayList<>();
+            if (!handler.gather(event.getItemStack(), event.getScreenWidth(), event.getScreenHeight(), maxWidth, components)) {
+                event.setCanceled(true);
+            }
+
+            event.getTooltipElements().addAll(
+                    components.stream().map(Either::<FormattedText, TooltipComponent>right).toList()
+            );
+        });
     }
 }

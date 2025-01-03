@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.fabric.platform.network;
 import com.communi.suggestu.scena.core.network.INetworkChannel;
 import com.communi.suggestu.scena.core.network.PayloadDirection;
 import com.communi.suggestu.scena.core.network.PayloadPhase;
+import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -15,6 +16,7 @@ import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,8 @@ import java.util.function.Function;
 
 public final class FabricNetworkChannel implements INetworkChannel {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private final Set<CustomPacketPayload.Type<?>> CONFIG_TYPES = new HashSet<>();
     private final Set<CustomPacketPayload.Type<?>> PLAY_TYPES = new HashSet<>();
 
@@ -32,7 +36,9 @@ public final class FabricNetworkChannel implements INetworkChannel {
 
     @Override
     public <T extends CustomPacketPayload, B extends FriendlyByteBuf> void register(CustomPacketPayload.Type<T> type, StreamCodec<B, T> codec, MessageExecutionHandler<T> handler, PayloadPhase<B> phase, PayloadDirection direction) {
-        getTypeRegistry(phase, direction).forEach(registry -> registry.register(type, codec));
+        getTypeRegistry(phase, direction).forEach(registry -> {
+            registry.register(type, codec);
+        });
         registryReceiver(type, handler, phase, direction);
 
         if (phase == PayloadPhase.CONFIG) {
@@ -90,23 +96,33 @@ public final class FabricNetworkChannel implements INetworkChannel {
 
     @Override
     public void sendToServer(CustomPacketPayload msg) {
+        boolean send = false;
         if (CONFIG_TYPES.contains(msg.type())) {
             ClientConfigurationNetworking.send(msg);
+            send = true;
         } else if (PLAY_TYPES.contains(msg.type())) {
             ClientPlayNetworking.send(msg);
+            send = true;
         }
 
-        throw new IllegalStateException("Payload type is not registered.");
+        if (!send) {
+            throw new IllegalStateException("Payload type is not registered.");
+        }
     }
 
     @Override
     public void sendToPlayer(CustomPacketPayload msg, ServerPacketListener listener) {
+        boolean send = false;
         if (CONFIG_TYPES.contains(msg.type()) && listener instanceof ServerConfigurationPacketListenerImpl packetListener) {
             ServerConfigurationNetworking.send(packetListener, msg);
+            send = true;
         } else if (PLAY_TYPES.contains(msg.type()) && listener instanceof ServerGamePacketListenerImpl packetListener) {
             ServerPlayNetworking.send(packetListener.getPlayer(), msg);
+            send = true;
         }
 
-        throw new IllegalStateException("Payload type is not registered or wrong listener type.");
+        if (!send) {
+            throw new IllegalStateException("Payload type is not registered or wrong listener type.");
+        }
     }
 }

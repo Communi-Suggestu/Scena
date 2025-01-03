@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.models.loaders;
 import com.communi.suggestu.scena.core.client.models.loaders.context.IModelBakingContext;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
@@ -24,9 +25,8 @@ public interface IModelSpecification<T extends IModelSpecification<T>>
      * @param context The context to bake in.
      * @param baker The bakery to use.
      * @param spriteGetter The sprite getter to use.
-     * @param modelState The transformers to apply.
-     * @param modelLocation The location of the model that is being baked.
+     * @param state The model states.
      * @return The baked model.
      */
-    BakedModel bake(IModelBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation);
+    BakedModel bake(IModelBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state);
 }

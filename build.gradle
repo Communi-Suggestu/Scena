@@ -122,11 +122,15 @@ subprojects { Project subProject ->
                         return file
                     }}
 
+            def addFMJFileToJarTask = subProject.tasks.register('addFmjToCoreJar', Jar) {
+                from(subProject.zipTree(coreProject.tasks.jar.archiveFile))
+                from(fmjFile)
+            }
 
             def remapCommonJarTask = subProject.tasks.register('remapCoreJar', subProject.ext.remapTaskClass) {
-                input = subProject.project(':core').tasks.jar.archiveFile
+                input = addFMJFileToJarTask.flatMap(jar -> jar.archiveFile)
                 archiveClassifier = 'core-fabric'
-                from(fmjFile)
+                dependsOn addFMJFileToJarTask
             }
 
             subProject.remapJar {
@@ -202,7 +206,7 @@ subprojects { Project subProject ->
                 return "${rootProject.name.toLowerCase()}.mixins.json"
             }
         })
-        copyTask.filesMatching(["META-INF/mods.toml", "pack.mcmeta", "mixins.json", "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
+        copyTask.filesMatching(["META-INF/neoforge.mods.toml", "pack.mcmeta", "mixins.json", "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
             filter(ReplaceTokens, tokens: getIdentifiers())
         }
         copyTask.getInputs().properties(getIdentifiers())
@@ -210,6 +214,11 @@ subprojects { Project subProject ->
 
     subProject.afterEvaluate {
         if(subProject.tasks.build.enabled) {
+            subProject.java {
+                withJavadocJar()
+                withSourcesJar()
+            }
+
             subProject.publishing {
                 publications {
                     mavenJava(MavenPublication) { pub ->

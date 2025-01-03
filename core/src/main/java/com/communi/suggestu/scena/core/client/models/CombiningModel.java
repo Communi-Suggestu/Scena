@@ -50,47 +50,38 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CombiningModel implements IModelSpecification<CombiningModel>
-{
+public class CombiningModel implements IModelSpecification<CombiningModel> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ImmutableMap<String, BlockModel> children;
     private final boolean logWarning;
 
-    public CombiningModel(ImmutableMap<String, BlockModel> children)
-    {
+    public CombiningModel(ImmutableMap<String, BlockModel> children) {
         this(children, false);
     }
 
-    private CombiningModel(ImmutableMap<String, BlockModel> children, boolean logWarning)
-    {
+    private CombiningModel(ImmutableMap<String, BlockModel> children, boolean logWarning) {
         this.children = children;
         this.logWarning = logWarning;
     }
 
     @Override
-    public BakedModel bake(IModelBakingContext context, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
-    {
-        if (logWarning)
-            LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"parts\" field in its composite model instead of \"children\". This field will be removed in 1.20.");
-
+    public BakedModel bake(IModelBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state) {
         Material particleLocation = context.getMaterial("particle").orElse(null);
         TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
 
         var bakedPartsBuilder = ImmutableMap.<String, BakedModel>builder();
-        for (var entry : children.entrySet())
-        {
+        for (var entry : children.entrySet()) {
             var name = entry.getKey();
             var model = entry.getValue();
-            bakedPartsBuilder.put(name, model.bake(bakery, model, spriteGetter, modelTransform, modelLocation, true));
+            bakedPartsBuilder.put(name, model.bake(baker, spriteGetter, state));
         }
         var bakedParts = bakedPartsBuilder.build();
 
-        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(bakery), bakedParts);
+        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker), bakedParts);
     }
 
-    public static class Baked implements IDataAwareBakedModel
-    {
+    private static class Baked implements IDataAwareBakedModel {
         private final boolean isAmbientOcclusion;
         private final boolean isGui3d;
         private final boolean isSideLit;
@@ -99,8 +90,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         private final ItemTransforms transforms;
         private final ImmutableMap<String, BakedModel> children;
 
-        public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children)
-        {
+        public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children) {
             this.children = children;
             this.isAmbientOcclusion = isAmbientOcclusion;
             this.isGui3d = isGui3d;
@@ -111,44 +101,34 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         }
 
         @NotNull
-        private static Collection<RenderType> getRenderTypes(final BakedModel model, final BlockState state, final RandomSource rand, final IBlockModelData data)
-        {
-            if (model instanceof IDataAwareBakedModel dataAwareBakedModel)
-            {
+        private static Collection<RenderType> getRenderTypes(final BakedModel model, final BlockState state, final RandomSource rand, final IBlockModelData data) {
+            if (model instanceof IDataAwareBakedModel dataAwareBakedModel) {
                 return dataAwareBakedModel.getSupportedRenderTypes(state, rand, data);
             }
 
-            if (model instanceof IDelegatingBakedModel delegatingBakedModel)
-            {
+            if (model instanceof IDelegatingBakedModel delegatingBakedModel) {
                 return getRenderTypes(delegatingBakedModel.getDelegate(), state, rand, data);
             }
 
             return IRenderTypeManager.getInstance().getRenderTypesFor(model, state, rand, data);
         }
 
-        public static Builder builder(IModelBakingContext owner, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms)
-        {
+        public static Builder builder(IModelBakingContext owner, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
             return builder(owner.useAmbientOcclusion(), owner.isGui3d(), owner.useBlockLight(), particle, overrides, cameraTransforms);
         }
 
-        public static Builder builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms)
-        {
+        public static Builder builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
             return new Builder(isAmbientOcclusion, isGui3d, isSideLit, particle, overrides, cameraTransforms);
         }
 
         @Override
-        public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IBlockModelData extraData, @Nullable RenderType renderType)
-        {
+        public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IBlockModelData extraData, @Nullable RenderType renderType) {
             List<List<BakedQuad>> quadLists = new ArrayList<>();
-            for (Map.Entry<String, BakedModel> entry : children.entrySet())
-            {
-                if (renderType == null || (state != null && getRenderTypes(entry.getValue(), state, rand, extraData).contains(renderType)))
-                {
-                    if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel)
-                    {
+            for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+                if (renderType == null || (state != null && getRenderTypes(entry.getValue(), state, rand, extraData).contains(renderType))) {
+                    if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel) {
                         quadLists.add(dataAwareBakedModel.getQuads(state, side, rand, CombiningModel.Data.resolve(extraData, entry.getKey()), renderType));
-                    } else
-                    {
+                    } else {
                         quadLists.add(entry.getValue().getQuads(state, side, rand));
                     }
                 }
@@ -157,55 +137,45 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         }
 
         @Override
-        public boolean useAmbientOcclusion()
-        {
+        public boolean useAmbientOcclusion() {
             return isAmbientOcclusion;
         }
 
         @Override
-        public boolean isGui3d()
-        {
+        public boolean isGui3d() {
             return isGui3d;
         }
 
         @Override
-        public boolean usesBlockLight()
-        {
+        public boolean usesBlockLight() {
             return isSideLit;
         }
 
         @Override
-        public boolean isCustomRenderer()
-        {
+        public boolean isCustomRenderer() {
             return false;
         }
 
         @Override
-        public @NotNull TextureAtlasSprite getParticleIcon()
-        {
+        public @NotNull TextureAtlasSprite getParticleIcon() {
             return particle;
         }
 
         @Override
-        public @NotNull ItemOverrides getOverrides()
-        {
+        public @NotNull ItemOverrides getOverrides() {
             return overrides;
         }
 
         @Override
-        public @NotNull ItemTransforms getTransforms()
-        {
+        public @NotNull ItemTransforms getTransforms() {
             return transforms;
         }
 
         @Override
-        public @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data)
-        {
+        public @NotNull Collection<RenderType> getSupportedRenderTypes(final BlockState state, final RandomSource rand, final IBlockModelData data) {
             var sets = new ArrayList<Collection<RenderType>>();
-            for (Map.Entry<String, BakedModel> entry : children.entrySet())
-            {
-                if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel)
-                {
+            for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+                if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel) {
                     sets.add(dataAwareBakedModel.getSupportedRenderTypes(state, rand, CombiningModel.Data.resolve(data, entry.getKey())));
                 }
             }
@@ -213,13 +183,10 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         }
 
         @Override
-        public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous)
-        {
+        public @NotNull Collection<RenderType> getSupportedRenderTypes(final ItemStack stack, final boolean fabulous) {
             var sets = new ArrayList<Collection<RenderType>>();
-            for (Map.Entry<String, BakedModel> entry : children.entrySet())
-            {
-                if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel)
-                {
+            for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
+                if (entry.getValue() instanceof IDataAwareBakedModel dataAwareBakedModel) {
                     sets.add(dataAwareBakedModel.getSupportedRenderTypes(stack, fabulous));
                 }
             }
@@ -227,19 +194,16 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
         }
 
         @Override
-        public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState pState, @Nullable final Direction pDirection, final @NotNull RandomSource pRandom)
-        {
+        public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState pState, @Nullable final Direction pDirection, final @NotNull RandomSource pRandom) {
             return getQuads(pState, pDirection, pRandom, IBlockModelData.empty(), null);
         }
 
         @Nullable
-        public BakedModel getPart(String name)
-        {
+        public BakedModel getPart(String name) {
             return children.get(name);
         }
 
-        public static class Builder implements IModelBuilder<Builder>
-        {
+        public static class Builder implements IModelBuilder<Builder> {
             private final boolean isAmbientOcclusion;
             private final boolean isGui3d;
             private final boolean isSideLit;
@@ -250,8 +214,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
             private TextureAtlasSprite particle;
             private RenderTypeGroup lastRenderTypes = RenderTypeGroup.EMPTY;
 
-            private Builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms)
-            {
+            private Builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms) {
                 this.isAmbientOcclusion = isAmbientOcclusion;
                 this.isGui3d = isGui3d;
                 this.isSideLit = isSideLit;
@@ -260,25 +223,20 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
                 this.transforms = transforms;
             }
 
-            public void addLayer(BakedModel model)
-            {
+            public void addLayer(BakedModel model) {
                 flushQuads(null);
                 children.add(model);
             }
 
-            private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads)
-            {
+            private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads) {
                 var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides, particle, renderTypes);
                 quads.forEach(q -> modelBuilder.addUnculledFace(renderTypes, q));
                 children.add(modelBuilder.build());
             }
 
-            private void flushQuads(RenderTypeGroup renderTypes)
-            {
-                if (!Objects.equals(renderTypes, lastRenderTypes))
-                {
-                    if (quads.size() > 0)
-                    {
+            private void flushQuads(RenderTypeGroup renderTypes) {
+                if (!Objects.equals(renderTypes, lastRenderTypes)) {
+                    if (quads.size() > 0) {
                         addLayer(lastRenderTypes, quads);
                         quads.clear();
                     }
@@ -286,39 +244,33 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
                 }
             }
 
-            public Builder setParticle(TextureAtlasSprite particleSprite)
-            {
+            public Builder setParticle(TextureAtlasSprite particleSprite) {
                 this.particle = particleSprite;
                 return this;
             }
 
             @Override
-            public Builder addCulledFace(final RenderTypeGroup group, final Direction facing, final BakedQuad quad)
-            {
+            public Builder addCulledFace(final RenderTypeGroup group, final Direction facing, final BakedQuad quad) {
                 flushQuads(group);
                 quads.add(quad);
                 return this;
             }
 
             @Override
-            public Builder addUnculledFace(final RenderTypeGroup group, final BakedQuad quad)
-            {
+            public Builder addUnculledFace(final RenderTypeGroup group, final BakedQuad quad) {
                 flushQuads(null);
                 quads.add(quad);
                 return this;
             }
 
-            public BakedModel build()
-            {
-                if (quads.size() > 0)
-                {
+            public BakedModel build() {
+                if (quads.size() > 0) {
                     addLayer(lastRenderTypes, quads);
                 }
                 var childrenBuilder = ImmutableMap.<String, BakedModel>builder();
                 var itemPassesBuilder = ImmutableList.<BakedModel>builder();
                 int i = 0;
-                for (var model : this.children)
-                {
+                for (var model : this.children) {
                     childrenBuilder.put("model_" + (i++), model);
                     itemPassesBuilder.add(model);
                 }
@@ -331,14 +283,12 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
     /**
      * A model data container which stores data for child components.
      */
-    public static class Data
-    {
+    public static class Data {
         public static final IModelDataKey<Data> PROPERTY = IModelDataKey.create();
 
         private final Map<String, IBlockModelData> partData;
 
-        private Data(Map<String, IBlockModelData> partData)
-        {
+        private Data(Map<String, IBlockModelData> partData) {
             this.partData = partData;
         }
 
@@ -349,8 +299,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
          * @param name      The name of the part to get data for
          * @return The data for the part, or the one passed in if not found
          */
-        public static IBlockModelData resolve(IBlockModelData modelData, String name)
-        {
+        public static IBlockModelData resolve(IBlockModelData modelData, String name) {
             var compositeData = modelData.getData(PROPERTY);
             if (compositeData == null)
                 return modelData;
@@ -358,45 +307,37 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
             return partData != null ? partData : modelData;
         }
 
-        public static Builder builder()
-        {
+        public static Builder builder() {
             return new Builder();
         }
 
         @Nullable
-        public IBlockModelData get(String name)
-        {
+        public IBlockModelData get(String name) {
             return partData.get(name);
         }
 
-        public static final class Builder
-        {
+        public static final class Builder {
             private final Map<String, IBlockModelData> partData = new IdentityHashMap<>();
 
-            public Builder with(String name, IBlockModelData data)
-            {
+            public Builder with(String name, IBlockModelData data) {
                 partData.put(name, data);
                 return this;
             }
 
-            public Data build()
-            {
+            public Data build() {
                 return new Data(partData);
             }
         }
     }
 
-    public static final class Loader implements IModelSpecificationLoader<CombiningModel>
-    {
+    public static final class Loader implements IModelSpecificationLoader<CombiningModel> {
         public static final Loader INSTANCE = new Loader();
 
-        private Loader()
-        {
+        private Loader() {
         }
 
         @Override
-        public CombiningModel read(JsonDeserializationContext deserializationContext, JsonObject jsonObject)
-        {
+        public CombiningModel read(JsonDeserializationContext deserializationContext, JsonObject jsonObject) {
             ImmutableMap.Builder<String, BlockModel> childrenBuilder = ImmutableMap.builder();
             readChildren(jsonObject, "children", deserializationContext, childrenBuilder, false);
             boolean logWarning = readChildren(jsonObject, "parts", deserializationContext, childrenBuilder, true);
@@ -408,14 +349,12 @@ public class CombiningModel implements IModelSpecification<CombiningModel>
             return new CombiningModel(children, logWarning);
         }
 
-        private boolean readChildren(JsonObject jsonObject, String name, JsonDeserializationContext deserializationContext, ImmutableMap.Builder<String, BlockModel> children, boolean logWarning)
-        {
+        private boolean readChildren(JsonObject jsonObject, String name, JsonDeserializationContext deserializationContext, ImmutableMap.Builder<String, BlockModel> children, boolean logWarning) {
             if (!jsonObject.has(name))
                 return false;
 
             var childrenJsonObject = jsonObject.getAsJsonObject(name);
-            for (Map.Entry<String, JsonElement> entry : childrenJsonObject.entrySet())
-            {
+            for (Map.Entry<String, JsonElement> entry : childrenJsonObject.entrySet()) {
                 children.put(entry.getKey(), deserializationContext.deserialize(entry.getValue(), BlockModel.class));
             }
             return logWarning;

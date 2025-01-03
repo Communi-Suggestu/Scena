@@ -6,6 +6,7 @@ import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.FabricModelManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.rendertype.FabricRenderTypeManager;
+import com.communi.suggestu.scena.fabric.platform.client.tooltip.ClientTooltipComponentConverterRegistry;
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -83,6 +84,11 @@ public final class FabricRenderingManager implements IRenderingManager
     public @NotNull IRenderTypeManager getRenderTypeManager()
     {
         return FabricRenderTypeManager.getInstance();
+    }
+
+    @Override
+    public void registerClientTooltipComponentConverter(Consumer<IClientTooltipComponentConverterRegistrar> callback) {
+        callback.accept(ClientTooltipComponentConverterRegistry.getInstance()::register);
     }
 
     @Override

@@ -7,6 +7,9 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
 import com.communi.suggestu.scena.forge.platform.registry.delegates.ForgeIdMapperPlatformDelegate;
 import com.communi.suggestu.scena.forge.platform.registry.delegates.ForgeRegistryPlatformDelegate;
 import com.communi.suggestu.scena.forge.platform.registry.registrar.ForgeRegistrarManager;
+import net.minecraft.client.main.GameConfig;
+import net.minecraft.core.IdMap;
+import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
@@ -26,7 +29,6 @@ public class ForgeRegistryManager implements IPlatformRegistryManager
 
     private final ForgeRegistryPlatformDelegate<Item>  itemRegistry  = new ForgeRegistryPlatformDelegate<>(BuiltInRegistries.ITEM);
     private final ForgeRegistryPlatformDelegate<Block>      blockRegistry      = new ForgeRegistryPlatformDelegate<>(BuiltInRegistries.BLOCK);
-    private final ForgeIdMapperPlatformDelegate<BlockState> blockStateIdMapper = new ForgeIdMapperPlatformDelegate<>(GameData.getBlockStateIDMap());
     private final ForgeRegistryPlatformDelegate<Fluid>      fluidRegistry      = new ForgeRegistryPlatformDelegate<>(BuiltInRegistries.FLUID);
 
     private ForgeRegistryManager()
@@ -52,9 +54,9 @@ public class ForgeRegistryManager implements IPlatformRegistryManager
     }
 
     @Override
-    public ISizedIdMap<BlockState> getBlockStateIdMap()
+    public IdMapper<BlockState> getBlockStateIdMap()
     {
-        return blockStateIdMapper;
+        return GameData.getBlockStateIDMap();
     }
 
     @Override

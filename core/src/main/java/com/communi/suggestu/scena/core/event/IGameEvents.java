@@ -98,4 +98,11 @@ public interface IGameEvents {
      * @return The entry point for the server post tick event.
      */
     IEventEntryPoint<IServerTickEvent> getServerPostTickEvent();
+
+    /**
+     * The entry point for when a data pack is synchronized.
+     *
+     * @return The entry point for the data pack sync event.
+     */
+    IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent();
 }

@@ -1,15 +1,14 @@
 package com.communi.suggestu.scena.fabric.platform.configuration;
 
-import com.communi.suggestu.scena.core.network.INetworkChannel;
-import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.google.gson.*;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.codec.StreamDecoder;
-import net.minecraft.network.codec.StreamMemberEncoder;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -26,6 +25,9 @@ public class FabricConfigurationNetworkingUtils
     }
 
     public static void registerNetworkingChannel(final Gson gson, Supplier<Map<String, FabricConfigurationSpec>> syncedSourcesProvider) {
+        PayloadTypeRegistry.playS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
+        PayloadTypeRegistry.configurationS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
+
         ClientPlayNetworking.registerGlobalReceiver(SyncedConfiguration.TYPE, (payload, context) -> {
             final JsonElement jsonElement = gson.fromJson(payload.specs(), JsonElement.class);
             if (!jsonElement.isJsonObject())
@@ -49,10 +51,13 @@ public class FabricConfigurationNetworkingUtils
 
     public record SyncedConfiguration(String specs) implements CustomPacketPayload {
 
-        public static final CustomPacketPayload.Type<SyncedConfiguration> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("scena", "synced_config"));
+        static StreamCodec<ByteBuf, SyncedConfiguration> STREAM_CODEC = ByteBufCodecs.STRING_UTF8
+                .map(SyncedConfiguration::new, SyncedConfiguration::specs);
+
+        public static final CustomPacketPayload.Type<SyncedConfiguration> TYPE = new CustomPacketPayload.Type<>(FabricConfigurationManager.CONFIG_SYNC_CHANNEL_ID);
 
         @Override
-        public Type<? extends CustomPacketPayload> type() {
+        public @NotNull Type<? extends CustomPacketPayload> type() {
             return TYPE;
         }
     }

@@ -28,11 +28,11 @@ public class FabricVanillaRegistryRegistrarDelegate<R extends T, T> implements I
     public <I extends R> IRegistryObject<I> register(final String name, final Supplier<? extends I> factory)
     {
         final I entry = factory.get();
-        if (entry instanceof SimpleCustomRegistryEntry registryEntry)
-            registryEntry.setRegistryName(new ResourceLocation(modId, name));
+        if (entry instanceof SimpleCustomRegistryEntry<?> registryEntry)
+            registryEntry.setRegistryName(ResourceLocation.fromNamespaceAndPath(modId, name));
 
-        Registry.register(this.vanillaRegistry, new ResourceLocation(modId, name), entry);
+        Registry.register(this.vanillaRegistry, ResourceLocation.fromNamespaceAndPath(modId, name), entry);
 
-        return new FabricVanillaRegistryRegistryObjectDelegate<>(new ResourceLocation(modId, name), entry);
+        return new FabricVanillaRegistryRegistryObjectDelegate<>(ResourceLocation.fromNamespaceAndPath(modId, name), entry);
     }
 }

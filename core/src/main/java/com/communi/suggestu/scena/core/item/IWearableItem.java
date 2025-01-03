@@ -12,7 +12,6 @@ public interface IWearableItem extends Equipable
      * The slot for the wearable item.
      *
      * @return The slot.
-     * @implNote By default, this method returns the same value as {@link #getEquipmentSlot()}.
      */
     default EquipmentSlot getSlot() {
         return this.getEquipmentSlot();

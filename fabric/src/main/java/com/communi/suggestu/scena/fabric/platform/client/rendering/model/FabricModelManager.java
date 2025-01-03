@@ -4,8 +4,7 @@ import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader.FabricBakedModelDelegate;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader.FabricPlatformModelLoaderPlatformDelegate;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -42,7 +41,7 @@ public final class FabricModelManager implements IModelManager
     @Override
     public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IModelSpecificationLoader<?> modelLoader)
     {
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> new FabricPlatformModelLoaderPlatformDelegate<>(name, modelLoader));
+        ModelLoadingPlugin.register(context -> context.resolveModel().register(new FabricPlatformModelLoaderPlatformDelegate<>(name, modelLoader)));
     }
 
     @Override

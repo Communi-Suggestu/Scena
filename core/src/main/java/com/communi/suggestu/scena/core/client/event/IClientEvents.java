@@ -58,4 +58,11 @@ public interface IClientEvents {
      * @return The entry point for the tooltip gather event.
      */
     IEventEntryPoint<IGatherTooltipEvent> getGatherTooltipEvent();
+
+    /**
+     * The entry point for when tooltip components are gathered.
+     *
+     * @return The entry point for the tooltip components gather event.
+     */
+    IEventEntryPoint<IGatherTooltipComponentsEvent> getGatherTooltipComponentsEvent();
 }

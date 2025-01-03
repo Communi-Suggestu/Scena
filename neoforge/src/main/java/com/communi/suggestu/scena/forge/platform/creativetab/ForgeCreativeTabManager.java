@@ -8,16 +8,12 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.util.MutableHashedLinkedMap;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID)
 public final class ForgeCreativeTabManager implements ICreativeTabManager {
@@ -49,13 +45,9 @@ public final class ForgeCreativeTabManager implements ICreativeTabManager {
         for (final CreativeTabModificationRegistration registration : getInstance().modificationRegistrations) {
             if (event.getTabKey() == registration.key()) {
                 final var adapter = registration.adapterConsumer();
-                adapter.accept(event.getFlags(), new Adapter(event.getEntries()), event.hasPermissions());
+                adapter.accept(event.getFlags(), new Adapter(event), event.hasPermissions());
             }
         }
-    }
-
-    record CreativeTabConstructionRegistration(@NotNull Consumer<CreativeModeTab.Builder> configurator,
-                                               @NotNull List<Object> afters, @NotNull List<Object> befores) {
     }
 
     record CreativeTabModificationRegistration(@NotNull ResourceKey<CreativeModeTab> key,
@@ -63,25 +55,25 @@ public final class ForgeCreativeTabManager implements ICreativeTabManager {
     }
 
     public static final class Adapter implements ICreativeTabManager.CreativeModeTabPopulator {
-        private final MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility> delegate;
+        private final BuildCreativeModeTabContentsEvent event;
 
-        public Adapter(MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility> delegate) {
-            this.delegate = delegate;
+        public Adapter(BuildCreativeModeTabContentsEvent event) {
+            this.event = event;
         }
 
         @Override
         public void prepend(ItemStack stack, CreativeModeTab.TabVisibility visibility) {
-            delegate.put(stack, visibility);
+            event.accept(stack, visibility);
         }
 
         @Override
         public void addAfter(ItemStack stack, CreativeModeTab.TabVisibility visibility, ItemStack after) {
-            delegate.putAfter(after, stack, visibility);
+            event.insertAfter(after, stack, visibility);
         }
 
         @Override
         public void addBefore(ItemStack stack, CreativeModeTab.TabVisibility visibility, ItemStack before) {
-            delegate.putBefore(before, stack, visibility);
+            event.insertBefore(before, stack, visibility);
         }
     }
 }

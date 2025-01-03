@@ -1,8 +1,12 @@
 package com.communi.suggestu.scena.forge.platform.fluid;
 
+import com.communi.suggestu.scena.core.IScenaPlatform;
+import com.communi.suggestu.scena.core.dist.Dist;
+import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.fluid.*;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
+import com.communi.suggestu.scena.forge.platform.ForgeScenaPlatform;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
@@ -11,7 +15,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -20,6 +27,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ForgeFluidManager implements IFluidManager {
@@ -36,8 +44,32 @@ public class ForgeFluidManager implements IFluidManager {
     @Override
     public FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler) {
         final IFluidVariantHandler handler = variantHandler.get();
+
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
         final IRegistryObject<FluidType> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
+
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
+            ForgeScenaPlatform platform = (ForgeScenaPlatform) IScenaPlatform.getInstance();
+            platform.getModBus().addListener((Consumer<RegisterClientExtensionsEvent>) registerClientExtensionsEvent -> registerClientExtensionsEvent.registerFluidType(new IClientFluidTypeExtensions() {
+                @Override
+                public int getTintColor(final @NotNull FluidStack stack)
+                {
+                    return handler.getTintColor(buildFluidInformation(stack));
+                }
+
+                @Override
+                public @NotNull ResourceLocation getStillTexture(final @NotNull FluidStack stack)
+                {
+                    return handler.getStillTexture(buildFluidInformation(stack)).orElseThrow();
+                }
+
+                @Override
+                public @NotNull ResourceLocation getFlowingTexture(final @NotNull FluidStack stack)
+                {
+                    return handler.getFlowingTexture(buildFluidInformation(stack)).orElseThrow();
+                }
+            }, fluidTypeRegistration.get()));
+        });
 
         final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registries.FLUID, name.getNamespace());
         final IRegistryObject<Fluid> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);

@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.rendering;
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
+import com.communi.suggestu.scena.core.client.tooltip.IClientTooltipComponentConverter;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -104,6 +106,13 @@ public interface IRenderingManager
     IRenderTypeManager getRenderTypeManager();
 
     /**
+     * Registers a callback which can register a new {@link IClientTooltipComponentConverter} for the current platform.
+     *
+     * @param callback The callback that registers the converter.
+     */
+    void registerClientTooltipComponentConverter(final Consumer<IClientTooltipComponentConverterRegistrar> callback);
+
+    /**
      * Registers a callback which can register a new {@link BlockEntityWithoutLevelRenderer} for a specific item.
      *
      * @param callback The callback that registers the renderer.
@@ -154,5 +163,16 @@ public interface IRenderingManager
          * @param <T> The type of the block entity.
          */
         <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider);
+    }
+
+    interface IClientTooltipComponentConverterRegistrar {
+
+        /**
+         * Registers a new {@link IClientTooltipComponentConverter} for the current platform.
+         *
+         * @param tooltipComponentType The type of {@link net.minecraft.world.inventory.tooltip.TooltipComponent} this converter can convert.
+         * @param converter The converter to register.
+         */
+        <T extends TooltipComponent> void registerConvert(final Class<T> tooltipComponentType, final IClientTooltipComponentConverter converter);
     }
 }

@@ -17,7 +17,6 @@ import java.util.function.Function;
 public final class ForgeModelGeometryToSpecificationPlatformDelegator<T extends IModelSpecification<T>>
         implements IUnbakedGeometry<ForgeModelGeometryToSpecificationPlatformDelegator<T>>
 {
-
     private final T delegate;
 
     public ForgeModelGeometryToSpecificationPlatformDelegator(final T delegate)
@@ -26,11 +25,11 @@ public final class ForgeModelGeometryToSpecificationPlatformDelegator<T extends 
     }
 
     @Override
-    public @NotNull BakedModel bake(@NotNull IGeometryBakingContext context, @NotNull ModelBaker baker, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelState, @NotNull ItemOverrides overrides, @NotNull ResourceLocation modelLocation) {
+    public @NotNull BakedModel bake(@NotNull IGeometryBakingContext context, @NotNull ModelBaker baker, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelState, @NotNull ItemOverrides overrides) {
         final ForgeModelBakingContextDelegate contextDelegate = new ForgeModelBakingContextDelegate(baker::getModel, baker, context);
 
         return new ForgeBakedModelDelegate(delegate.bake(
-                contextDelegate, baker, spriteGetter, modelState, modelLocation
+                contextDelegate, baker, spriteGetter, modelState
         ));
     }
 }

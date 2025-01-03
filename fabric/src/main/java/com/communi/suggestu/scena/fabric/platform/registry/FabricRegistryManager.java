@@ -1,13 +1,11 @@
 package com.communi.suggestu.scena.fabric.platform.registry;
 
-import com.communi.suggestu.scena.fabric.platform.registry.delegates.FabricIdMapperPlatformDelegate;
-import com.communi.suggestu.scena.fabric.platform.registry.delegates.FabricRegistryPlatformDelegate;
-import com.communi.suggestu.scena.fabric.platform.registry.registar.FabricRegistrarManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistry;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
-import com.communi.suggestu.scena.core.registries.ISizedIdMap;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
-import net.minecraft.core.Registry;
+import com.communi.suggestu.scena.fabric.platform.registry.delegates.FabricRegistryPlatformDelegate;
+import com.communi.suggestu.scena.fabric.platform.registry.registar.FabricRegistrarManager;
+import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -42,9 +40,9 @@ public final class FabricRegistryManager implements IPlatformRegistryManager
     }
 
     @Override
-    public ISizedIdMap<BlockState> getBlockStateIdMap()
+    public IdMapper<BlockState> getBlockStateIdMap()
     {
-        return new FabricIdMapperPlatformDelegate<>(Block.BLOCK_STATE_REGISTRY);
+        return Block.BLOCK_STATE_REGISTRY;
     }
 
     @Override

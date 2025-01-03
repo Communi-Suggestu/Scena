@@ -16,7 +16,7 @@ public abstract class FluidTypeFluidMixin
 
     @SuppressWarnings("ConstantConditions")
     @Unique
-    public Fluid getThis() {
+    public Fluid scena$getThis() {
         return (Fluid) (Object) this;
     }
 
@@ -27,7 +27,7 @@ public abstract class FluidTypeFluidMixin
             remap = false
     )
     private void onGetFluidType(final CallbackInfoReturnable<FluidType> cir) {
-        if (getThis() instanceof FluidWithHandler withHandler) {
+        if (scena$getThis() instanceof FluidWithHandler withHandler) {
             cir.setReturnValue(new ForgeFluidTypeDelegate(withHandler.getVariantHandler()));
         }
     }

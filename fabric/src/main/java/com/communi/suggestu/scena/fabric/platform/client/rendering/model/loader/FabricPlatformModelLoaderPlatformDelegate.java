@@ -8,18 +8,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
-import net.fabricmc.fabric.api.client.model.ModelProviderContext;
-import net.fabricmc.fabric.api.client.model.ModelProviderException;
-import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelResolver;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -30,7 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Optional;
 
-public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpecificationLoader<S>, S extends IModelSpecification<S>> implements ModelResourceProvider
+public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpecificationLoader<S>, S extends IModelSpecification<S>> implements ModelResolver
 {
 
     private final Gson gson;
@@ -51,13 +42,11 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
                             .create();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public @Nullable UnbakedModel loadModelResource(final ResourceLocation resourceLocation, final ModelProviderContext modelProviderContext) throws ModelProviderException
-    {
+    public @Nullable UnbakedModel resolveModel(Context context) {
         try
         {
-            final ResourceLocation target = new ResourceLocation(resourceLocation.getNamespace(), "models/" + resourceLocation.getPath() + ".json");
+            final ResourceLocation target = context.id().withPrefix("models/").withSuffix(".json");
 
             final Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(target);
             if (resource.isEmpty())
@@ -82,7 +71,7 @@ public final class FabricPlatformModelLoaderPlatformDelegate<L extends IModelSpe
         }
         catch (IOException e)
         {
-            throw new ModelProviderException("Failed to find and read resource", e);
+            throw new IllegalStateException("Failed to find and read resource", e);
         }
     }
 }

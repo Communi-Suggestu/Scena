@@ -20,12 +20,12 @@ public class ClientInitHandler
     public static void onFMLClientSetup(final FMLClientSetupEvent event)
     {
         if (IOptifineCompatibilityManager.getInstance().isInstalled()) {
-            NeoForge.EVENT_BUS.addListener((Consumer<RenderLevelStageEvent>) event1 -> {
-                if (event1.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
+            NeoForge.EVENT_BUS.addListener((Consumer<RenderLevelStageEvent>) stageEvent -> {
+                if (stageEvent.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
                     return;
                 }
 
-                NeoForge.EVENT_BUS.post(new ForgeScenaRenderWorldLastEvent(event1.getLevelRenderer(), event1.getPartialTick(), event1.getPoseStack()));
+                NeoForge.EVENT_BUS.post(new ForgeScenaRenderWorldLastEvent(stageEvent.getLevelRenderer(), stageEvent.getCamera().getPartialTickTime(), stageEvent.getPoseStack()));
             });
         }
     }

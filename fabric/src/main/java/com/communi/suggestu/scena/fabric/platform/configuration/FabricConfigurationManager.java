@@ -11,15 +11,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,7 +31,7 @@ public final class FabricConfigurationManager implements IConfigurationManager
             .setPrettyPrinting()
             .create();
 
-    private static final ResourceLocation CONFIG_SYNC_CHANNEL_ID = new ResourceLocation("scena", "config_sync");
+    public static final ResourceLocation CONFIG_SYNC_CHANNEL_ID = ResourceLocation.fromNamespaceAndPath("scena", "config_sync");
     private static final FabricConfigurationManager INSTANCE = new FabricConfigurationManager();
 
     public static FabricConfigurationManager getInstance()
@@ -47,9 +44,9 @@ public final class FabricConfigurationManager implements IConfigurationManager
 
     private FabricConfigurationManager()
     {
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
-          GSON,
-          () -> this.syncedSources
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
+                GSON,
+                () -> this.syncedSources
         ));
 
         ServerPlayConnectionEvents.JOIN.register((listener, packetSender, minecraftServer) -> syncTo(listener.getPlayer()));
@@ -93,8 +90,8 @@ public final class FabricConfigurationManager implements IConfigurationManager
     private JsonObject loadLocalConfig(final String name) {
         try
         {
-            final File configurationDirectory = FabricLoader.getInstance().getConfigDirectory();
-            final Path configPath = Path.of(configurationDirectory.getAbsolutePath(), name + ".json");
+            final Path configurationDirectory = FabricLoader.getInstance().getConfigDir();
+            final Path configPath = configurationDirectory.resolve(name + ".json");
 
             final FileReader fileReader = new FileReader(configPath.toAbsolutePath().toFile().getAbsolutePath());
 
@@ -113,8 +110,8 @@ public final class FabricConfigurationManager implements IConfigurationManager
     }
 
     private boolean doesLocalConfigExist(final String name) {
-        final File configurationDirectory = FabricLoader.getInstance().getConfigDirectory();
-        final Path configPath = Path.of(configurationDirectory.getAbsolutePath(), name + ".json");
+        final Path configurationDirectory = FabricLoader.getInstance().getConfigDir();
+        final Path configPath = configurationDirectory.resolve(name + ".json");
         return Files.exists(configPath);
     }
 
@@ -122,8 +119,8 @@ public final class FabricConfigurationManager implements IConfigurationManager
     private void saveLocalConfig(final String name, final JsonObject config) {
         try
         {
-            final File configurationDirectory = FabricLoader.getInstance().getConfigDirectory();
-            final Path configPath = Path.of(configurationDirectory.getAbsolutePath(), name + ".json");
+            final Path configurationDirectory = FabricLoader.getInstance().getConfigDir();
+            final Path configPath = configurationDirectory.resolve(name + ".json");
             if (Files.exists(configPath))
                 Files.delete(configPath);
 

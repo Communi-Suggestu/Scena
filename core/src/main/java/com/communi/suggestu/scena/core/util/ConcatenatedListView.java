@@ -20,9 +20,9 @@ import java.util.Spliterator;
 import java.util.function.Supplier;
 
 /**
- * A list that concatenates multiple other lists for efficient iteration.<p/>
+ * A list that concatenates multiple other lists for efficient iteration.
  * You may use this in place of creating a new list and calling {@link List#addAll(Collection)}
- * for each of your collections.<p/>
+ * for each of your collections.
  * This list does not support modification operations, but the underlying lists may be mutated safely externally.
  */
 public class ConcatenatedListView<T> implements List<T>

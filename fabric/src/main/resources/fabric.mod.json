@@ -33,5 +33,13 @@
     "saeculariacaudices": "${saeculariaCaudicesVersion}"
   },
   "suggests": {
+  },
+
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_773": [
+        "com/communi/suggestu/scena/fabric/platform/client/rendering/model/IModelBakeryAccessor"
+      ]
+    }
   }
 }

@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.forge.platform.client.rendering;
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
+import com.communi.suggestu.scena.core.client.tooltip.IClientTooltipComponentConverter;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.communi.suggestu.scena.forge.utils.Constants;
@@ -11,12 +12,14 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -24,6 +27,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -35,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 ;
 
@@ -50,6 +55,7 @@ public class ForgeRenderingManager implements IRenderingManager
 
     private final List<Consumer<IBlockEntityRendererRegistrar>> blockEntityRegistrars = Collections.synchronizedList(Lists.newArrayList());
     private final List<Consumer<IBlockEntityWithoutLevelRendererRegistrar>> blockEntityWithoutLevelRegistrars = Collections.synchronizedList(Lists.newArrayList());
+    private final List<Consumer<IClientTooltipComponentConverterRegistrar>> clientTooltipComponentConverterRegistrars = Collections.synchronizedList(Lists.newArrayList());
     private final AtomicBoolean registered = new AtomicBoolean(false);
     private final Map<Item, BlockEntityWithoutLevelRenderer> bewlrs = Maps.newConcurrentMap();
 
@@ -108,6 +114,16 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @Override
+    public void registerClientTooltipComponentConverter(Consumer<IClientTooltipComponentConverterRegistrar> callback) {
+        if (registered.get())
+        {
+            throw new IllegalStateException("Cannot register a client tooltip component converter after the client setup event has been fired.");
+        }
+
+        clientTooltipComponentConverterRegistrars.add(callback);
+    }
+
+    @Override
     public void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback)
     {
         if (registered.get())
@@ -135,6 +151,18 @@ public class ForgeRenderingManager implements IRenderingManager
         getInstance().registered.set(true);
         getInstance().blockEntityWithoutLevelRegistrars.forEach(callback -> callback.accept((item, renderer) -> getInstance().bewlrs.put(item, renderer)));
         getInstance().blockEntityRegistrars.forEach(callback -> callback.accept(BlockEntityRenderers::register));
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event) {
+        getInstance().clientTooltipComponentConverterRegistrars.forEach(callback -> callback.accept(
+                new IClientTooltipComponentConverterRegistrar() {
+                    @Override
+                    public <T extends TooltipComponent> void registerConvert(Class<T> tooltipComponentType, IClientTooltipComponentConverter converter) {
+                        event.register(tooltipComponentType, converter::convert);
+                    }
+                }
+        ));
     }
 
     @Override

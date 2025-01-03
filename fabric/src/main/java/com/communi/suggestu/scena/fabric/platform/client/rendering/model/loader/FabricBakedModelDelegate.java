@@ -3,20 +3,26 @@ package com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader
 import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.IDelegatingBakedModel;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
+import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;
 import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.material.ShadeMode;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
+import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -146,7 +152,6 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         final List<BakedQuad> quads = dataAwareBakedModel.getQuads(blockState, direction, supplier.get(), blockModelData, renderType);
 
         final RenderMaterial material = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).materialFinder().blendMode(0, BlendMode.fromRenderLayer(renderType)).find();
-
         quads.forEach(quad -> {
             final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
             final QuadEmitter emitter = meshBuilder.getEmitter();
@@ -168,13 +173,40 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
                         supplier.get().nextInt()
                 );
 
-        renderContext.pushTransform(quad -> true);
+        if (itemModel == null)
+            return;
 
-        if (itemModel != null) {
-            itemModel.emitItemQuads(itemStack, supplier, renderContext);
+        Collection<RenderType> supportedRenderTypes = IRenderTypeManager.getInstance().getRenderTypesFor(itemModel, itemStack,
+                Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FABULOUS);
+        if (itemModel instanceof IDataAwareBakedModel dataAwareBakedModel) {
+            supportedRenderTypes = dataAwareBakedModel.getSupportedRenderTypes(itemStack, Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FABULOUS);
         }
 
-        renderContext.popTransform();
+        if (supportedRenderTypes.isEmpty()) {
+            return;
+        }
+
+        final RenderMaterial cutOutMaterial = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).materialFinder().blendMode(BlendMode.CUTOUT).shadeMode(ShadeMode.VANILLA).find();
+        final RenderMaterial translucentMaterial = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).materialFinder().blendMode(BlendMode.TRANSLUCENT).shadeMode(ShadeMode.VANILLA).find();
+
+        for (RenderType supportedRenderType : supportedRenderTypes) {
+            RenderMaterial material = supportedRenderType == RenderType.translucent() ||
+                    supportedRenderType == Sheets.translucentItemSheet() ||
+                    supportedRenderType == Sheets.translucentCullBlockSheet() ? translucentMaterial : cutOutMaterial;
+
+            renderContext.pushTransform(quad -> {
+                quad.material(material);
+                quad.color(-1, -1, -1, -1);
+                return true;
+            });
+
+            itemModel.emitItemQuads(itemStack, supplier, renderContext);
+
+            renderContext.popTransform();
+        }
+
+
+
     }
 
     @FunctionalInterface

@@ -10,7 +10,6 @@ public final class PayloadPhase<T extends FriendlyByteBuf> {
     public static PayloadPhase<RegistryFriendlyByteBuf> PLAY = new PayloadPhase<>();
 
     private PayloadPhase() {
-        throw new IllegalStateException("PayloadPhase should not be instantiated");
     }
 
     @Override

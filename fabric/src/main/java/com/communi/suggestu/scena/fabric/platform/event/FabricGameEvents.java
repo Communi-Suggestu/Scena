@@ -65,6 +65,12 @@ public final class FabricGameEvents implements IGameEvents {
         }
     });
 
+    public static final Event<IDataPackSyncEvent> DATA_PACK_SYNC = EventFactory.createArrayBacked(IDataPackSyncEvent.class, callbacks -> (playerList, players) -> {
+        for (IDataPackSyncEvent callback : callbacks) {
+            callback.onSync(playerList, players);
+        }
+    });
+
     private FabricGameEvents() {
     }
 
@@ -170,6 +176,11 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IServerTickEvent> getServerPostTickEvent() {
         return FabricEventEntryPoint.create(ServerTickEvents.END_SERVER_TICK, iServerTickEvent -> iServerTickEvent::onTick);
+    }
+
+    @Override
+    public IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent() {
+        return FabricEventEntryPoint.create(DATA_PACK_SYNC, Function.identity());
     }
 
     private static InteractionResult mapResult(

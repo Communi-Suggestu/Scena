@@ -30,7 +30,6 @@ project.runs {
     server { }
 
     configureEach { run ->
-        run.modSource project(":core").sourceSets.main
         run.modSource sourceSets.main
         run.jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
     }

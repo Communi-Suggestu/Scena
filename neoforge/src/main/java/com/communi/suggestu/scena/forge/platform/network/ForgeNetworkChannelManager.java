@@ -1,15 +1,19 @@
 package com.communi.suggestu.scena.forge.platform.network;
 
+import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.network.INetworkChannel;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.network.PayloadDirection;
 import com.communi.suggestu.scena.core.network.PayloadPhase;
+import com.communi.suggestu.scena.forge.accessors.CommonAccessors;
+import com.communi.suggestu.scena.forge.platform.client.accessors.ClientAccessors;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -69,7 +73,22 @@ public class ForgeNetworkChannelManager implements INetworkChannelManager {
         final PayloadDirection direction = registration.direction();
 
         final Registrator<T, B> registrator = getRegistrator(registrar, phase, direction);
-        registrator.register(type, codec, (payload, context) -> registration.handler().execute(payload, context.flow() == PacketFlow.SERVERBOUND, context.player(), context::enqueueWork));
+        registrator.register(type, codec, (payload, context) -> {
+            Player player;
+            try {
+                player = context.player();
+            } catch (Exception e) {
+                player = DistExecutor.safeRunForDist(
+                        () -> ClientAccessors::getPlayer,
+                        () -> CommonAccessors::getNull
+                );
+            }
+
+            registration.handler().execute(payload,
+                    context.flow() == PacketFlow.SERVERBOUND,
+                    player,
+                    context::enqueueWork);
+        });
     }
 
     @SuppressWarnings("unchecked")

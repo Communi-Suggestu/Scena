@@ -18,8 +18,7 @@ import java.util.Optional;
  * Allows access to game objects based on the world position.
  * Not every platform supports this natively, so we sometimes have to use different tactics to implement this.
  */
-public interface ILevelBasedPropertyAccessor
-{
+public interface ILevelBasedPropertyAccessor extends CanBeGrassCheck {
 
     /**
      * Gives access to level based property accessors.
@@ -101,12 +100,12 @@ public interface ILevelBasedPropertyAccessor
     /**
      * Returns the beacon color multiplier of the blockstate on the given position in the block getter for the given beacon position.
      *
-     * @param levelReader The level reader to pull the multiplier from.
+     * @param level The level reader to pull the multiplier from.
      * @param pos The position to get the blockstate from.
-     * @param beaconPos The position of the beacon.
-     * @return The color multiplier for the beacon.
+     * @param beacon The position of the beacon.
+     * @return The ARGB32 Color multiplier.
      */
-    float[] getBeaconColorMultiplier(LevelReader levelReader, BlockPos pos, BlockPos beaconPos);
+    Integer getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon);
 
     /**
      * Returns the sound type of the blockstate on the given position for the given entity.
@@ -128,15 +127,4 @@ public interface ILevelBasedPropertyAccessor
      */
     float getExplosionResistance(BlockGetter blockGetter, BlockPos position, Explosion explosion);
 
-    /**
-     * Determines if the target blockstate at the target position can have the grass state on the grass position below it become a grass block.
-     *
-     * @param levelReader The level reader of the world.
-     * @param grassState The state of the grass supporting block.
-     * @param grassBlockPos The position of the grass supporting block.
-     * @param targetState The target state of the block above the grass.
-     * @param targetPosition The position of the target state in the level reader.
-     * @return An optional indicating if the target can sustain the grass state. Empty if no decision can be made and vanilla logic needs to be executed.
-     */
-    Optional<Boolean> canBeGrass(LevelReader levelReader, BlockState grassState, BlockPos grassBlockPos, BlockState targetState, BlockPos targetPosition);
 }

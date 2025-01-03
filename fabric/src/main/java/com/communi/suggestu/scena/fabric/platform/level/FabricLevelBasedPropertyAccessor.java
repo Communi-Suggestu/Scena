@@ -82,17 +82,17 @@ public final class FabricLevelBasedPropertyAccessor implements ILevelBasedProper
     }
 
     @Override
-    public float[] getBeaconColorMultiplier(final LevelReader levelReader, final BlockPos blockPos, final BlockPos beaconPos)
+    public Integer getBeaconColorMultiplier(LevelReader level, BlockPos pos, BlockPos beacon)
     {
-        final BlockState blockState = levelReader.getBlockState(blockPos);
+        final BlockState blockState = level.getBlockState(pos);
         if (blockState.getBlock() instanceof IBlockWithWorldlyProperties blockWithWorldlyProperties) {
             return blockWithWorldlyProperties.getBeaconColorMultiplier(
-              blockState, levelReader, blockPos, beaconPos
+              blockState, level, pos, beacon
             );
         }
 
         if (blockState.getBlock() instanceof BeaconBeamBlock beaconBeamBlock) {
-            return beaconBeamBlock.getColor().getTextureDiffuseColors();
+            return beaconBeamBlock.getColor().getTextureDiffuseColor();
         }
 
         return null;

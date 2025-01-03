@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.SoundAction;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -17,7 +18,6 @@ import static com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager.
 
 public class ForgeFluidTypeDelegate extends FluidType
 {
-
     private final IFluidVariantHandler delegate;
 
     public ForgeFluidTypeDelegate(final IFluidVariantHandler delegate)
@@ -27,13 +27,13 @@ public class ForgeFluidTypeDelegate extends FluidType
     }
 
     @Override
-    public Component getDescription(final FluidStack stack)
+    public @NotNull Component getDescription(final @NotNull FluidStack stack)
     {
         return this.delegate.getName(buildFluidInformation(stack));
     }
 
     @Override
-    public @Nullable SoundEvent getSound(final FluidStack stack, final SoundAction action)
+    public @Nullable SoundEvent getSound(final @NotNull FluidStack stack, final @NotNull SoundAction action)
     {
         if (action == SoundActions.BUCKET_FILL) {
             return this.delegate.getFillSound(buildFluidInformation(stack)).orElse(null);
@@ -45,50 +45,26 @@ public class ForgeFluidTypeDelegate extends FluidType
     }
 
     @Override
-    public int getLightLevel(final FluidStack stack)
+    public int getLightLevel(final @NotNull FluidStack stack)
     {
         return delegate.getLuminance(buildFluidInformation(stack));
     }
 
     @Override
-    public int getDensity(final FluidStack stack)
+    public int getDensity(final @NotNull FluidStack stack)
     {
         return delegate.getDensity(buildFluidInformation(stack));
     }
 
     @Override
-    public int getTemperature(final FluidStack stack)
+    public int getTemperature(final @NotNull FluidStack stack)
     {
         return delegate.getTemperature(buildFluidInformation(stack));
     }
 
     @Override
-    public int getViscosity(final FluidStack stack)
+    public int getViscosity(final @NotNull FluidStack stack)
     {
         return delegate.getViscosity(buildFluidInformation(stack));
-    }
-
-    @Override
-    public void initializeClient(final Consumer<IClientFluidTypeExtensions> consumer)
-    {
-        consumer.accept(new IClientFluidTypeExtensions() {
-            @Override
-            public int getTintColor(final FluidStack stack)
-            {
-                return delegate.getTintColor(buildFluidInformation(stack));
-            }
-
-            @Override
-            public ResourceLocation getStillTexture(final FluidStack stack)
-            {
-                return delegate.getStillTexture(buildFluidInformation(stack)).orElseThrow();
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture(final FluidStack stack)
-            {
-                return delegate.getFlowingTexture(buildFluidInformation(stack)).orElseThrow();
-            }
-        });
     }
 }

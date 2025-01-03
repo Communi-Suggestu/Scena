@@ -57,7 +57,7 @@ public class ForgeLevelBasedPropertyAccessor implements ILevelBasedPropertyAcces
     }
 
     @Override
-    public float[] getBeaconColorMultiplier(final LevelReader levelReader, final BlockPos pos, final BlockPos beaconPos)
+    public Integer getBeaconColorMultiplier(final LevelReader levelReader, final BlockPos pos, final BlockPos beaconPos)
     {
         return levelReader.getBlockState(pos)
           .getBeaconColorMultiplier(levelReader, pos, beaconPos);

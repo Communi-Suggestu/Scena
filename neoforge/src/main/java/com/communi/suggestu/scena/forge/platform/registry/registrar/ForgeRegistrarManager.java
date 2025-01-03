@@ -11,7 +11,6 @@ import com.communi.suggestu.scena.forge.platform.ForgeScenaPlatform;
 import com.communi.suggestu.scena.forge.platform.registry.registrar.delegates.ForgeDeferredRegisterPlatformDelegate;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 @SuppressWarnings({"rawtypes", "unchecked"})

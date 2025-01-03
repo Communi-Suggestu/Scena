@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.core.registries;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
+import net.minecraft.core.IdMapper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,7 +49,7 @@ public interface IPlatformRegistryManager
      *
      * @return The id to object map for blockstates.
      */
-    ISizedIdMap<BlockState> getBlockStateIdMap();
+    IdMapper<BlockState> getBlockStateIdMap();
 
     /**
      * Gives access to the fluid registry.

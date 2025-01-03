@@ -8,7 +8,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -25,18 +24,18 @@ public class FabricExtendedBlockModel extends BlockModel
     }
 
     @Override
-    public BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation) {
+    public @NotNull BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state) {
         final FabricModelBakingContextDelegate context = new FabricModelBakingContextDelegate(this);
 
-        final BakedModel bakedModel = specification.bake(context, modelBaker, function, modelState, resourceLocation);
+        final BakedModel bakedModel = specification.bake(context, baker, spriteGetter, state);
         return new FabricBakedModelDelegate(bakedModel);
     }
 
     @Override
-    public @NotNull BakedModel bake(ModelBaker modelBaker, BlockModel blockModel, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation, boolean bl) {
+    public @NotNull BakedModel bake(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, boolean guiLight3d) {
         final FabricModelBakingContextDelegate context = new FabricModelBakingContextDelegate(this);
 
-        final BakedModel bakedModel = specification.bake(context, modelBaker, function, modelState, resourceLocation);
+        final BakedModel bakedModel = specification.bake(context, baker, spriteGetter, state);
         return new FabricBakedModelDelegate(bakedModel);
     }
 }

@@ -2,6 +2,8 @@ package com.communi.suggestu.scena.core.registries;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Objects;
+
 public abstract class AbstractCustomRegistryEntry implements ICustomRegistryEntry
 {
     private ResourceLocation registryName;
@@ -21,5 +23,16 @@ public abstract class AbstractCustomRegistryEntry implements ICustomRegistryEntr
         }
 
         this.registryName = registryName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AbstractCustomRegistryEntry that)) return false;
+        return Objects.equals(getRegistryName(), that.getRegistryName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getRegistryName());
     }
 }

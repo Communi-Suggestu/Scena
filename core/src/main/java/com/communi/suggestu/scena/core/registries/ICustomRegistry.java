@@ -1,6 +1,9 @@
 package com.communi.suggestu.scena.core.registries;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
@@ -14,6 +17,19 @@ import java.util.function.Consumer;
  */
 public interface ICustomRegistry<T extends ICustomRegistryEntry>
 {
+
+    /**
+     * The codec used to serialize and deserialize the registry entries.
+     * @return The codec.
+     */
+    Codec<T> byNameCodec();
+
+    /**
+     * The codec used to serialize and deserialize the registry entries to a stream.
+     *
+     * @return The codec.
+     */
+    StreamCodec<ByteBuf, T> byNameStreamCodec();
 
     /**
      * Gives access to all values in the registry.
@@ -35,6 +51,17 @@ public interface ICustomRegistry<T extends ICustomRegistryEntry>
      * @return An optional with the lookup result, empty if the name is not used by any object in the registry.
      */
     Optional<T> get(final ResourceLocation name);
+
+    /**
+     * Gives access to the value with the given name in the registry.
+     * An exception is thrown if no object is registered with the given name.
+     *
+     * @param name The name to lookup.
+     * @return The lookup result.
+     */
+    default T getOrThrow(final ResourceLocation name) {
+        return get(name).orElseThrow(() -> new IllegalStateException("Unknown registry name: " + name));
+    }
 
     /**
      * Callback executor for each of the values in the registry.

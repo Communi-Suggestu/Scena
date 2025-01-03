@@ -1,5 +1,6 @@
 package com.communi.suggestu.scena.core.registries;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 
 /**

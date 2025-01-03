@@ -2,8 +2,10 @@ package com.communi.suggestu.scena.forge.mixin.platform.client;
 
 import com.communi.suggestu.scena.core.client.integration.IOptifineCompatibilityManager;
 import com.communi.suggestu.scena.forge.platform.client.event.ForgeScenaRenderWorldLastEvent;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -25,7 +27,7 @@ public abstract class LevelRendererBeforeDebugRenderingHookMixin
       method = {"renderLevel"},
       at = {@At(
         value = "INVOKE",
-        target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;)V"
+        target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;Ljava/util/function/Predicate;)V"
       )}
     )
     private void onRenderParticles(CallbackInfo ci) {
@@ -36,17 +38,16 @@ public abstract class LevelRendererBeforeDebugRenderingHookMixin
       method = {"renderLevel"},
       at = {@At(
         value = "INVOKE",
-        target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"
+        target = "Lnet/minecraft/client/renderer/debug/DebugRenderer;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;DDD)V"
       )}
     )
-    private void beforeDebugRender(PoseStack poseStack, float partialTicks, long startTimeNano, boolean shouldRenderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci) {
+    private void beforeDebugRender(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci, @Local PoseStack poseStack) {
         if (!didRenderParticles)
             return;
 
         didRenderParticles = false;
         final LevelRenderer levelRenderer = (LevelRenderer) (Object) this;
 
-        NeoForge.EVENT_BUS.post(new ForgeScenaRenderWorldLastEvent(levelRenderer, partialTicks, poseStack));
+        NeoForge.EVENT_BUS.post(new ForgeScenaRenderWorldLastEvent(levelRenderer, camera.getPartialTickTime(), poseStack));
     }
-
 }

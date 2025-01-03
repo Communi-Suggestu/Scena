@@ -2,11 +2,12 @@ package com.communi.suggestu.scena.forge.platform.event;
 
 import com.communi.suggestu.scena.core.event.*;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -23,7 +24,7 @@ public final class ForgeGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IItemEntityPickupEvent> getItemEntityPickupEvent() {
-        return EventBusEventEntryPoint.forge(EntityItemPickupEvent.class, (event, handler) -> handler.handle(event.getItem(), event.getEntity()));
+        return EventBusEventEntryPoint.forge(ItemEntityPickupEvent.Pre.class, (event, handler) -> handler.handle(event.getItemEntity(), event.getPlayer()));
     }
 
     @Override
@@ -34,8 +35,8 @@ public final class ForgeGameEvents implements IGameEvents {
             final IPlayerLeftClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
             event.setCanceled(result.handled() || event.isCanceled());
-            event.setUseItem(Event.Result.valueOf(result.useItemResult().name()));
-            event.setUseBlock(Event.Result.valueOf(result.useBlockResult().name()));
+            event.setUseItem(fromResult(result.useItemResult()));
+            event.setUseBlock(fromResult(result.useBlockResult()));
 
         });
     }
@@ -48,8 +49,8 @@ public final class ForgeGameEvents implements IGameEvents {
             final IPlayerRightClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
             event.setCanceled(result.handled() || event.isCanceled());
-            event.setUseItem(Event.Result.valueOf(result.useItemResult().name()));
-            event.setUseBlock(Event.Result.valueOf(result.useBlockResult().name()));
+            event.setUseItem(fromResult(result.useItemResult()));
+            event.setUseBlock(fromResult(result.useBlockResult()));
         });
     }
 
@@ -105,6 +106,21 @@ public final class ForgeGameEvents implements IGameEvents {
         return EventBusEventEntryPoint.forge(ServerTickEvent.Post.class, (event, handler) -> {
             handler.onTick(event.getServer());
         });
+    }
+
+    @Override
+    public IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent() {
+        return EventBusEventEntryPoint.forge(OnDatapackSyncEvent.class, (event, handler) -> {
+            handler.onSync(event.getPlayerList(), event.getRelevantPlayers());
+        });
+    }
+
+    private static TriState fromResult(ProcessingResult result) {
+        return switch (result) {
+            case DENY -> TriState.FALSE;
+            case ALLOW -> TriState.TRUE;
+            default -> TriState.DEFAULT;
+        };
     }
 
     private ForgeGameEvents() {
