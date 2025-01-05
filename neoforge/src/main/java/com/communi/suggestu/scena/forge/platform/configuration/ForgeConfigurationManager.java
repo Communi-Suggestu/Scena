@@ -23,17 +23,10 @@ public class ForgeConfigurationManager implements IConfigurationManager {
     }
 
     @Override
-    public IConfigurationBuilder createBuilder(
-            final ConfigurationType type, final String name) {
+    public IConfigurationBuilder createBuilder(final ConfigurationType type, final String name, final String commentPrefix) {
         return new ForgeDelegateConfigurationBuilder(forgeConfigSpec -> {
-            ConfigTracker.INSTANCE.registerConfig(
-                    remapType(type),
-                    forgeConfigSpec,
-                    ModLoadingContext.get().getActiveContainer(),
-                    String.format("%s.toml", name)
-            );
-        },
-                availableKeys::add);
+            ConfigTracker.INSTANCE.registerConfig(remapType(type), forgeConfigSpec, ModLoadingContext.get().getActiveContainer(), String.format("%s.toml", name));
+        }, availableKeys::add, commentPrefix);
     }
 
     private static ModConfig.Type remapType(final ConfigurationType type) {

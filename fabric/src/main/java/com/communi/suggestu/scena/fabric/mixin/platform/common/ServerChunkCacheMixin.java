@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ServerChunkCache.class)
+@Mixin(value = ServerChunkCache.class, priority = 1100)
 public abstract class ServerChunkCacheMixin {
 
     @Shadow
@@ -21,13 +21,19 @@ public abstract class ServerChunkCacheMixin {
     protected abstract ChunkHolder getVisibleChunkIfPresent(long chunkPos);
 
     @Inject(
-        method = "getChunk",
-        at = @At(
-                value = "INVOKE",
-                target = "Lnet/minecraft/util/profiling/ProfilerFiller;incrementCounter(Ljava/lang/String;)V",
-                ordinal = 1
-        ),
-        cancellable = true
+            method = "getChunk",
+            at = {
+                    @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;incrementCounter(Ljava/lang/String;)V",
+                    ordinal = 1),
+                    @At(
+                    value = "INVOKE",
+                    target = "/getChunkBlocking/",
+                    ordinal = 0)
+            },
+            allow = 1,
+            cancellable = true
     )
     public void shortCircuitChunkLoadingFutureIfInCurrentlyLoadingChunk(int x, int z, ChunkStatus chunkStatus, boolean requireChunk, CallbackInfoReturnable<ChunkAccess> cir) {
         long l = ChunkPos.asLong(x, z);

@@ -81,7 +81,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
         return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker), bakedParts);
     }
 
-    private static class Baked implements IDataAwareBakedModel {
+    public static class Baked implements IDataAwareBakedModel {
         private final boolean isAmbientOcclusion;
         private final boolean isGui3d;
         private final boolean isSideLit;

@@ -48,7 +48,7 @@ public class ForgeFluidManager implements IFluidManager {
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
         final IRegistryObject<FluidType> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ForgeScenaPlatform platform = (ForgeScenaPlatform) IScenaPlatform.getInstance();
             platform.getModBus().addListener((Consumer<RegisterClientExtensionsEvent>) registerClientExtensionsEvent -> registerClientExtensionsEvent.registerFluidType(new IClientFluidTypeExtensions() {
                 @Override

@@ -6,6 +6,21 @@ project.ext.remapTaskClass = Class.forName('net.fabricmc.loom.task.RemapJarTask'
 
 project.addCoreProject()
 
+def shaderCompatEnabled = Boolean.parseBoolean(project.enableShaderCompat)
+
+sourceSets {
+    if (shaderCompatEnabled) {
+        main {
+            java {
+                srcDir "src/shaders/java"
+            }
+            resources {
+                srcDir "src/shaders/resources"
+            }
+        }
+    }
+}
+
 def remappedAttribute = Attribute.of("net.fabric.loom.remapped", Boolean)
 project.configurations.modImplementation {
     attributes {
@@ -18,6 +33,20 @@ project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fab
 project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
 project.dependencies.modImplementation "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
 
+if (shaderCompatEnabled) {
+    project.dependencies.modCompileOnly("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-fabric")
+    project.dependencies.modCompileOnly("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-fabric")
+    project.dependencies.modCompileOnly("org.antlr:antlr4-runtime:4.13.1")
+    project.dependencies.modCompileOnly("io.github.douira:glsl-transformer:2.0.1")
+    project.dependencies.modCompileOnly("org.anarres:jcpp:1.4.14")
+    project.dependencies.modLocalRuntime("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-fabric")
+    project.dependencies.modLocalRuntime("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-fabric")
+    project.dependencies.modLocalRuntime("org.antlr:antlr4-runtime:4.13.1")
+    project.dependencies.modLocalRuntime("io.github.douira:glsl-transformer:2.0.1")
+    project.dependencies.modLocalRuntime("org.anarres:jcpp:1.4.14")
+}
+
+
 project.dependencies.include "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
 
 project.dependencies.mappings loom.layered() { layer ->
@@ -27,16 +56,7 @@ project.dependencies.mappings loom.layered() { layer ->
 
 project.loom.accessWidenerPath = project(':common').file("scena.accesswidener")
 project.tasks.processResources.from project(':common').file("scena.accesswidener")
-
-def interpolationProperties = [
-        'version'                  : "${rootProject.version}",
-        'mcVersion'                : "${project.getAllSupportedMcVersionsAsStringArray()}",
-        'saeculariaCaudicesVersion': "${project.saeculariaCaudicesVersion}"
-]
-project.tasks.processResources.filesMatching("fabric.mod.json") {
-    expand(interpolationProperties)
-}
-project.tasks.processResources.inputs.properties(interpolationProperties)
+project.setupResourceProcessing(project.sourceSets.main)
 
 project.remapJar.addNestedDependencies = true
 
@@ -54,5 +74,53 @@ project.loom {
             ideConfigGenerated(true)
             runDir("runs/server")
         }
+    }
+}
+
+if (project.isRunningWithIdea()) {
+    //We are in a special mode that requires us to redirect the process resources tasks to the idea out directory.
+    //We only care for our own output for now, dependency projects will need to be handled separately.
+    def copyIdeaResources = project.tasks.register("copyIdeaResources", Copy) {
+        from project.tasks.named("processResources", Copy).map { it.destinationDir }
+        into project.file("out/production/resources")
+    }
+
+    project.tasks.processResources.finalizedBy(copyIdeaResources)
+}
+
+def ideaSyncRunModifier = project.tasks.register("ideaSyncRunModifier") {
+    doLast {
+        def runConfigurationsDir = project.rootProject.file(".idea/runConfigurations")
+        runConfigurationsDir.listFiles().each { file ->
+            if (!file.name.endsWith(".xml")) {
+                return
+            }
+
+            def content = file.text
+            def targetContent = "<option name=\"Gradle.BeforeRunTask\" enabled=\"true\" tasks=\"processResources\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" vmOptions=\"\" scriptParameters=\"-PrunsWithIdea=true\" />"
+            def alternativeTarget = "<option enabled=\"true\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" name=\"Gradle.BeforeRunTask\" scriptParameters=\"-PrunsWithIdea=true\" tasks=\"processResources\" vmOptions=\"\"/>"
+            def beforeMarker = "</method>"
+            if (content.contains(targetContent) || content.contains(alternativeTarget)) {
+                return
+            }
+
+            def contentParts = content.split(beforeMarker)
+            if (contentParts.size() != 2) {
+                return
+            }
+
+            def newContent = contentParts[0] + targetContent + beforeMarker + contentParts[1]
+            file.write(newContent)
+        }
+    }
+}
+
+tasks.named("ideaSyncTask") {
+    finalizedBy(ideaSyncRunModifier)
+}
+
+idea {
+    module {
+        excludeDirs += file("src/main/templates")
     }
 }

@@ -1,11 +1,25 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+import java.nio.file.Files
+
 plugins {
     id "net.neoforged.gradle.common"
 }
 
 project.group = "com.communi-suggestu.scena"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
+
+allprojects { Project project ->
+    project.ext.isRunningWithIdea = {
+        final File DotIdeaDirectory = new File(project.rootProject.getProjectDir(), ".idea");
+        final File GradleXml = new File(DotIdeaDirectory, "gradle.xml");
+        try {
+            return new String(Files.readAllBytes(GradleXml.toPath())).contains("<option name=\"delegatedBuild\" value=\"false\" />");
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
+}
 
 subprojects { Project subProject ->
     subProject.apply { configure ->
@@ -20,6 +34,21 @@ subprojects { Project subProject ->
     subProject.repositories.maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+    }
+    subProject.repositories.maven { url"https://maven.su5ed.dev/releases" }
+    subProject.repositories {
+        // Other repositories can go above or below Modrinth's. We don't need priority :)
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            filter {
+                includeGroup "maven.modrinth"
+            }
+        }
     }
 
     subProject.group = rootProject.group
@@ -80,6 +109,10 @@ subprojects { Project subProject ->
     subProject.ext.buildSupportedVersionRange = { v ->
         def nextMajorComponent = determineNextMajorVersion(v)
         return "[${v},${nextMajorComponent})".toString()
+    }
+
+    subProject.ext.buildSupportedNpmVersionRange = { v ->
+        return "~${v}".toString()
     }
 
     subProject.ext.addCoreProject = {
@@ -190,26 +223,37 @@ subprojects { Project subProject ->
                 "forgeVersion"                           : project.forgeVersion,
                 "minecraftVersion"                       : project.minecraftVersion,
                 "supportedSaeculariaCaudicesVersionRange": buildSupportedVersionRange(rootProject.saeculariaCaudicesVersion),
+                "supportedSaeculariaCaudicesNpmVersionRange" : buildSupportedNpmVersionRange(rootProject.saeculariaCaudicesVersion),
                 "saeculariaCaudicesVersion"              : project.saeculariaCaudicesVersion,
                 "fabricVersion"                          : project.fabricVersion,
                 "fabricLoaderVersion"                    : project.fabricLoaderVersion,
+                "javaVersion"                            : project.javaVersion,
         ]
 
         return propertiesToExpand
     }
 
-    subProject.ext.setupResourceProcessing = { copyTask ->
-        copyTask.rename({ fileName ->
-            if (fileName != "mixins.json") {
-                return fileName
-            } else {
-                return "${rootProject.name.toLowerCase()}.mixins.json"
+    subProject.ext.setupResourceProcessing = { SourceSet sourceSet ->
+        subProject.tasks.named(sourceSet.processResourcesTaskName, {Task copyTask ->
+            def resourcesDir = sourceSet.resources.srcDirs[0]
+            def templateDir = resourcesDir.parentFile.toPath().resolve("templates").toFile()
+            subProject.logger.warn("Template dir: ${templateDir}")
+            if (templateDir.exists()) {
+                copyTask.from(templateDir)
             }
+
+            copyTask.rename({ fileName ->
+                if (fileName != "mixins.json") {
+                    return fileName
+                } else {
+                    return "${rootProject.name.toLowerCase()}.mixins.json"
+                }
+            })
+            copyTask.filesMatching(["META-INF/neoforge.mods.toml", "pack.mcmeta", "mixins.json", "chiselsandbits.mixins.json".toString(), "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
+                filter(ReplaceTokens, tokens: getIdentifiers())
+            }
+            copyTask.getInputs().properties(getIdentifiers())
         })
-        copyTask.filesMatching(["META-INF/neoforge.mods.toml", "pack.mcmeta", "mixins.json", "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
-            filter(ReplaceTokens, tokens: getIdentifiers())
-        }
-        copyTask.getInputs().properties(getIdentifiers())
     }
 
     subProject.afterEvaluate {
@@ -249,6 +293,16 @@ subprojects { Project subProject ->
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+if (isRunningWithIdea()) {
+    idea {
+        project {
+            runs {
+                runWithIdea()
             }
         }
     }

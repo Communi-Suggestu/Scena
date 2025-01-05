@@ -18,7 +18,8 @@ public interface IConfigurationManager
      *
      * @param type The type of the configuration.
      * @param name The name of the configuration.
+     * @param commentPrefix the prefix for all comment translation keys.
      * @return The builder for the configuration.
      */
-    IConfigurationBuilder createBuilder(final ConfigurationType type, final String name);
+    IConfigurationBuilder createBuilder(final ConfigurationType type, final String name, final String commentPrefix);
 }

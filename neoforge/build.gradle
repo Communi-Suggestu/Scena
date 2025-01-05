@@ -14,7 +14,20 @@ subsystems {
     }
 }
 
+def shaderCompatEnabled = Boolean.parseBoolean(project.enableShaderCompat)
+
 sourceSets {
+    if (shaderCompatEnabled) {
+        main {
+            java {
+                srcDir "src/shaders/java"
+            }
+            resources {
+                srcDir "src/shaders/resources"
+            }
+        }
+    }
+
     configureEach {
         runs {
             modIdentifier "scena"
@@ -31,7 +44,6 @@ project.runs {
 
     configureEach { run ->
         run.modSource sourceSets.main
-        run.jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
     }
 }
 
@@ -41,13 +53,31 @@ project.dependencies.includedLibraries("com.communi-suggestu.saecularia-caudices
     jarJar.ranged(it, buildSupportedVersionRange(project.saeculariaCaudicesVersion))
 }
 
+if (shaderCompatEnabled) {
+    project.dependencies.compileOnly("maven.modrinth:embeddium:${project.embeddiumVersion}+mc${project.minecraftVersion}")
+    project.dependencies.compileOnly("maven.modrinth:monocle-iris:${project.monocleVersion}")
+    project.dependencies.compileOnly("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-neoforge")
+    project.dependencies.compileOnly("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-neoforge")
+    //project.dependencies.localRuntime("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-neoforge")
+    project.dependencies.localRuntime("maven.modrinth:embeddium:${project.embeddiumVersion}+mc${project.minecraftVersion}")
+    project.dependencies.compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:${project.sodiumFabricApiVersion}")
+    project.dependencies.compileOnly("org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:${project.sodiumFabricRendererVersion}")
+}
+
 project.tasks.processResources.from(project(":common").file("forge.accesstransformer.cfg"), (CopySpec spec) -> {
     spec.into("META-INF")
     spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
 })
-project.setupResourceProcessing(project.tasks.processResources)
+project.setupResourceProcessing(project.sourceSets.main)
+
 
 tasks.jarJar.configuration project.configurations.includedLibraries
 tasks.jarJar.archiveClassifier.set("")
 tasks.jar.archiveClassifier.set("slim")
 tasks.assemble.dependsOn tasks.jarJar
+
+idea {
+    module {
+        excludeDirs += file("src/main/templates")
+    }
+}

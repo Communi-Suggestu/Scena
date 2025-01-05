@@ -1,5 +1,6 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.client;
 
+import com.communi.suggestu.scena.fabric.platform.client.rendering.IGuiGraphicsTooltipHandler;
 import com.communi.suggestu.scena.fabric.platform.client.tooltip.TooltipUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(GuiGraphics.class)
-public class GuiGraphicsMixin {
+public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler {
 
     @Unique
     private ItemStack currentStack = ItemStack.EMPTY;
@@ -42,5 +43,10 @@ public class GuiGraphicsMixin {
                 this.currentStack,
                 components
         );
+    }
+
+    @Override
+    public void scena$setCurrentStack(ItemStack stack) {
+        this.currentStack = stack;
     }
 }

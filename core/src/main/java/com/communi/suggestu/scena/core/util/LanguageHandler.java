@@ -1,4 +1,4 @@
-package com.communi.suggestu.scena.forge.utils;
+package com.communi.suggestu.scena.core.util;
 
 import com.communi.suggestu.scena.core.dist.Dist;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
@@ -80,7 +80,7 @@ public final class LanguageHandler
 
         private LanguageCache()
         {
-            final String fileLoc = "assets/" + Constants.MOD_ID + "/lang/%s.json";
+            final String fileLoc = "assets/scena/lang/%s.json";
             load(fileLoc);
         }
 

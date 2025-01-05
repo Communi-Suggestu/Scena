@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "scena",
-  "version": "${version}",
+  "version": "@version@",
 
   "name": "Scena",
   "description": "Cross-Platform API for Fabric, Quilt and Forge",
@@ -22,15 +22,16 @@
     ]
   },
   "mixins": [
-    "scena.mixins.json"
+    "scena.mixins.json",
+    "scena.shaders.mixins.json"
   ],
   "accessWidener" : "scena.accesswidener",
   "depends": {
-    "fabricloader": ">=0.12.0",
-    "fabric": "*",
-    "minecraft": ["${mcVersion}"],
-    "java": ">=17",
-    "saeculariacaudices": "${saeculariaCaudicesVersion}"
+    "fabricloader": ">=@fabricLoaderVersion@",
+    "fabric": ">=@fabricVersion@",
+    "minecraft": ["@minecraftVersion@"],
+    "java": ">=@javaVersion@",
+    "saeculariacaudices": "@supportedSaeculariaCaudicesNpmVersionRange@"
   },
   "suggests": {
   },

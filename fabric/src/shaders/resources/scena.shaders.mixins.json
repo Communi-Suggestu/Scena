@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "plugin": "com.communi.suggestu.scena.fabric.mixin.compat.ShaderCompatMixinPlugin",
+  "package": "com.communi.suggestu.scena.fabric.mixin.compat",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+  ],
+  "client": [
+    "sodium.IrisCompatibleFabricBakedModelDelegate",
+    "sodium.BlockRendererAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

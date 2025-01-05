@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager.buildFluidStack;
 
+@SuppressWarnings("OptionalOfNullableMisuse")
 public class ForgeFluidVariantHandlerDelegate implements IFluidVariantHandler
 {
 

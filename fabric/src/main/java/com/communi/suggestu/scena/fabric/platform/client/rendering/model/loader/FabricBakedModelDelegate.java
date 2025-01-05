@@ -152,13 +152,13 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
         final List<BakedQuad> quads = dataAwareBakedModel.getQuads(blockState, direction, supplier.get(), blockModelData, renderType);
 
         final RenderMaterial material = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).materialFinder().blendMode(0, BlendMode.fromRenderLayer(renderType)).find();
-        quads.forEach(quad -> {
+        for (BakedQuad quad : quads) {
             final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
             final QuadEmitter emitter = meshBuilder.getEmitter();
             emitter.fromVanilla(quad, material, direction);
             emitter.emit();
-            renderContext.meshConsumer().accept(meshBuilder.build());
-        });
+            meshBuilder.build().outputTo(renderContext.getEmitter());
+        }
     }
 
     @Override
@@ -196,7 +196,6 @@ public class FabricBakedModelDelegate implements BakedModel, IDelegatingBakedMod
 
             renderContext.pushTransform(quad -> {
                 quad.material(material);
-                quad.color(-1, -1, -1, -1);
                 return true;
             });
 

@@ -44,7 +44,7 @@ public final class FabricConfigurationManager implements IConfigurationManager
 
     private FabricConfigurationManager()
     {
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
                 GSON,
                 () -> this.syncedSources
         ));
@@ -65,7 +65,7 @@ public final class FabricConfigurationManager implements IConfigurationManager
 
     @Override
     public IConfigurationBuilder createBuilder(
-      final ConfigurationType type, final String name)
+      final ConfigurationType type, final String name, final String commentPrefix)
     {
         final JsonObject localConfig = doesLocalConfigExist(name) ? loadLocalConfig(name) : new JsonObject();
         final FabricConfigurationSource source = new FabricConfigurationSource(name, localConfig);

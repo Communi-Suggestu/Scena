@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "plugin": "com.communi.suggestu.scena.forge.mixin.compat.ShaderCompatMixinPlugin",
+  "package": "com.communi.suggestu.scena.forge.mixin.compat",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "scena.mixins.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "shaders.sodium.MixinAbstractBlockRenderContext",
+    "shaders.sodium.BlockRendererAccessor",
+    "shaders.embeddium.MixinBlockRenderer"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

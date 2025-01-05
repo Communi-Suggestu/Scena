@@ -4,16 +4,17 @@ import com.communi.suggestu.scena.core.network.INetworkChannel;
 import com.communi.suggestu.scena.core.network.PayloadDirection;
 import com.communi.suggestu.scena.core.network.PayloadPhase;
 import com.mojang.logging.LogUtils;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ServerPacketListener;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.slf4j.Logger;
@@ -21,8 +22,6 @@ import org.slf4j.Logger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public final class FabricNetworkChannel implements INetworkChannel {
 
@@ -74,7 +73,9 @@ public final class FabricNetworkChannel implements INetworkChannel {
     private static <T extends CustomPacketPayload> void registryReceiver(CustomPacketPayload.Type<T> type, MessageExecutionHandler<T> handler, PayloadPhase<?> phase, PayloadDirection direction) {
         if (phase == PayloadPhase.PLAY) {
             if (direction == PayloadDirection.CLIENTBOUND || direction == PayloadDirection.BOTH) {
-                ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) -> handler.execute(payload, false, context.player(), context.client()::execute));
+                if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                    ClientFabricNetworkAdapter.registerGlobalPlayHandler(type, handler);
+                }
             }
 
             if (direction == PayloadDirection.SERVERBOUND || direction == PayloadDirection.BOTH) {
@@ -84,7 +85,9 @@ public final class FabricNetworkChannel implements INetworkChannel {
 
         if (phase == PayloadPhase.CONFIG) {
             if (direction == PayloadDirection.CLIENTBOUND || direction == PayloadDirection.BOTH) {
-                ClientConfigurationNetworking.registerGlobalReceiver(type, (payload, context) -> handler.execute(payload, false, null, context.client()::execute));
+                if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                    ClientFabricNetworkAdapter.registerGlobalConfigurationHandler(type, handler);
+                }
             }
 
             if (direction == PayloadDirection.SERVERBOUND || direction == PayloadDirection.BOTH) {
