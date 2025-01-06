@@ -197,22 +197,22 @@ public class FluidCuboidUtils
         switch (face)
         {
             case DOWN, UP -> {
-                minU = sprite.getU(xt1 * size);
-                maxU = sprite.getU(xt2 * size);
-                minV = sprite.getV(zt1 * size);
-                maxV = sprite.getV(zt2 * size);
+                minU = sprite.getU(xt1);
+                maxU = sprite.getU(xt2);
+                minV = sprite.getV(zt1);
+                maxV = sprite.getV(zt2);
             }
             case NORTH, SOUTH -> {
-                minU = sprite.getU(xt2 * size);
-                maxU = sprite.getU(xt1 * size);
-                minV = sprite.getV(yt1 * size);
-                maxV = sprite.getV(yt2 * size);
+                minU = sprite.getU(xt2);
+                maxU = sprite.getU(xt1);
+                minV = sprite.getV(yt1);
+                maxV = sprite.getV(yt2);
             }
             case WEST, EAST -> {
-                minU = sprite.getU(zt2 * size);
-                maxU = sprite.getU(zt1 * size);
-                minV = sprite.getV(yt1 * size);
-                maxV = sprite.getV(yt2 * size);
+                minU = sprite.getU(zt2);
+                maxU = sprite.getU(zt1);
+                minV = sprite.getV(yt1);
+                maxV = sprite.getV(yt2);
             }
             default -> {
                 minU = sprite.getU0();

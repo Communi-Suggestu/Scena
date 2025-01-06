@@ -80,4 +80,8 @@ public class ForgeFluidVariantHandlerDelegate implements IFluidVariantHandler
     {
         return Optional.ofNullable(IClientFluidTypeExtensions.of(delegate).getFlowingTexture(buildFluidStack(variant)));
     }
+
+    public FluidType getDelegate() {
+        return delegate;
+    }
 }

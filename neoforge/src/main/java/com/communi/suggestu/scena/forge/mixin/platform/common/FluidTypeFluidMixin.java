@@ -1,7 +1,9 @@
 package com.communi.suggestu.scena.forge.mixin.platform.common;
 
 import com.communi.suggestu.scena.core.fluid.FluidWithHandler;
+import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidTypeDelegate;
+import com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidVariantHandlerDelegate;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,6 +30,13 @@ public abstract class FluidTypeFluidMixin
     )
     private void onGetFluidType(final CallbackInfoReturnable<FluidType> cir) {
         if (scena$getThis() instanceof FluidWithHandler withHandler) {
+            final IFluidVariantHandler handler = withHandler.getVariantHandler();
+            if (handler instanceof ForgeFluidVariantHandlerDelegate forgeHandler &&
+                forgeHandler.getDelegate() instanceof ForgeFluidTypeDelegate delegate) {
+                cir.setReturnValue(delegate);
+                return;
+            }
+
             cir.setReturnValue(new ForgeFluidTypeDelegate(withHandler.getVariantHandler()));
         }
     }
