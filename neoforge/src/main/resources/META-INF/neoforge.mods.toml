@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="$project.license"
+
+[[mods]] #mandatory
+modId="$project.mod.id"
+version="$version"
+displayName="$name"
+authors="$project.author"
+logoFile="logo-forge.png"
+description='''
+$project.description
+'''
+[[dependencies.$project.mod.id]]
+    modId="neoforge" #mandatory
+    required=true #mandatory
+    versionRange="$dependencies.net.neoforged.neoforge.maven"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.$project.mod.id]]
+    modId="minecraft" #mandatory
+    required=true #mandatory
+    versionRange="${minecraft.range.neoforge.get()}"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.$project.mod.id]]
+    modId="saeculariacaudices"
+    required=true
+    versionRange="$dependencies.com.communi_suggestu.saecularia_caudices.neoforge.maven"
+    ordering="AFTER"
+    side="BOTH"
+[[mixins]]
+config="scena.mixins.json"
+# [[mixins]]
+# config="scena.mixins.shaders.json"

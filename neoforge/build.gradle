@@ -1,83 +1,41 @@
 plugins {
-    id 'net.neoforged.gradle.userdev'
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.62'
+    id 'com.communi-suggestu.obumbratio' version '0.0.0-fix'
 }
 
-configurations.create("includedLibraries")
-configurations.api.extendsFrom configurations.includedLibraries
-
-project.addCoreProject()
-
-subsystems {
-    parchment {
-        minecraftVersion = project.parchmentMinecraftVersion
-        mappingsVersion = project.parchmentVersion
+platform {
+    neoforge {
+        version = "21.1.+"
+        accessTransformers.from(rootProject.files("common/forge.accesstransformer.cfg"))
     }
 }
 
-def shaderCompatEnabled = Boolean.parseBoolean(project.enableShaderCompat)
-
-sourceSets {
-    if (shaderCompatEnabled) {
-        main {
-            java {
-                srcDir "src/shaders/java"
-            }
-            resources {
-                srcDir "src/shaders/resources"
-            }
+tableau {
+    project {
+        group = "com.communi-suggestu.scena"
+        publisher = "communi-suggestu"
+        versioning {
+            version = environmentVariable("VERSION")
+                    .orElse(property("local.version"))
+            suffix = ""
         }
     }
-
-    configureEach {
-        runs {
-            modIdentifier "scena"
-        }
+    maven {
+        publishToLDTTeamMaven('communi-suggestu-saecularia-caudices')
+        publishLocally()
+        pom({
+            usingMitLicense()
+            usingGit()
+        })
     }
 }
 
-project.minecraft.accessTransformers.file project(":common").file("forge.accesstransformer.cfg")
-
-project.runs {
-    client { }
-
-    server { }
-
-    configureEach { run ->
-        run.modSource sourceSets.main
-    }
+shaders {
+    enable()
+    embeddium()
+    neoforge()
 }
 
-
-project.dependencies.implementation "net.neoforged:neoforge:${project.forgeVersion}"
-project.dependencies.includedLibraries("com.communi-suggestu.saecularia-caudices:saecularia-caudices-neoforge:${project.saeculariaCaudicesVersion}") {
-    jarJar.ranged(it, buildSupportedVersionRange(project.saeculariaCaudicesVersion))
-}
-
-if (shaderCompatEnabled) {
-    project.dependencies.compileOnly("maven.modrinth:embeddium:${project.embeddiumVersion}+mc${project.minecraftVersion}")
-    project.dependencies.compileOnly("maven.modrinth:monocle-iris:${project.monocleVersion}")
-    project.dependencies.compileOnly("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-neoforge")
-    project.dependencies.compileOnly("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-neoforge")
-    //project.dependencies.localRuntime("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-neoforge")
-    project.dependencies.localRuntime("maven.modrinth:embeddium:${project.embeddiumVersion}+mc${project.minecraftVersion}")
-    project.dependencies.compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:${project.sodiumFabricApiVersion}")
-    project.dependencies.compileOnly("org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:${project.sodiumFabricRendererVersion}")
-}
-
-project.tasks.processResources.from(project(":common").file("forge.accesstransformer.cfg"), (CopySpec spec) -> {
-    spec.into("META-INF")
-    spec.rename("forge.accesstransformer.cfg", "accesstransformer.cfg")
-})
-project.setupResourceProcessing(project.sourceSets.main)
-
-
-tasks.jarJar.configuration project.configurations.includedLibraries
-tasks.jarJar.archiveClassifier.set("")
-tasks.jar.archiveClassifier.set("slim")
-tasks.assemble.dependsOn tasks.jarJar
-
-idea {
-    module {
-        excludeDirs += file("src/main/templates")
-    }
+dependencies {
+    includedLibraries "com.communi-suggestu.saecularia-caudices:neoforge:${project.property('communi.suggestu.saecularia.caudices.version')}"
 }

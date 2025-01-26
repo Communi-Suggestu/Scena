@@ -1,126 +1,42 @@
 plugins {
-    id 'fabric-loom'
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.62'
+    id 'com.communi-suggestu.obumbratio' version '0.0.0-fix'
 }
 
-project.ext.remapTaskClass = Class.forName('net.fabricmc.loom.task.RemapJarTask')
+platform {
+    fabric {
+        loaderVersion = "0.16.7"
+        apiVersion = "0.114.0"
+        accessWideners = rootProject.file("common/scena.accesswidener")
+    }
+}
 
-project.addCoreProject()
-
-def shaderCompatEnabled = Boolean.parseBoolean(project.enableShaderCompat)
-
-sourceSets {
-    if (shaderCompatEnabled) {
-        main {
-            java {
-                srcDir "src/shaders/java"
-            }
-            resources {
-                srcDir "src/shaders/resources"
-            }
+tableau {
+    project {
+        group = "com.communi-suggestu.scena"
+        publisher = "communi-suggestu"
+        versioning {
+            version = environmentVariable("VERSION")
+                    .orElse(property("local.version"))
+            suffix = ""
         }
     }
-}
-
-def remappedAttribute = Attribute.of("net.fabric.loom.remapped", Boolean)
-project.configurations.modImplementation {
-    attributes {
-        attribute(remappedAttribute, true)
+    maven {
+        publishToLDTTeamMaven('communi-suggestu-saecularia-caudices')
+        publishLocally()
+        pom({
+            usingMitLicense()
+            usingGit()
+        })
     }
 }
 
-project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}"
-project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
-project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
-project.dependencies.modImplementation "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
-
-if (shaderCompatEnabled) {
-    project.dependencies.modCompileOnly("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-fabric")
-    project.dependencies.modCompileOnly("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-fabric")
-    project.dependencies.modCompileOnly("org.antlr:antlr4-runtime:4.13.1")
-    project.dependencies.modCompileOnly("io.github.douira:glsl-transformer:2.0.1")
-    project.dependencies.modCompileOnly("org.anarres:jcpp:1.4.14")
-    project.dependencies.modLocalRuntime("maven.modrinth:sodium:mc${project.minecraftVersion}-${project.sodiumVersion}-fabric")
-    project.dependencies.modLocalRuntime("maven.modrinth:iris:${project.irisVersion}+${project.minecraftVersion}-fabric")
-    project.dependencies.modLocalRuntime("org.antlr:antlr4-runtime:4.13.1")
-    project.dependencies.modLocalRuntime("io.github.douira:glsl-transformer:2.0.1")
-    project.dependencies.modLocalRuntime("org.anarres:jcpp:1.4.14")
+shaders {
+    sodium()
+    fabric()
 }
 
-
-project.dependencies.include "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
-
-project.dependencies.mappings loom.layered() { layer ->
-    layer.officialMojangMappings()
-    layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
-}
-
-project.loom.accessWidenerPath = project(':common').file("scena.accesswidener")
-project.tasks.processResources.from project(':common').file("scena.accesswidener")
-project.setupResourceProcessing(project.sourceSets.main)
-
-project.remapJar.addNestedDependencies = true
-
-project.loom {
-    runs {
-        client {
-            client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("runs/client")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("runs/server")
-        }
-    }
-}
-
-if (project.isRunningWithIdea()) {
-    //We are in a special mode that requires us to redirect the process resources tasks to the idea out directory.
-    //We only care for our own output for now, dependency projects will need to be handled separately.
-    def copyIdeaResources = project.tasks.register("copyIdeaResources", Copy) {
-        from project.tasks.named("processResources", Copy).map { it.destinationDir }
-        into project.file("out/production/resources")
-    }
-
-    project.tasks.processResources.finalizedBy(copyIdeaResources)
-}
-
-def ideaSyncRunModifier = project.tasks.register("ideaSyncRunModifier") {
-    doLast {
-        def runConfigurationsDir = project.rootProject.file(".idea/runConfigurations")
-        runConfigurationsDir.listFiles().each { file ->
-            if (!file.name.endsWith(".xml")) {
-                return
-            }
-
-            def content = file.text
-            def targetContent = "<option name=\"Gradle.BeforeRunTask\" enabled=\"true\" tasks=\"processResources\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" vmOptions=\"\" scriptParameters=\"-PrunsWithIdea=true\" />"
-            def alternativeTarget = "<option enabled=\"true\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" name=\"Gradle.BeforeRunTask\" scriptParameters=\"-PrunsWithIdea=true\" tasks=\"processResources\" vmOptions=\"\"/>"
-            def beforeMarker = "</method>"
-            if (content.contains(targetContent) || content.contains(alternativeTarget)) {
-                return
-            }
-
-            def contentParts = content.split(beforeMarker)
-            if (contentParts.size() != 2) {
-                return
-            }
-
-            def newContent = contentParts[0] + targetContent + beforeMarker + contentParts[1]
-            file.write(newContent)
-        }
-    }
-}
-
-tasks.named("ideaSyncTask") {
-    finalizedBy(ideaSyncRunModifier)
-}
-
-idea {
-    module {
-        excludeDirs += file("src/main/templates")
-    }
+dependencies {
+    modImplementation "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
+    include "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
 }

@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "scena",
-  "version": "@version@",
+  "id": "$project.mod.id",
+  "version": "$version",
 
-  "name": "Scena",
-  "description": "Cross-Platform API for Fabric, Quilt and Forge",
+  "name": "$project.root.name",
+  "description": "$project.description",
   "authors": [
-    "OrionDevelopment"
+    "$project.author"
   ],
   "contact": {
     "sources": "https://github.com/Communi-Suggestu/Scena"
   },
 
-  "license": "MIT",
+  "license": "$project.license",
   "icon": "logo.png",
 
   "environment": "*",
@@ -27,11 +27,11 @@
   ],
   "accessWidener" : "scena.accesswidener",
   "depends": {
-    "fabricloader": ">=@fabricLoaderVersion@",
-    "fabric": ">=@fabricVersion@",
-    "minecraft": ["@minecraftVersion@"],
-    "java": ">=@javaVersion@",
-    "saeculariacaudices": "@supportedSaeculariaCaudicesNpmVersionRange@"
+    "fabricloader": "$dependencies.net.fabricmc.fabric.loader.npm",
+    "fabric": "$dependencies.net.fabricmc.fabric_api.fabric.api.npm",
+    "minecraft": [${minecraft.range.fabric.get()}],
+    "java": ">=${java.version.get()}",
+    "saeculariacaudices": "$dependencies.com.communi_suggestu.saecularia_caudices.fabric.npm"
   },
   "suggests": {
   },
