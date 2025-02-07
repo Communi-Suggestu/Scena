@@ -32,6 +32,7 @@ tableau {
 
 shaders {
     enable()
+    sodium()
     embeddium()
     neoforge()
 }

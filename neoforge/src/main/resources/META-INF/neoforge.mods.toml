@@ -31,5 +31,9 @@ $project.description
     side="BOTH"
 [[mixins]]
 config="scena.mixins.json"
-# [[mixins]]
-# config="scena.mixins.shaders.json"
+[[mixins]]
+config="scena.mixins.sodium.json"
+requiredMods=["sodium", "iris"]
+[[mixins]]
+config="scena.mixins.embeddium.json"
+requiredMods=["embeddium", "iris", "monocle"]

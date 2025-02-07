@@ -14,7 +14,13 @@ tableau {
     }
 }
 
-allprojects {
+allprojects {Project project ->
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(project.getProperties().get("java.version")))
+        }
+    }
+
     repositories {
         maven {
             name 'Maven for PR #1874' // https://github.com/neoforged/NeoForge/pull/1874
