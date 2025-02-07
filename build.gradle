@@ -20,15 +20,4 @@ allprojects {Project project ->
             languageVersion.set(JavaLanguageVersion.of(project.getProperties().get("java.version")))
         }
     }
-
-    repositories {
-        maven {
-            name 'Maven for PR #1874' // https://github.com/neoforged/NeoForge/pull/1874
-            url 'https://prmaven.neoforged.net/NeoForge/pr1874'
-            content {
-                includeModule('net.neoforged', 'testframework')
-                includeModule('net.neoforged', 'neoforge')
-            }
-        }
-    }
 }
