@@ -21,7 +21,7 @@ tableau {
         }
     }
     maven {
-        publishToLDTTeamMaven('communi-suggestu-saecularia-caudices')
+        publishToLDTTeamMaven('communi-suggestu-scena')
         publishLocally()
         pom({
             usingMitLicense()

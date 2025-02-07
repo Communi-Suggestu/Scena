@@ -22,7 +22,7 @@ tableau {
         }
     }
     maven {
-        publishToLDTTeamMaven('communi-suggestu-saecularia-caudices')
+        publishToLDTTeamMaven('communi-suggestu-saecularia-scena')
         publishLocally()
         pom({
             usingMitLicense()
