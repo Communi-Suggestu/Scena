@@ -5,8 +5,8 @@ plugins {
 
 platform {
     fabric {
-        loaderVersion = "0.16.7"
-        apiVersion = "0.114.0"
+        loaderVersion = rootProject.property('fabric.loader.version')
+        apiVersion = rootProject.property('fabric.api.version')
         accessWideners = rootProject.file("common/scena.accesswidener")
     }
 }
