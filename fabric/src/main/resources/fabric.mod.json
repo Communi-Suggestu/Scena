@@ -28,7 +28,7 @@
   "accessWidener" : "scena.accesswidener",
   "depends": {
     "fabricloader": ">=$project.fabric.loader.version",
-    "fabric": "=>$project.fabric.api.version",
+    "fabric": ">=$project.fabric.api.version",
     "minecraft": [${minecraft.range.fabric.get()}],
     "java": ">=${java.version.get()}",
     "saeculariacaudices": "$dependencies.com.communi_suggestu.saecularia_caudices.fabric.npm"
