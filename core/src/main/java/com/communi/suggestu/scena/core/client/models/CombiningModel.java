@@ -15,7 +15,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -25,11 +24,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,7 +41,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,7 +73,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
         }
         var bakedParts = bakedPartsBuilder.build();
 
-        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker), bakedParts);
+        return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), context.getItemOverrides(baker), bakedParts, List.of());
     }
 
     public static class Baked implements IDataAwareBakedModel {
@@ -89,8 +84,9 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
         private final ItemOverrides overrides;
         private final ItemTransforms transforms;
         private final ImmutableMap<String, BakedModel> children;
+        private final List<RenderTypeGroup> renderTypes;
 
-        public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children) {
+        public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children, List<RenderTypeGroup> renderTypes) {
             this.children = children;
             this.isAmbientOcclusion = isAmbientOcclusion;
             this.isGui3d = isGui3d;
@@ -98,6 +94,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
             this.particle = particle;
             this.overrides = overrides;
             this.transforms = transforms;
+            this.renderTypes = renderTypes;
         }
 
         @NotNull
@@ -179,6 +176,15 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
                     sets.add(dataAwareBakedModel.getSupportedRenderTypes(state, rand, CombiningModel.Data.resolve(data, entry.getKey())));
                 }
             }
+
+            if (sets.isEmpty()) {
+                sets.add(
+                        renderTypes.stream()
+                                .filter(t -> !t.isEmpty())
+                                .map(RenderTypeGroup::block).toList()
+                );
+            }
+
             return sets.stream().flatMap(Collection::stream).collect(Collectors.toSet());
         }
 
@@ -190,6 +196,15 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
                     sets.add(dataAwareBakedModel.getSupportedRenderTypes(stack, fabulous));
                 }
             }
+
+            if (sets.isEmpty()) {
+                sets.add(
+                        renderTypes.stream()
+                                .filter(t -> !t.isEmpty())
+                                .map(RenderTypeGroup::activeEntity).toList()
+                );
+            }
+
             return sets.stream().flatMap(Collection::stream).collect(Collectors.toSet());
         }
 
@@ -211,6 +226,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
             private final List<BakedQuad> quads = new ArrayList<>();
             private final ItemOverrides overrides;
             private final ItemTransforms transforms;
+            private final Set<RenderTypeGroup> knownTypes;
             private TextureAtlasSprite particle;
             private RenderTypeGroup lastRenderTypes = RenderTypeGroup.EMPTY;
 
@@ -221,10 +237,13 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
                 this.particle = particle;
                 this.overrides = overrides;
                 this.transforms = transforms;
+
+                this.knownTypes = new HashSet<>();
+                this.knownTypes.add(RenderTypeGroup.EMPTY);
             }
 
             public void addLayer(BakedModel model) {
-                flushQuads(null);
+                flushQuads(RenderTypeGroup.EMPTY);
                 children.add(model);
             }
 
@@ -232,6 +251,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
                 var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides, particle, renderTypes);
                 quads.forEach(q -> modelBuilder.addUnculledFace(renderTypes, q));
                 children.add(modelBuilder.build());
+                this.knownTypes.add(renderTypes);
             }
 
             private void flushQuads(RenderTypeGroup renderTypes) {
@@ -258,7 +278,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
 
             @Override
             public Builder addUnculledFace(final RenderTypeGroup group, final BakedQuad quad) {
-                flushQuads(null);
+                flushQuads(group);
                 quads.add(quad);
                 return this;
             }
@@ -274,7 +294,7 @@ public class CombiningModel implements IModelSpecification<CombiningModel> {
                     childrenBuilder.put("model_" + (i++), model);
                     itemPassesBuilder.add(model);
                 }
-                return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build());
+                return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), knownTypes.stream().toList());
             }
         }
 
