@@ -1,5 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.configuration;
 
+import com.communi.suggestu.scena.core.dist.Dist;
+import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.google.gson.*;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -28,22 +30,24 @@ public class FabricConfigurationNetworkingUtils
         PayloadTypeRegistry.playS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
         PayloadTypeRegistry.configurationS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
 
-        ClientPlayNetworking.registerGlobalReceiver(SyncedConfiguration.TYPE, (payload, context) -> {
-            final JsonElement jsonElement = gson.fromJson(payload.specs(), JsonElement.class);
-            if (!jsonElement.isJsonObject())
-                throw new JsonParseException("The synced configs must be send in an object!");
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            ClientPlayNetworking.registerGlobalReceiver(SyncedConfiguration.TYPE, (payload, context) -> {
+                final JsonElement jsonElement = gson.fromJson(payload.specs(), JsonElement.class);
+                if (!jsonElement.isJsonObject())
+                    throw new JsonParseException("The synced configs must be send in an object!");
 
-            final JsonObject jsonObject = jsonElement.getAsJsonObject();
+                final JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            syncedSourcesProvider.get().forEach((key, spec) -> {
-                spec.reset();
-                if (jsonObject.has(key)) {
-                    final JsonElement specData = jsonObject.get(key);
-                    if (!specData.isJsonObject())
-                        throw new JsonParseException("A single synced config must be send in an object!");
+                syncedSourcesProvider.get().forEach((key, spec) -> {
+                    spec.reset();
+                    if (jsonObject.has(key)) {
+                        final JsonElement specData = jsonObject.get(key);
+                        if (!specData.isJsonObject())
+                            throw new JsonParseException("A single synced config must be send in an object!");
 
-                    spec.loadFrom(specData.getAsJsonObject());
-                }
+                        spec.loadFrom(specData.getAsJsonObject());
+                    }
+                });
             });
         });
     }
