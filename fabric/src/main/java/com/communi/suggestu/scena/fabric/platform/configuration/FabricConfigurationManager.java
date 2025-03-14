@@ -44,11 +44,10 @@ public final class FabricConfigurationManager implements IConfigurationManager
 
     private FabricConfigurationManager()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FabricConfigurationNetworkingUtils.registerNetworkingChannel(
+        FabricConfigurationNetworkingUtils.registerNetworkingChannel(
                 GSON,
                 () -> this.syncedSources
-        ));
-
+        );
         ServerPlayConnectionEvents.JOIN.register((listener, packetSender, minecraftServer) -> syncTo(listener.getPlayer()));
     }
 
