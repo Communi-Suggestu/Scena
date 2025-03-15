@@ -12,30 +12,19 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager.makeInformation;
 
-@SuppressWarnings({"UnstableApiUsage", "resource"})
-public class FabricFluidVariantRenderHandlerDelegate implements FluidVariantRenderHandler
-{
-    private final IFluidVariantHandler delegate;
-
-    public FabricFluidVariantRenderHandlerDelegate(final IFluidVariantHandler delegate) {this.delegate = delegate;}
+public record FabricFluidVariantRenderHandlerDelegate(
+        IFluidVariantHandler delegate) implements FluidVariantRenderHandler {
 
     @Override
-    public @Nullable TextureAtlasSprite[] getSprites(final FluidVariant fluidVariant)
-    {
-        return new TextureAtlasSprite[] {
-            Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(delegate.getStillTexture(makeInformation(fluidVariant)).orElseThrow()),
-            delegate.getFlowingTexture(makeInformation(fluidVariant)).map(texture -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture)).orElse(null)
+    public @Nullable TextureAtlasSprite[] getSprites(final FluidVariant fluidVariant) {
+        return new TextureAtlasSprite[]{
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(delegate.getStillTexture(makeInformation(fluidVariant)).orElseThrow()),
+                delegate.getFlowingTexture(makeInformation(fluidVariant)).map(texture -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture)).orElse(null)
         };
     }
 
     @Override
-    public int getColor(final FluidVariant fluidVariant, @Nullable final BlockAndTintGetter view, @Nullable final BlockPos pos)
-    {
+    public int getColor(final FluidVariant fluidVariant, @Nullable final BlockAndTintGetter view, @Nullable final BlockPos pos) {
         return delegate.getTintColor(makeInformation(fluidVariant));
-    }
-
-    public IFluidVariantHandler getDelegate()
-    {
-        return delegate;
     }
 }

@@ -88,7 +88,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
                 () -> () -> {
                     final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
                     if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
-                        return renderDelegate.getDelegate().getStillTexture(variant);
+                        return renderDelegate.delegate().getStillTexture(variant);
                     }
 
                     return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::contents).map(SpriteContents::name);
@@ -104,7 +104,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
                 () -> () -> {
                     final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
                     if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
-                        return renderDelegate.getDelegate().getFlowingTexture(variant);
+                        return renderDelegate.delegate().getFlowingTexture(variant);
                     }
 
                     return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::contents).map(SpriteContents::name);

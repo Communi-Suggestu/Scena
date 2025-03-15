@@ -31,7 +31,7 @@ public enum Dist {
      *
      * @return The current distribution.
      */
-    static Dist current() {
+    public static Dist current() {
         return IDistributionManager.getInstance().getCurrentDistribution();
     }
 

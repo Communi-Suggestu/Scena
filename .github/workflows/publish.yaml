@@ -8,7 +8,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -47,9 +48,20 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: Publish to Maven Local
+      - name: Publish to Maven
         run: ./gradlew publish
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           VERSION: ${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}
+
+      - name: Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "**/build/libs/*.jar"
+          allowUpdates: "true"
+          artifactErrorsFailBuild: 'false'
+          generateReleaseNotes: 'true'
+          name: ${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}
+          tag: ${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}
+

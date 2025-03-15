@@ -9,6 +9,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
+import com.communi.suggestu.scena.fabric.platform.client.fluid.ClientFabricFluidManager;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -55,10 +56,9 @@ public class FabricFluidManager implements IFluidManager
         final IFluidVariantHandler handler = variantHandler.get();
         FluidVariantAttributes.register(fluidRegistration.get(), new FabricFluidVariantAttributeHandlerDelegate(handler));
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), fluidRegistration.get());
-            FluidVariantRendering.register(fluidRegistration.get(), new FabricFluidVariantRenderHandlerDelegate(handler));
-        });
+        if (Dist.current().isClient()) {
+            ClientFabricFluidManager.registerFluidAndVariant(fluidRegistration, handler);
+        }
 
         return new FluidRegistration(fluidRegistration, () -> handler);
     }
