@@ -55,7 +55,7 @@ public class MixinBlockRenderer {
             target = "Lorg/embeddedt/embeddium/impl/render/chunk/compile/pipeline/BlockRenderer;writeGeometry(Lorg/embeddedt/embeddium/api/render/chunk/BlockRenderContext;Lorg/embeddedt/embeddium/impl/render/chunk/compile/buffers/ChunkModelBuilder;Lnet/minecraft/world/phys/Vec3;Lorg/embeddedt/embeddium/impl/render/chunk/terrain/material/Material;Lorg/embeddedt/embeddium/impl/model/quad/BakedQuadView;[ILorg/embeddedt/embeddium/impl/model/light/data/QuadLightData;)V"
         )
     )
-    public void onRenderQuad(BlockRenderContext ctx, Material material, LightPipeline lighter, ColorProvider<BlockState> colorizer, Vec3 offset, ChunkModelBuilder builder, List<BakedQuad> quads, Direction cullFace, CallbackInfo ci, @Local BakedQuadView quad) {
+    public void onRenderQuad(BlockRenderContext ctx, Material material, LightPipeline lighter, ColorProvider<BlockState> colorizer, Vec3 offset, ChunkBuildBuffers buffers, ChunkModelBuilder defaultBuilder, List<BakedQuad> quads, Direction cullFace, CallbackInfo ci, @Local BakedQuadView quad) {
         if ((Object) this instanceof BlockRenderer r && WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && quad instanceof BlockStateAwareQuad blockStateAwareQuad && this.builders != null) {
             final BlockState blockState = blockStateAwareQuad.getBlockState();
             ((BlockSensitiveBufferBuilder) this.builders).endBlock();
