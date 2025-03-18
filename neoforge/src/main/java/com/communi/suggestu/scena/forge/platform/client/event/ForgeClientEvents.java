@@ -55,8 +55,11 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return EventBusEventEntryPoint.forge(ForgeScenaRenderWorldLastEvent.class, (event, handler) -> {
-            handler.handle(event.getLevelRenderer(), event.getPoseStack(), event.getPartialTicks());
+        return EventBusEventEntryPoint.forge(RenderLevelStageEvent.class, (event, handler) -> {
+            if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
+                return;
+
+            handler.handle(event.getLevelRenderer(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
         });
     }
 
