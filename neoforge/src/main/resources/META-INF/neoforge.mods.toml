@@ -31,7 +31,7 @@ $project.description
     side="BOTH"
 [[dependencies.$project.mod.id]]
     modId="embeddium"
-    required=false
+    type="OPTIONAL"
     versionRange="[$project.compat.shaders.versions.embeddium,)"
     ordering="AFTER"
     side="BOTH"
