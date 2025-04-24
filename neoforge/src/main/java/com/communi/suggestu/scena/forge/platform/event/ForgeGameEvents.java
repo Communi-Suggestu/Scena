@@ -30,7 +30,7 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IPlayerLeftClickBlockEvent> getPlayerLeftClickEvent() {
         return EventBusEventEntryPoint.forge(PlayerInteractEvent.LeftClickBlock.class, (event, handler) -> {
-            final IPlayerLeftClickBlockEvent.Result current = new IPlayerLeftClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
+            final IPlayerLeftClickBlockEvent.Result current = new IPlayerLeftClickBlockEvent.Result(event.isCanceled(), toResult(event.getUseItem()), toResult(event.getUseBlock()));
 
             final IPlayerLeftClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
@@ -44,7 +44,7 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IPlayerRightClickBlockEvent> getPlayerRightClickEvent() {
         return EventBusEventEntryPoint.forge(PlayerInteractEvent.RightClickBlock.class, (event, handler) -> {
-            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), ProcessingResult.valueOf(event.getUseItem().name()), ProcessingResult.valueOf(event.getUseBlock().name()));
+            final IPlayerRightClickBlockEvent.Result current = new IPlayerRightClickBlockEvent.Result(event.isCanceled(), toResult(event.getUseItem()), toResult(event.getUseBlock()));
 
             final IPlayerRightClickBlockEvent.Result result = handler.handle(event.getEntity(), event.getHand(), event.getItemStack(), event.getPos(), event.getFace(), current);
 
@@ -120,6 +120,14 @@ public final class ForgeGameEvents implements IGameEvents {
             case DENY -> TriState.FALSE;
             case ALLOW -> TriState.TRUE;
             default -> TriState.DEFAULT;
+        };
+    }
+
+    private static ProcessingResult toResult(TriState result) {
+        return switch (result) {
+            case FALSE -> ProcessingResult.DENY;
+            case TRUE -> ProcessingResult.ALLOW;
+            default -> ProcessingResult.DEFAULT;
         };
     }
 
