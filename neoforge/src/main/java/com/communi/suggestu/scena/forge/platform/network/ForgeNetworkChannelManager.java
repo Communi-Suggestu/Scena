@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Constants.MOD_ID)
 public class ForgeNetworkChannelManager implements INetworkChannelManager {
     private static final ForgeNetworkChannelManager INSTANCE = new ForgeNetworkChannelManager();
 

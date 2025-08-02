@@ -1,12 +1,14 @@
 package com.communi.suggestu.scena.core.client.rendering.type;
 
-import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -39,7 +41,7 @@ public interface IRenderTypeManager
      * @param renderType The render type.
      * @return True when rendering in the given render type is required, false when not.
      */
-    boolean canRenderInType(final BlockState blockState, final RenderType renderType);
+    boolean canRenderInType(final BlockState blockState, final ChunkSectionLayer renderType);
 
     /**
      * Indicates if the fluidState needs to be rendered in the render type.
@@ -48,7 +50,7 @@ public interface IRenderTypeManager
      * @param renderType The render type.
      * @return True when rendering in the given render type is required, false when not.
      */
-    boolean canRenderInType(final FluidState fluidState, final RenderType renderType);
+    boolean canRenderInType(final FluidState fluidState, final ChunkSectionLayer renderType);
 
     /**
      * Registers a callback which can be used to register render types for blocks.
@@ -59,14 +61,15 @@ public interface IRenderTypeManager
     /**
      * Retrieves the {@linkplain RenderType render types} for the given block state, data and model.
      *
-     * @param model The model to get the types for.
-     * @param state The block state to get the types for.
-     * @param rand The random source to use.
-     * @param data The data to use.
+     * @param model              The model to get the types for.
+     * @param blockAndTintGetter The level information
+     * @param position
+     * @param state              The block state to get the types for.
+     * @param rand               The random source to use.
      * @return The render types for the given block state, data and model.
      */
     @NotNull
-    Collection<RenderType> getRenderTypesFor(BakedModel model, BlockState state, RandomSource rand, IBlockModelData data);
+    Collection<ChunkSectionLayer> getRenderTypesFor(BlockStateModel model, BlockAndTintGetter blockAndTintGetter, final BlockPos position, BlockState state, RandomSource rand);
 
     /**
      * Retrieves the {@linkplain RenderType render types} for the given model, itemstack and if we are running in fabulous or not.
@@ -77,7 +80,7 @@ public interface IRenderTypeManager
      * @return The render types for the given block state, data and model.
      */
     @NotNull
-    Collection<RenderType> getRenderTypesFor(BakedModel model, ItemStack stack, boolean isFabulous);
+    Collection<RenderType> getRenderTypesFor(ItemModel model, ItemStack stack, boolean isFabulous);
 
 
     /**
@@ -91,6 +94,6 @@ public interface IRenderTypeManager
          * @param block The block to register the fallback render type for.
          * @param renderType The render type to use as a fallback.
          */
-        void register(final Block block, final RenderType renderType);
+        void register(final Block block, final ChunkSectionLayer renderType);
     }
 }

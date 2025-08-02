@@ -1,22 +1,13 @@
 package com.communi.suggestu.scena.fabric.platform.client.rendering.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
-import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
-import com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader.FabricBakedModelDelegate;
-import com.communi.suggestu.scena.fabric.platform.client.rendering.model.loader.FabricPlatformModelLoaderPlatformDelegate;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
+import com.communi.suggestu.scena.core.client.models.loader.IUnbakedModelLoader;
+import net.fabricmc.fabric.api.client.model.loading.v1.UnbakedModelDeserializer;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public final class FabricModelManager implements IModelManager
 {
@@ -32,32 +23,14 @@ public final class FabricModelManager implements IModelManager
     }
 
     @Override
-    public UnbakedModel getUnbakedModel(final ResourceLocation unbakedModel)
+    public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IUnbakedModelLoader<?> modelLoader)
     {
-        final IModelBakeryAccessor accessor = (IModelBakeryAccessor) Minecraft.getInstance().getModelManager();
-        return accessor.getModelBakery().getModel(unbakedModel);
-    }
-
-    @Override
-    public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IModelSpecificationLoader<?> modelLoader)
-    {
-        ModelLoadingPlugin.register(context -> context.resolveModel().register(new FabricPlatformModelLoaderPlatformDelegate<>(name, modelLoader)));
+        UnbakedModelDeserializer.register(name, modelLoader::read);
     }
 
     @Override
     public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
     {
-        callback.accept(ItemProperties::register);
-    }
-
-    @Override
-    public BakedModel adaptToPlatform(final BakedModel bakedModel)
-    {
-        if (bakedModel instanceof FabricBakedModelDelegate)
-        {
-            return bakedModel;
-        }
-
-        return new FabricBakedModelDelegate(bakedModel);
+        callback.accept(RangeSelectItemModelProperties.ID_MAPPER::put);
     }
 }

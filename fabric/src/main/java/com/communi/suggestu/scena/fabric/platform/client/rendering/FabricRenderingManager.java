@@ -9,26 +9,23 @@ import com.communi.suggestu.scena.fabric.platform.client.rendering.rendertype.Fa
 import com.communi.suggestu.scena.fabric.platform.client.tooltip.ClientTooltipComponentConverterRegistry;
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.SpecialBlockRendererRegistry;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class FabricRenderingManager implements IRenderingManager
 {
     private static final FabricRenderingManager INSTANCE = new FabricRenderingManager();
@@ -42,18 +39,28 @@ public final class FabricRenderingManager implements IRenderingManager
 
     @Override
     public void renderModel(
-      final PoseStack.Pose last,
-      final VertexConsumer buffer,
-      final BlockState defaultBlockState,
-      final BakedModel model,
-      final float r,
-      final float g,
-      final float b,
-      final int combinedLight,
-      final int combinedOverlay,
-      final RenderType renderType)
+        final PoseStack matrices,
+        final MultiBufferSource source,
+        final BlockStateModel blockStateModel,
+        final float r,
+        final float g,
+        final float b,
+        final int combinedLight,
+        final int combinedOverlay,
+        final BlockAndTintGetter level,
+        final BlockPos blockPos,
+        final BlockState blockState)
     {
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(last, buffer, defaultBlockState, model, r, g, b, combinedLight, combinedOverlay);
+        //TODO: Figure out what to do with rendering the colors!
+        Minecraft.getInstance().getBlockRenderer().renderBlockAsEntity(
+            blockState,
+            matrices,
+            source,
+            combinedLight,
+            combinedOverlay,
+            level,
+            blockPos
+        );
     }
 
     @Override
@@ -94,16 +101,18 @@ public final class FabricRenderingManager implements IRenderingManager
     @Override
     public void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback)
     {
-        callback.accept((item, renderer) -> BuiltinItemRendererRegistry.INSTANCE.register(
-                item,
-                renderer::renderByItem
-        ));
+        callback.accept((name, renders, defaultUnbaked) -> {
+            for (final Block render : renders)
+            {
+                SpecialBlockRendererRegistry.register(render, defaultUnbaked);
+            }
+        });
     }
 
     @Override
     public void registerBlockEntityRenderer(final Consumer<IBlockEntityRendererRegistrar> callback)
     {
-        callback.accept(BlockEntityRendererRegistry::register);
+        callback.accept(BlockEntityRenderers::register);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.forge.platform.client.model.data;
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 
 public class ForgeModelDataManager implements IModelDataManager
 {

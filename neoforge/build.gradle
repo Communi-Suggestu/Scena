@@ -5,7 +5,6 @@ plugins {
 
 platform {
     neoforge {
-        version = "21.1.+"
         accessTransformers.from(rootProject.files("common/forge.accesstransformer.cfg"))
     }
 }
@@ -30,12 +29,14 @@ tableau {
     }
 }
 
+/*
 shaders {
     enable()
     sodium()
     embeddium()
     neoforge()
 }
+*/
 
 dependencies {
     includedLibraries "com.communi-suggestu.saecularia-caudices:neoforge:${project.property('communi.suggestu.saecularia.caudices.version')}"

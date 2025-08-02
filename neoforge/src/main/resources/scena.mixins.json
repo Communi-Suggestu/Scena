@@ -8,12 +8,10 @@
     "common.ChunkAccessMixin",
     "common.FluidTypeFluidMixin",
     "common.LevelChunkMixin",
-    "common.LivingEntityEquipmentSlotMixin",
     "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
     "client.ActiveModelDataManagerMixin",
-    "client.BlockEntityWithoutLevelRendererMixin"
   ],
   "server": [],
   "injectors": {

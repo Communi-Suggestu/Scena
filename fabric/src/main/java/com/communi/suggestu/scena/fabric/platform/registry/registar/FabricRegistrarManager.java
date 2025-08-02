@@ -63,7 +63,7 @@ public final class FabricRegistrarManager implements IRegistrarManager
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.RECIPE_SERIALIZER);
         }
 
-        final Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.get((ResourceKey) typeClass);
+        final Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue((ResourceKey) typeClass);
 
         if (registry != null) {
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, registry);

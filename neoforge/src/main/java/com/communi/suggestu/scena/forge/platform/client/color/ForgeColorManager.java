@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import java.util.List;
 import java.util.function.Consumer;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
 public class ForgeColorManager implements IColorManager
 {
     private static final ForgeColorManager INSTANCE = new ForgeColorManager();
@@ -50,7 +50,7 @@ public class ForgeColorManager implements IColorManager
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onItemColorHandler(final RegisterColorHandlersEvent.Item event)
+    public static void onItemColorHandler(final RegisterColorHandlersEvent.ItemTintSources event)
     {
         ForgeColorManager.getInstance().itemColorSetters.forEach(
           c -> c.accept(event::register)

@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.models;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
 /**
  * A set of functionally equivalent shaders. One using {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#BLOCK},
@@ -10,19 +11,14 @@ import net.minecraft.client.renderer.RenderType;
  * {@code entityFabulous} may support custom render targets and other aspects of the fabulous pipeline, or can otherwise
  * be the same as {@code entity}.
  */
-public record RenderTypeGroup(RenderType block, RenderType entity, RenderType entityFabulous)
+public record RenderTypeGroup(ChunkSectionLayer block, RenderType entity)
 {
-    public static RenderTypeGroup EMPTY = new RenderTypeGroup(null, null, null);
+    public static RenderTypeGroup EMPTY = new RenderTypeGroup(null, null);
 
     public RenderTypeGroup
     {
-        if ((block == null) != (entity == null) || (block == null) != (entityFabulous == null))
+        if ((block == null) != (entity == null))
             throw new IllegalArgumentException("The render types in a group must either be all null, or all non-null.");
-    }
-
-    public RenderTypeGroup(RenderType block, RenderType entity)
-    {
-        this(block, entity, entity);
     }
 
     /**
@@ -32,23 +28,5 @@ public record RenderTypeGroup(RenderType block, RenderType entity, RenderType en
     {
         // We throw an exception in the constructor if nullability doesn't match, so checking this is enough
         return block == null;
-    }
-
-    /**
-     * Returns the current active entity render type, based on whether fabulous is enabled.
-     * @return The active render type for entity/item rendering.
-     */
-    public RenderType activeEntity() {
-        return entityFor(Minecraft.getInstance().options.graphicsMode().get() == GraphicsStatus.FABULOUS);
-    }
-
-    /**
-     * Returns the relevant entity render type based on whether the fabulous render mode is enabled or not.
-     *
-     * @param fabulous True for fabulous, false when not.
-     * @return The render type for entity / item rendering.
-     */
-    public RenderType entityFor(boolean fabulous) {
-        return  fabulous ? entityFabulous : block;
     }
 }

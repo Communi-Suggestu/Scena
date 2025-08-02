@@ -3,21 +3,20 @@ package com.communi.suggestu.scena.forge.platform.client.key;
 import com.communi.suggestu.scena.core.client.key.IKeyBindingManager;
 import com.communi.suggestu.scena.core.client.key.IKeyConflictContext;
 import com.communi.suggestu.scena.core.client.key.KeyModifier;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.communi.suggestu.scena.forge.utils.Constants;
-import net.minecraft.client.KeyMapping;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
 public class ForgeKeyBindingManager implements IKeyBindingManager
 {
     private static final ForgeKeyBindingManager INSTANCE = new ForgeKeyBindingManager();

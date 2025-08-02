@@ -18,7 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -128,7 +127,7 @@ public final class FabricGameEvents implements IGameEvents {
                         new IPlayerRightClickBlockEvent.Result(false, ProcessingResult.DEFAULT, ProcessingResult.DEFAULT)
                 );
 
-                return new InteractionResultHolder<>(mapItemResult(result), player.getItemInHand(hand));
+                return mapItemResult(result);
             })
         );
     }

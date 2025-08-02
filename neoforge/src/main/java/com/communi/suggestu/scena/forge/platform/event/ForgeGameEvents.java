@@ -1,9 +1,9 @@
 package com.communi.suggestu.scena.forge.platform.event;
 
 import com.communi.suggestu.scena.core.event.*;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;

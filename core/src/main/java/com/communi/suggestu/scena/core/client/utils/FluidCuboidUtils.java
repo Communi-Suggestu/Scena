@@ -6,6 +6,7 @@ import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -107,8 +108,8 @@ public class FluidCuboidUtils
         matrices.pushPose();
         matrices.translate(x1, y1, z1);
 
-        final TextureAtlasSprite stillSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
-        final TextureAtlasSprite flowingSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(flowing);
+        final TextureAtlasSprite stillSprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(still);
+        final TextureAtlasSprite flowingSprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(flowing);
 
         // x/y/z2 - x/y/z1 is because we need the width/height/depth
         putTexturedQuad(renderer, matrices.last(), stillSprite, x2 - x1, y2 - y1, z2 - z1, DOWN, color, combinedOverlay, combinedLight, false);

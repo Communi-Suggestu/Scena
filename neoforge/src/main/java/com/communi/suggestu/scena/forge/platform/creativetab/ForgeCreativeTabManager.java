@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID)
+@EventBusSubscriber(modid = Constants.MOD_ID)
 public final class ForgeCreativeTabManager implements ICreativeTabManager {
     private static final ForgeCreativeTabManager INSTANCE = new ForgeCreativeTabManager();
     private final Collection<CreativeTabModificationRegistration> modificationRegistrations = Collections.synchronizedCollection(Lists.newArrayList());

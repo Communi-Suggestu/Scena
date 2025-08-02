@@ -31,11 +31,13 @@ tableau {
     }
 }
 
+/*
 shaders {
     enable()
     sodium()
     fabric()
 }
+*/
 
 dependencies {
     modImplementation "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"

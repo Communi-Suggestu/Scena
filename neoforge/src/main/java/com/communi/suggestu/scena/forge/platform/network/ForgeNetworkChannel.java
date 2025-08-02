@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ServerPacketListener;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.extensions.IServerCommonPacketListenerExtension;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -42,7 +43,7 @@ public class ForgeNetworkChannel implements INetworkChannel {
 
     @Override
     public void sendToServer(CustomPacketPayload msg) {
-        PacketDistributor.sendToServer(msg);
+        ClientPacketDistributor.sendToServer(msg);
     }
 
     @Override

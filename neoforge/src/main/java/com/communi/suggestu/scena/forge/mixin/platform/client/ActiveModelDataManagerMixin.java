@@ -6,8 +6,8 @@ import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockMod
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.client.model.data.ModelDataManager;
+import net.neoforged.neoforge.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelDataManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -16,7 +16,7 @@ public abstract class ActiveModelDataManagerMixin
 {
     @WrapOperation(
             method = "refreshAt",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getModelData()Lnet/neoforged/neoforge/client/model/data/ModelData;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getModelData()Lnet/neoforged/neoforge/model/data/ModelData;")
     )
     private ModelData bypassExpensiveCalculationIfNecessary(BlockEntity instance, Operation<ModelData> original) {
         if (instance instanceof IBlockEntityWithModelData blockEntityWithModelData) {

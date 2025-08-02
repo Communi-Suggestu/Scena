@@ -59,12 +59,6 @@ public final class FabricLevelBasedPropertyAccessor implements ILevelBasedProper
     public int getLightEmission(final LevelReader levelReader, final BlockPos blockPos)
     {
         final BlockState blockState = levelReader.getBlockState(blockPos);
-        if (blockState.getBlock() instanceof IBlockWithWorldlyProperties blockWithWorldlyProperties) {
-            return blockWithWorldlyProperties.getLightEmission(
-              blockState, levelReader, blockPos
-            );
-        }
-
         return blockState.getLightEmission();
     }
 

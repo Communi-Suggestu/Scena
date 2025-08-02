@@ -1,9 +1,10 @@
 package com.communi.suggestu.scena.core.client.rendering;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.client.color.item.ItemTintSource;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.Consumer;
@@ -62,10 +63,8 @@ public interface IColorManager
     interface IItemColorSetter {
 
         /**
-         * Sets the color manager for the given items.
-         * @param colorManager The color manager to use for the given item.
-         * @param items The items which use the given color manager.
+         * Registers the item tint source provider.
          */
-        void register(final ItemColor colorManager, final Item... items);
+        void register(final ResourceLocation colorProviderName, MapCodec<? extends ItemTintSource> builder);
     }
 }

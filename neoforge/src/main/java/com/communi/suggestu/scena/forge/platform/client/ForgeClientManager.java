@@ -19,7 +19,7 @@ import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeModelDat
 import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeModelPropertyPlatformDelegate;
 import com.communi.suggestu.scena.forge.platform.client.rendering.ForgeRenderingManager;
 import com.communi.suggestu.scena.forge.platform.client.screens.ForgeScreenManager;
-import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 
 public class ForgeClientManager implements IClientManager

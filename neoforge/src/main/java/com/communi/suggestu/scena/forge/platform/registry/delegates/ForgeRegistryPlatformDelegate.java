@@ -33,7 +33,7 @@ public class ForgeRegistryPlatformDelegate<T> implements IPlatformRegistry<T>
         if (!delegate.containsKey(key))
             return Optional.empty();
 
-        return Optional.ofNullable(delegate.get(key));
+        return Optional.ofNullable(delegate.getValue(key));
     }
 
     @Override
