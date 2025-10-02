@@ -34,7 +34,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return EventBusEventEntryPoint.forge(RenderHighlightEvent.Block.class, (event, handler) -> {
+        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
             event.setCanceled(handler.handle());
         });
     }

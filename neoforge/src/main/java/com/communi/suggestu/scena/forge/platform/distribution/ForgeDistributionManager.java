@@ -20,7 +20,7 @@ public class ForgeDistributionManager implements IDistributionManager
     @Override
     public Dist getCurrentDistribution()
     {
-        return switch (FMLEnvironment.dist) {
+        return switch (FMLEnvironment.getDist()) {
             case CLIENT -> Dist.CLIENT;
             case DEDICATED_SERVER -> Dist.DEDICATED_SERVER;
         };
@@ -29,6 +29,6 @@ public class ForgeDistributionManager implements IDistributionManager
     @Override
     public boolean isProduction()
     {
-        return FMLEnvironment.production;
+        return FMLEnvironment.isProduction();
     }
 }

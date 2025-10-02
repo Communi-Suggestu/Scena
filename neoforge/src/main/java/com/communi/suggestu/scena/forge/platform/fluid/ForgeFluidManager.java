@@ -24,6 +24,12 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -84,24 +90,54 @@ public class ForgeFluidManager implements IFluidManager {
 
     @Override
     public Optional<FluidInformation> get(final ItemStack stack) {
-        return Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM))
-                .map(fluidHandler -> fluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE))
-                .map(fluidStack -> new FluidInformation(fluidStack.getFluid(), fluidStack.getAmount(), fluidStack.isEmpty() ? DataComponentPatch.EMPTY : fluidStack.getComponentsPatch()));
+        final var fluidStack = FluidUtil.getFirstStackContained(stack);
+        if (fluidStack.isEmpty())
+            return Optional.empty();
+
+        return Optional.of(
+            new FluidInformation(
+                fluidStack.getFluid(),
+                fluidStack.getAmount(),
+                fluidStack.getComponentsPatch()
+            )
+        );
     }
 
     @Override
     public ItemStack extractFrom(final ItemStack stack, final long amount) {
-        final Optional<IFluidHandlerItem> handler = Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM));
-        handler.ifPresent(h -> h.drain((int) amount, IFluidHandler.FluidAction.EXECUTE));
+        final ResourceHandler<FluidResource> access = ItemAccess.forStack(stack).oneByOne().getCapability(Capabilities.Fluid.ITEM);
+        if (access == null)
+            return stack;
 
-        return handler.map(IFluidHandlerItem::getContainer).orElse(stack);
+        try(Transaction tx = Transaction.open(null)) {
+            final var fluidStack = FluidUtil.getFirstStackContained(stack);
+            final var resource = FluidResource.of(fluidStack);
+            if (resource.isEmpty())
+                return stack;
+
+            access.extract(resource, (int) Math.min(fluidStack.getAmount(), amount), tx);
+            tx.commit();
+        }
+
+        return stack;
     }
 
     @Override
     public ItemStack insertInto(final ItemStack stack, final FluidInformation fluidInformation) {
-        final Optional<IFluidHandlerItem> handler = Optional.ofNullable(stack.getCapability(Capabilities.FluidHandler.ITEM));
-        handler.ifPresent(h -> h.fill(buildFluidStack(fluidInformation), IFluidHandler.FluidAction.EXECUTE));
-        return handler.map(IFluidHandlerItem::getContainer).orElse(stack);
+        final ResourceHandler<FluidResource> access = ItemAccess.forStack(stack).oneByOne().getCapability(Capabilities.Fluid.ITEM);
+        if (access == null)
+            return stack;
+
+        try(Transaction tx = Transaction.open(null)) {
+            final var resource = FluidResource.of(fluidInformation.fluid(), fluidInformation.data());
+            if (resource.isEmpty())
+                return stack;
+
+            access.insert(resource, (int) fluidInformation.amount(), tx);
+            tx.commit();
+        }
+
+        return stack;
     }
 
     @Override

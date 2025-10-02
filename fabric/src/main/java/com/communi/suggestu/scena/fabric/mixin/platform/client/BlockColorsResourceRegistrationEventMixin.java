@@ -1,22 +1,21 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.client;
 
 import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEvents;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.PaintingTextureManager;
+import net.minecraft.client.color.block.BlockColors;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PaintingTextureManager.class)
-public abstract class PaintingTextureManagerConstructionHandler
+@Mixin(BlockColors.class)
+public abstract class BlockColorsResourceRegistrationEventMixin
 {
 
     @Inject(
-      method = "<init>",
+      method = "createDefault",
       at = @At("RETURN")
     )
-    public void onConstruction(final TextureManager textureManager, final CallbackInfo ci) {
+    private static void onConstruction(final CallbackInfoReturnable<BlockColors> cir) {
         FabricClientEvents.RESOURCE_REGISTRATION.invoker().handle();
     }
 }

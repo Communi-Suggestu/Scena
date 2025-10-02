@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.key;
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Platform manager for registering new keybindings on the system
@@ -37,14 +38,14 @@ public interface IKeyBindingManager
      * Creates a new key mapping with the given properties.
      * If the system supports it a conflict context is registered as well.
      *
-     * @param translationKey The translation key for the key mapping.
+     * @param translationKey     The translation key for the key mapping.
      * @param keyConflictContext The optional key conflict context to apply.
-     * @param inputType The input type for the key mapping.
-     * @param key The default configured key.
-     * @param groupTranslationKey The translation key for the group that the key belongs to.
+     * @param inputType          The input type for the key mapping.
+     * @param key                The default configured key.
+     * @param group              The translation key for the group that the key belongs to.
      * @return The new key mapping.
      */
-    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, InputConstants.Type inputType, int key, String groupTranslationKey);
+    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, InputConstants.Type inputType, int key, ResourceLocation group);
 
     /**
      * Creates a new key mapping with the given properties.
@@ -58,7 +59,7 @@ public interface IKeyBindingManager
      * @param groupTranslationKey The translation key for the group that the key belongs to.
      * @return The new key mapping.
      */
-    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputConstants.Type inputType, int key, String groupTranslationKey);
+    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputConstants.Type inputType, int key, ResourceLocation groupTranslationKey);
 
     /**
      * Checks if the key conflict context of the key mapping is active or not.

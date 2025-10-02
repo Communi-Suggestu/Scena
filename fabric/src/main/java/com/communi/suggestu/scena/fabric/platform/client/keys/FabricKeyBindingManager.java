@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.fabric.platform.client.keys;
 import com.communi.suggestu.scena.core.client.key.IKeyBindingManager;
 import com.communi.suggestu.scena.core.client.key.IKeyConflictContext;
 import com.communi.suggestu.scena.core.client.key.KeyModifier;
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
@@ -10,10 +11,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.Map;
 
 public final class FabricKeyBindingManager implements IKeyBindingManager
 {
     private static final FabricKeyBindingManager INSTANCE = new FabricKeyBindingManager();
+
+    private final Map<ResourceLocation, KeyMapping.Category> categories = Maps.newHashMap();
 
     public static FabricKeyBindingManager getInstance()
     {
@@ -38,13 +44,18 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
 
     @Override
     public KeyMapping createNew(
-      final String translationKey, final IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int key, final String groupTranslationKey)
+      final String translationKey, final IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int key, final ResourceLocation group)
     {
+        final KeyMapping.Category category = categories.computeIfAbsent(
+            group,
+            KeyMapping.Category::register
+        );
+
         return new KeyMapping(
           translationKey,
           inputType,
           key,
-          groupTranslationKey
+            category
         );
     }
 
@@ -55,9 +66,14 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
       final KeyModifier keyModifier,
       final InputConstants.Type inputType,
       final int key,
-      final String groupTranslationKey)
+      final ResourceLocation groupTranslationKey)
     {
-        return new ModifiedKeyMapping(translationKey, inputType, key, groupTranslationKey, keyConflictContext, keyModifier);
+        final KeyMapping.Category category = categories.computeIfAbsent(
+            groupTranslationKey,
+            KeyMapping.Category::register
+        );
+
+        return new ModifiedKeyMapping(translationKey, inputType, key, category, keyConflictContext, keyModifier);
     }
 
     @Override
@@ -110,7 +126,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
           final String translationKey,
           final InputConstants.Type inputType,
           final int key,
-          final String groupTranslationKey,
+          final Category groupTranslationKey,
           final IKeyConflictContext context,
           final KeyModifier keyModifier)
         {
@@ -130,9 +146,9 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
 
         private boolean isKeyModifierActive() {
             return switch (keyModifier) {
-                case CONTROL -> Screen.hasControlDown();
-                case SHIFT -> Screen.hasShiftDown();
-                case ALT -> Screen.hasAltDown();
+                case CONTROL -> Minecraft.getInstance().hasControlDown();
+                case SHIFT -> Minecraft.getInstance().hasShiftDown();
+                case ALT -> Minecraft.getInstance().hasAltDown();
             };
         }
 

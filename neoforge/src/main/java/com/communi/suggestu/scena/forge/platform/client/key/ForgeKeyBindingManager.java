@@ -5,8 +5,10 @@ import com.communi.suggestu.scena.core.client.key.IKeyConflictContext;
 import com.communi.suggestu.scena.core.client.key.KeyModifier;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -14,6 +16,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
@@ -28,6 +31,7 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
 
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private final List<KeyMapping> mappingsToRegister = Lists.newArrayList();
+    private final Map<ResourceLocation, KeyMapping.Category> categoriesToRegister = Maps.newHashMap();
 
     private ForgeKeyBindingManager()
     {
@@ -46,6 +50,7 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
     public static void handleKeyMappingRegistration(final RegisterKeyMappingsEvent event) {
         ForgeKeyBindingManager.getInstance().isInitialized.set(true);
         ForgeKeyBindingManager.getInstance().mappingsToRegister.forEach(event::register);
+        ForgeKeyBindingManager.getInstance().categoriesToRegister.values().forEach(event::registerCategory);
     }
 
     @Override
@@ -56,14 +61,23 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
 
     @Override
     public KeyMapping createNew(
-      final String translationKey, final IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int key, final String groupTranslationKey)
+        final String translationKey,
+        final IKeyConflictContext keyConflictContext,
+        final InputConstants.Type inputType,
+        final int key,
+        final ResourceLocation group)
     {
+        final var category = categoriesToRegister.computeIfAbsent(
+            group,
+            KeyMapping.Category::new
+        );
+
         return new KeyMapping(
           translationKey,
           new PlatformKeyConflictContextForgeDelegate(keyConflictContext),
           inputType,
           key,
-          groupTranslationKey
+          category
         );
     }
 
@@ -74,15 +88,20 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
       final KeyModifier keyModifier,
       final InputConstants.Type inputType,
       final int key,
-      final String groupTranslationKey)
+      final ResourceLocation group)
     {
+        final var category = categoriesToRegister.computeIfAbsent(
+            group,
+            KeyMapping.Category::new
+        );
+
         return new KeyMapping(
           translationKey,
           new PlatformKeyConflictContextForgeDelegate(keyConflictContext),
           makePlatformSpecific(keyModifier),
           inputType,
           key,
-          groupTranslationKey
+          category
         );
     }
 

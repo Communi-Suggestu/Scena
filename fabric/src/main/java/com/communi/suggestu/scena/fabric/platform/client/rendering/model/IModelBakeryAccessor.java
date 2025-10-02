@@ -13,5 +13,11 @@ public interface IModelBakeryAccessor
      *
      * @return The model bakery.
      */
-    ModelBakery getModelBakery();
+    default ModelBakery getModelBakery() {
+        return scena$getModelBakeryInternal();
+    }
+
+    ModelBakery scena$getModelBakeryInternal();
+
+    void scena$setModelBakeryInternal(ModelBakery modelBakery);
 }

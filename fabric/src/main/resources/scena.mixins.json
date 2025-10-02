@@ -18,8 +18,8 @@
     "platform.client.ClientTooltipComponentMixin",
     "platform.client.GuiGraphicsMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
-    "platform.client.MouseHandlerEventMixin",
-    "platform.client.PaintingTextureManagerConstructionHandler",
+    "platform.client.ScrollWheelHandlerEventMixin",
+    "platform.client.BlockColorsResourceRegistrationEventMixin",
     "platform.client.AbstractContainerScreenMixin"
   ],
   "injectors": {

@@ -27,7 +27,7 @@ public class UnitTextureAtlasSprite extends TextureAtlasSprite
     private UnitTextureAtlasSprite()
     {
         super(LOCATION,
-                new SpriteContents(LOCATION, new FrameSize(1,1), new NativeImage(1, 1, false), ResourceMetadata.EMPTY),
+                new SpriteContents(LOCATION, new FrameSize(1,1), new NativeImage(1, 1, false)),
                 1,1,0,0);
     }
 

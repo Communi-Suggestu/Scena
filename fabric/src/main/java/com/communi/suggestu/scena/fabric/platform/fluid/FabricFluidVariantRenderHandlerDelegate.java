@@ -18,8 +18,8 @@ public record FabricFluidVariantRenderHandlerDelegate(
     @Override
     public @Nullable TextureAtlasSprite[] getSprites(final FluidVariant fluidVariant) {
         return new TextureAtlasSprite[]{
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(delegate.getStillTexture(makeInformation(fluidVariant)).orElseThrow()),
-                delegate.getFlowingTexture(makeInformation(fluidVariant)).map(texture -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture)).orElse(null)
+                Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(delegate.getStillTexture(makeInformation(fluidVariant)).orElseThrow()),
+                delegate.getFlowingTexture(makeInformation(fluidVariant)).map(texture -> Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(texture)).orElse(null)
         };
     }
 
