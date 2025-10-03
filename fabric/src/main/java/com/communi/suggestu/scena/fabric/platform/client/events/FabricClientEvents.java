@@ -9,7 +9,10 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.client.resources.model.AtlasManager;
 
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class FabricClientEvents implements IClientEvents {
@@ -49,6 +52,14 @@ public final class FabricClientEvents implements IClientEvents {
 
         return true;
     });
+
+    public static Event<IRegisterTextureAtlasesEvent> REGISTER_TEXTURE_ATLASES_EVENT = EventFactory.createArrayBacked(IRegisterTextureAtlasesEvent.class,
+        events -> config -> {
+            for (final IRegisterTextureAtlasesEvent iResourceRegistrationEvent : events)
+            {
+                iResourceRegistrationEvent.handle(config);
+            }
+        });
 
     private FabricClientEvents() {
     }
@@ -93,5 +104,11 @@ public final class FabricClientEvents implements IClientEvents {
     @Override
     public IEventEntryPoint<IGatherTooltipComponentsEvent> getGatherTooltipComponentsEvent() {
         return FabricEventEntryPoint.create(GATHER_TOOLTIP_COMPONENTS, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IRegisterTextureAtlasesEvent> getRegisterTextureAtlasesEvent()
+    {
+        return FabricEventEntryPoint.create(REGISTER_TEXTURE_ATLASES_EVENT, Function.identity());
     }
 }

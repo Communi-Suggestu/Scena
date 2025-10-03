@@ -14,13 +14,14 @@
     "platform.common.ServerChunkCacheMixin"
   ],
   "client": [
+    "platform.client.AbstractContainerScreenMixin",
+    "platform.client.AtlasManagerMixin",
+    "platform.client.BlockColorsResourceRegistrationEventMixin",
     "platform.client.ClientChunkCacheChunkLoadMixin",
     "platform.client.ClientTooltipComponentMixin",
     "platform.client.GuiGraphicsMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
-    "platform.client.ScrollWheelHandlerEventMixin",
-    "platform.client.BlockColorsResourceRegistrationEventMixin",
-    "platform.client.AbstractContainerScreenMixin"
+    "platform.client.ScrollWheelHandlerEventMixin"
   ],
   "injectors": {
     "defaultRequire": 1

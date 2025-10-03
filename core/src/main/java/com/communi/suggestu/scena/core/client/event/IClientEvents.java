@@ -65,4 +65,12 @@ public interface IClientEvents {
      * @return The entry point for the tooltip components gather event.
      */
     IEventEntryPoint<IGatherTooltipComponentsEvent> getGatherTooltipComponentsEvent();
+
+    /**
+     * The entry point for the registration event of texture atlases.
+     * Fired at the beginning of the construction of the atlas manager.
+     *
+     * @return The entry point.
+     */
+    IEventEntryPoint<IRegisterTextureAtlasesEvent> getRegisterTextureAtlasesEvent();
 }

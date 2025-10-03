@@ -14,6 +14,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public final class ForgeClientEvents implements IClientEvents {
     private static final ForgeClientEvents INSTANCE = new ForgeClientEvents();
@@ -87,5 +88,13 @@ public final class ForgeClientEvents implements IClientEvents {
                     components.stream().map(Either::<FormattedText, TooltipComponent>right).toList()
             );
         });
+    }
+
+    @Override
+    public IEventEntryPoint<IRegisterTextureAtlasesEvent> getRegisterTextureAtlasesEvent()
+    {
+        return EventBusEventEntryPoint.mod(RegisterTextureAtlasesEvent.class,
+            (registerTextureAtlasesEvent, event) -> event.handle(registerTextureAtlasesEvent::register)
+        );
     }
 }
