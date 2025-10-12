@@ -8,10 +8,12 @@
     "common.ChunkAccessMixin",
     "common.FluidTypeFluidMixin",
     "common.LevelChunkMixin",
+    "common.TagValueInputMixin",
+    "common.TagValueOutputMixin",
     "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
-    "client.ActiveModelDataManagerMixin",
+    "client.ActiveModelDataManagerMixin"
   ],
   "server": [],
   "injectors": {
