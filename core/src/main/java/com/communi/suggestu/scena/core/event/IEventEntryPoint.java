@@ -35,4 +35,17 @@ public interface IEventEntryPoint<T extends IEvent> {
             throw new NotImplementedException("This event is not yet implemented on this platform. You can not register a handler to it!");
         }
     }
+
+    /**
+     * Creates a new event entry point which throws the given message on the first call to register.
+     *
+     * @param message The message to throw.
+     * @return The entry point.
+     * @param <G> The type of the event.
+     */
+    static <G extends IEvent> IEventEntryPoint<G> throwing(final String message) {
+        return handler -> {
+            throw new IllegalStateException(message);
+        };
+    }
 }

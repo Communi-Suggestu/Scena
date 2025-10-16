@@ -5,12 +5,20 @@ import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.core.event.Settable;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +43,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
-            event.setCanceled(handler.handle());
-        });
+        return IEventEntryPoint.throwing("Use getPostRenderWorldEvent for block high light processing");
     }
 
     @Override
@@ -56,9 +62,34 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return EventBusEventEntryPoint.forge(RenderLevelStageEvent.AfterParticles.class, (event, handler) -> {
-            handler.handle(event.getLevelRenderer(), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
+            event.addCustomRenderer(new PostRenderWorldWrapper(event.getLevelRenderer(), handler));
         });
+    }
+
+    private record PostRenderWorldWrapper(
+        LevelRenderer renderer,
+        IPostRenderWorldEvent event
+    )  implements CustomBlockOutlineRenderer {
+
+        @Override
+        public boolean render(
+            final @NotNull BlockOutlineRenderState renderState,
+            final MultiBufferSource.@NotNull BufferSource buffer,
+            final @NotNull PoseStack poseStack,
+            final boolean translucentPass,
+            final @NotNull LevelRenderState levelRenderState)
+        {
+            event.handle(
+                renderer(),
+                poseStack,
+                buffer,
+                translucentPass,
+                levelRenderState,
+                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true)
+            );
+            return false;
+        }
     }
 
     @Override
