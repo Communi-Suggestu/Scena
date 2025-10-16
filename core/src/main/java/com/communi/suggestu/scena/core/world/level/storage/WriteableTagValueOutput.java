@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.world.level.storage;
 
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.TagValueInput;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,4 +18,20 @@ public interface WriteableTagValueOutput
      * @param toWrite To write.
      */
     void scena$write(Set<Map.Entry<String, Tag>> toWrite);
+
+    /**
+     * Returns the current tag value output as a tag value input.
+     *
+     * @return The copyable tag value output.
+     */
+    CopyableTagValueInput scena$asInput();
+
+    /**
+     * The copyable tag value input.
+     *
+     * @return The copyable input variant of this output.
+     */
+    default CopyableTagValueInput asInput() {
+        return scena$asInput();
+    }
 }

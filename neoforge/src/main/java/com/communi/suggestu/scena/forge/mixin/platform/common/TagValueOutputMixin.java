@@ -1,8 +1,10 @@
 package com.communi.suggestu.scena.forge.mixin.platform.common;
 
+import com.communi.suggestu.scena.core.world.level.storage.CopyableTagValueInput;
 import com.communi.suggestu.scena.core.world.level.storage.WriteableTagValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,5 +23,12 @@ public class TagValueOutputMixin implements WriteableTagValueOutput
     public void scena$write(final Set<Map.Entry<String, Tag>> toWrite)
     {
         toWrite.forEach(e -> output.put(e.getKey(), e.getValue()));
+    }
+
+    @Override
+    public CopyableTagValueInput scena$asInput()
+    {
+        //noinspection DataFlowIssue
+        return (CopyableTagValueInput) new TagValueInput(null, null, output);
     }
 }

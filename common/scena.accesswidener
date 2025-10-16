@@ -16,3 +16,4 @@ accessible method net/minecraft/client/renderer/block/model/SimpleUnbakedGeometr
 accessible method net/minecraft/world/level/block/entity/BlockEntityType <init> (Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;Ljava/util/Set;)V
 accessible class net/minecraft/client/resources/model/AtlasManager$AtlasEntry
 accessible method net/minecraft/client/resources/model/AtlasManager$AtlasEntry <init> (Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/client/resources/model/AtlasManager$AtlasConfig;)V
+accessible method net/minecraft/world/level/storage/TagValueInput <init> (Lnet/minecraft/util/ProblemReporter;Lnet/minecraft/world/level/storage/ValueInputContextHelper;Lnet/minecraft/nbt/CompoundTag;)V
