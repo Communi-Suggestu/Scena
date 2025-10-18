@@ -1,7 +1,11 @@
 package com.communi.suggestu.scena.core.client.rendering.type;
 
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemModel;
@@ -82,6 +86,29 @@ public interface IRenderTypeManager
     @NotNull
     Collection<RenderType> getRenderTypesFor(ItemModel model, ItemStack stack, boolean isFabulous);
 
+    /**
+     * Provides a {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY} for the given {@link DefaultVertexFormat#BLOCK} format.
+     * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(BlockState)}.
+     */
+    default RenderType getEntityRenderType(ChunkSectionLayer chunkSectionLayer) {
+        if (chunkSectionLayer != ChunkSectionLayer.TRANSLUCENT)
+            return Sheets.cutoutBlockSheet();
+        return Sheets.translucentItemSheet();
+    }
+
+    /**
+     * Provides a {@link RenderType} fit for rendering moving blocks given the specified chunk render type.
+     * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getMovingBlockRenderType(BlockState)}.
+     */
+    default RenderType getMovingBlockRenderType(ChunkSectionLayer chunkSectionLayer) {
+        return switch (chunkSectionLayer) {
+            case SOLID -> RenderType.solid();
+            case CUTOUT_MIPPED -> RenderType.cutoutMipped();
+            case CUTOUT -> RenderType.cutout();
+            case TRANSLUCENT -> RenderType.translucentMovingBlock();
+            case TRIPWIRE -> RenderType.tripwire();
+        };
+    }
 
     /**
      * A registrar for fallback render types for blocks, in case the platform does not support model based render types.
