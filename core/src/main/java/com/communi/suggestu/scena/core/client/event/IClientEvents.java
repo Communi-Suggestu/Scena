@@ -73,4 +73,11 @@ public interface IClientEvents {
      * @return The entry point.
      */
     IEventEntryPoint<IRegisterTextureAtlasesEvent> getRegisterTextureAtlasesEvent();
+
+    /**
+     * The entry point for the registration event of picture in picture renderers.
+     *
+     * @return The entry point.
+     */
+    IEventEntryPoint<IRegisterPIPRenderersEvent> getRegisterPIPRenderersEvent();
 }

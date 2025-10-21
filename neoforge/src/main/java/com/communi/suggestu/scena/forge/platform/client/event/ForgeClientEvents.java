@@ -128,4 +128,12 @@ public final class ForgeClientEvents implements IClientEvents {
             (registerTextureAtlasesEvent, event) -> event.handle(registerTextureAtlasesEvent::register)
         );
     }
+
+    @Override
+    public IEventEntryPoint<IRegisterPIPRenderersEvent> getRegisterPIPRenderersEvent()
+    {
+        return EventBusEventEntryPoint.mod(RegisterPictureInPictureRenderersEvent.class,
+            (registerPictureInPictureRenderersEvent, iRegisterPIPRenderersEvent) -> iRegisterPIPRenderersEvent.handle(registerPictureInPictureRenderersEvent::register)
+        );
+    }
 }

@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.client.events;
 
 import com.communi.suggestu.scena.core.client.event.*;
+import com.communi.suggestu.scena.core.event.IEvent;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.event.FabricEventEntryPoint;
@@ -110,5 +111,11 @@ public final class FabricClientEvents implements IClientEvents {
     public IEventEntryPoint<IRegisterTextureAtlasesEvent> getRegisterTextureAtlasesEvent()
     {
         return FabricEventEntryPoint.create(REGISTER_TEXTURE_ATLASES_EVENT, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IRegisterPIPRenderersEvent> getRegisterPIPRenderersEvent()
+    {
+        return new IEventEntryPoint.NotImplemented<>();
     }
 }
