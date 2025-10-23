@@ -1,16 +1,21 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.client;
 
+import com.communi.suggestu.scena.core.client.rendering.IExtendedGuiGraphics;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.IGuiGraphicsTooltipHandler;
 import com.communi.suggestu.scena.fabric.platform.client.tooltip.TooltipUtils;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.render.state.GuiRenderState;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,10 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(GuiGraphics.class)
-public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler {
+public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler, IExtendedGuiGraphics
+{
 
     @Unique
     private ItemStack currentStack = ItemStack.EMPTY;
+
+    @Shadow
+    @Final
+    public GuiRenderState guiRenderState;
 
     @Inject(
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
@@ -66,5 +76,12 @@ public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler {
     @Override
     public void scena$setCurrentStack(ItemStack stack) {
         this.currentStack = stack;
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    @Override
+    public void submitPip(final PictureInPictureRenderState renderState)
+    {
+        this.guiRenderState.submitPicturesInPictureState(renderState);
     }
 }

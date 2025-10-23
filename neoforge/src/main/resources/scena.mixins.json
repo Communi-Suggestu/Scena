@@ -13,7 +13,8 @@
     "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
-    "client.ActiveModelDataManagerMixin"
+    "client.ActiveModelDataManagerMixin",
+    "client.GuiGraphicsMixin"
   ],
   "server": [],
   "injectors": {

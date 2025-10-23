@@ -1,6 +1,7 @@
 plugins {
-    id 'com.ldtteam.tableau.maven-publishing' version '0.0.63'
+    alias(libs.plugins.tableau.maven.publishing)
 }
+
 
 platform {
     project {
@@ -8,6 +9,7 @@ platform {
         accessTransformers.from(rootProject.files('common/accesstransformer.cfg'))
     }
 }
+
 
 tableau {
     project {

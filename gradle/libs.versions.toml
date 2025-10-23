@@ -1,0 +1,13 @@
+[versions]
+tableau="0.+"
+placitum="0.+"
+obumbratio="0.+"
+foojay="0.+"
+neogradle = "7.1.+"
+
+[plugins]
+tableau-maven-publishing = { id = "com.ldtteam.tableau.maven-publishing", version.ref = "tableau" }
+tableau-common = { id = "com.ldtteam.tableau.common", version.ref = "tableau" }
+obumbratio = { id = "com.communi-suggestu.obumbratio", version.ref = "obumbratio" }
+placitum = { id = "com.communi-suggestu.placitum", version.ref = "placitum" }
+foojay = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }

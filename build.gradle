@@ -1,5 +1,5 @@
 plugins {
-    id 'com.ldtteam.tableau.common' version '0.0.62'
+    alias(libs.plugins.tableau.common)
 }
 
 tableau {
