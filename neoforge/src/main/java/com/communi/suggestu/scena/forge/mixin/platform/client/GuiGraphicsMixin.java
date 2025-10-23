@@ -2,7 +2,9 @@ package com.communi.suggestu.scena.forge.mixin.platform.client;
 
 import com.communi.suggestu.scena.core.client.rendering.IExtendedGuiGraphics;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -18,4 +20,13 @@ public abstract class GuiGraphicsMixin implements IExtendedGuiGraphics
 
     @Shadow
     public abstract void submitPictureInPictureRenderState(final PictureInPictureRenderState par1);
+
+    @Override
+    public @Nullable ScreenRectangle currentScissorArea()
+    {
+        return peekScissorStack();
+    }
+
+    @Shadow
+    public abstract ScreenRectangle peekScissorStack();
 }

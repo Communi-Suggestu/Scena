@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("AddedMixinMembersNamePattern")
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler, IExtendedGuiGraphics
 {
@@ -34,6 +36,10 @@ public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler, IExtendedGu
     @Shadow
     @Final
     public GuiRenderState guiRenderState;
+
+    @Shadow
+    @Final
+    public GuiGraphics.ScissorStack scissorStack;
 
     @Inject(
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
@@ -78,10 +84,15 @@ public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler, IExtendedGu
         this.currentStack = stack;
     }
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
     public void submitPip(final PictureInPictureRenderState renderState)
     {
         this.guiRenderState.submitPicturesInPictureState(renderState);
+    }
+
+    @Override
+    public ScreenRectangle currentScissorArea()
+    {
+        return this.scissorStack.peek();
     }
 }
