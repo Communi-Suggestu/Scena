@@ -18,7 +18,6 @@
   "client": [
     "platform.client.AbstractContainerScreenMixin",
     "platform.client.AtlasManagerMixin",
-    "platform.client.BakedQuadMixin",
     "platform.client.BlockColorsResourceRegistrationEventMixin",
     "platform.client.ClientChunkCacheChunkLoadMixin",
     "platform.client.ClientTooltipComponentMixin",
