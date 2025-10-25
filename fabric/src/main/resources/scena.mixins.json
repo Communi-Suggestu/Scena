@@ -24,7 +24,8 @@
     "platform.client.FabricBlockStateModelMixin",
     "platform.client.GuiGraphicsMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
-    "platform.client.ScrollWheelHandlerEventMixin"
+    "platform.client.ScrollWheelHandlerEventMixin",
+    "platform.client.VanillaBlockModelPartEncoderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
