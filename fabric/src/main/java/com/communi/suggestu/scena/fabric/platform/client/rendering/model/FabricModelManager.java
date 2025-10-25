@@ -23,12 +23,6 @@ public final class FabricModelManager implements IModelManager
     }
 
     @Override
-    public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IUnbakedModelLoader<?> modelLoader)
-    {
-        UnbakedModelDeserializer.register(name, modelLoader::read);
-    }
-
-    @Override
     public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
     {
         callback.accept(RangeSelectItemModelProperties.ID_MAPPER::put);
