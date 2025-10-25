@@ -30,34 +30,11 @@ public final class ForgeModelManager implements IModelManager
         return INSTANCE;
     }
 
-    private final Map<ResourceLocation, IUnbakedModelLoader<?>> loaders = Maps.newConcurrentMap();
-    private final AtomicBoolean registeredLoaders = new AtomicBoolean(false);
-
     private final Collection<Consumer<IItemModelPropertyRegistrar>> modelPropertyRegistrars = Collections.synchronizedCollection(Lists.newArrayList());
     private final AtomicBoolean registeredModelProperties = new AtomicBoolean(false);
 
     private ForgeModelManager()
     {
-    }
-
-    @Override
-    public void registerModelLoader(final @NotNull ResourceLocation name, final @NotNull IUnbakedModelLoader<?> modelLoader)
-    {
-        if (registeredLoaders.get())
-            throw new IllegalStateException("ModelLoader is already registered!");
-
-        loaders.put(name, modelLoader);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void onModelRegistry(final ModelEvent.RegisterLoaders event)
-    {
-        getInstance().registeredLoaders.set(true);
-
-        getInstance().loaders.forEach((name, loader) -> {
-            event.register(name, loader::read);
-        });
     }
 
     @Override

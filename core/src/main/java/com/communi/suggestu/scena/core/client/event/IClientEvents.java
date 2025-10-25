@@ -80,4 +80,11 @@ public interface IClientEvents {
      * @return The entry point.
      */
     IEventEntryPoint<IRegisterPIPRenderersEvent> getRegisterPIPRenderersEvent();
+
+    /**
+     * The entry point for the registration event of the block state model system.
+     *
+     * @return The entry point
+     */
+    IEventEntryPoint<IRegisterBlockStateModelEvent> getRegisterBlockStateModelEvent();
 }

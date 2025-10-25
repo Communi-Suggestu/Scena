@@ -26,14 +26,6 @@ public interface IModelManager
     }
 
     /**
-     * Registers a model specification loader for the given resource location.
-     *
-     * @param name the name of the loader
-     * @param modelLoader the loader.
-     */
-    void registerModelLoader(@NotNull final ResourceLocation name, @NotNull final IUnbakedModelLoader<?> modelLoader);
-
-    /**
      * Registers a new callback for item model property registration.
      *
      * @param callback The callback.

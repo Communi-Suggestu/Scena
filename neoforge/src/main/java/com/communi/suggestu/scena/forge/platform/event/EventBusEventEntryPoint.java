@@ -7,6 +7,7 @@ import com.communi.suggestu.scena.forge.platform.ForgeScenaPlatform;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.function.BiConsumer;
@@ -17,7 +18,7 @@ public final class EventBusEventEntryPoint<T extends IEvent, F extends Event> im
         return new EventBusEventEntryPoint<>(NeoForge.EVENT_BUS, eventClass, invoker);
     }
 
-    public static <Z extends IEvent, Y extends Event> IEventEntryPoint<Z> mod(final Class<Y> eventClass, final BiConsumer<Y, Z> invoker) {
+    public static <Z extends IEvent, Y extends Event & IModBusEvent> IEventEntryPoint<Z> mod(final Class<Y> eventClass, final BiConsumer<Y, Z> invoker) {
         IScenaPlatform platform = IScenaPlatform.getInstance();
         if (!(platform instanceof ForgeScenaPlatform forgeScenaPlatform)) {
             throw new IllegalStateException("Platform not initialized");
