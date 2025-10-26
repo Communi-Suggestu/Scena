@@ -1,14 +1,20 @@
 package com.communi.suggestu.scena.core.client.models;
 
-import com.communi.suggestu.scena.core.client.models.loader.IUnbakedModelLoader;
+import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The model manager of the platform.
@@ -31,6 +37,24 @@ public interface IModelManager
      * @param callback The callback.
      */
     void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback);
+
+    /**
+     * Provides the ability to extract quad information of a {@link net.minecraft.client.renderer.block.model.BlockStateModel}
+     *
+     * @param blockState The block state to get the quad information of.
+     * @param blockEntitySupplier The supplier that potentially creates the block entity for the block state to get the model for.
+     * @param cullDirection The cull direction to get the quads for.
+     * @param blockAndTintGetter The block and tint getter in which the block state is virtually placed.
+     * @param pos The position on which the block state is virtually placed.
+     * @param pipeline The pipeline head into which the quad data is pumped.
+     */
+    void extractQuads(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable Direction cullDirection,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos,
+        final Consumer<ModelQuadLayer> pipeline);
 
     interface IItemModelPropertyRegistrar {
         /**

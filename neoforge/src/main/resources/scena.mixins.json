@@ -8,12 +8,14 @@
     "common.ChunkAccessMixin",
     "common.FluidTypeFluidMixin",
     "common.LevelChunkMixin",
+    "common.SingleBlockBlockReaderExtension",
     "common.TagValueInputMixin",
     "common.TagValueOutputMixin",
     "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
     "client.ActiveModelDataManagerMixin",
+    "client.BlockStateModelExtensionMixin",
     "client.GuiGraphicsMixin"
   ],
   "server": [],

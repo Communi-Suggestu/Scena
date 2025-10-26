@@ -21,5 +21,6 @@ public interface IVertexConsumer
     void setApplyDiffuseLighting(boolean diffuse);
     void setTexture(TextureAtlasSprite texture);
     void put(int vertexIndex, int element, float... data);
+    void setLightEmission(int lightEmission);
     default void onComplete() {}
 }

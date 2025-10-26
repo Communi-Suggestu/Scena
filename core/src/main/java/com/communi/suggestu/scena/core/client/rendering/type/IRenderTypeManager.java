@@ -1,11 +1,11 @@
 package com.communi.suggestu.scena.core.client.rendering.type;
 
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
+import com.communi.suggestu.scena.core.client.utils.RenderTypeUtils;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemModel;
@@ -101,13 +101,7 @@ public interface IRenderTypeManager
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getMovingBlockRenderType(BlockState)}.
      */
     default RenderType getMovingBlockRenderType(ChunkSectionLayer chunkSectionLayer) {
-        return switch (chunkSectionLayer) {
-            case SOLID -> RenderType.solid();
-            case CUTOUT_MIPPED -> RenderType.cutoutMipped();
-            case CUTOUT -> RenderType.cutout();
-            case TRANSLUCENT -> RenderType.translucentMovingBlock();
-            case TRIPWIRE -> RenderType.tripwire();
-        };
+        return RenderTypeUtils.renderTypeFor(chunkSectionLayer);
     }
 
     /**

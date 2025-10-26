@@ -57,6 +57,7 @@ public final class LightUtil
     {
         consumer.setTexture(quad.sprite());
         consumer.setQuadOrientation(quad.direction());
+        consumer.setLightEmission(quad.lightEmission());
         if(quad.isTinted())
         {
             consumer.setQuadTint(quad.tintIndex());
