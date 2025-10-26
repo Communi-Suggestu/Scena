@@ -59,6 +59,28 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @Override
+    public @Nullable Object determineModelCacheKey(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos)
+    {
+        final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        RANDOM.setSeed(blockState.getSeed(pos));
+        return model.createGeometryKey(
+            new SingleBlockBlockAndTintGetter.Builder()
+                .withBlockState(blockState)
+                .withBlockEntity(blockEntitySupplier)
+                .withPos(pos)
+                .withSource(blockAndTintGetter)
+                .createSingleBlockBlockAndTintGetter(),
+            pos,
+            blockState,
+            RANDOM
+        );
+    }
+
+    @Override
     public void extractQuads(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,

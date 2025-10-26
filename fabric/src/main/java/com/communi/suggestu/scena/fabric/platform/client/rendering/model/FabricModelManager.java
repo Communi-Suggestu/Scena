@@ -43,6 +43,30 @@ public final class FabricModelManager implements IModelManager
         callback.accept(RangeSelectItemModelProperties.ID_MAPPER::put);
     }
 
+    @Override
+    public @Nullable Object determineModelCacheKey(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos)
+    {
+        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
+            .withBlockState(blockState)
+            .withBlockEntity(blockEntitySupplier)
+            .withPos(pos)
+            .withSource(blockAndTintGetter)
+            .createSingleBlockBlockAndTintGetter();
+        RANDOM.setSeed(blockState.getSeed(pos));
+
+        return blockStateModel.createGeometryKey(
+            wrapper,
+            pos,
+            blockState,
+            RANDOM
+        );
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public void extractQuads(
