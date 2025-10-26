@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
@@ -156,5 +158,11 @@ public final class FabricClientEvents implements IClientEvents
                     );
                 }
             });
+    }
+
+    @Override
+    public IEventEntryPoint<IRegisterItemModelEvent> getRegisterItemModelEvent()
+    {
+        return handler -> handler.handle(ItemModels.ID_MAPPER::put);
     }
 }

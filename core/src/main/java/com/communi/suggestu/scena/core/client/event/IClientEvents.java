@@ -87,4 +87,11 @@ public interface IClientEvents {
      * @return The entry point
      */
     IEventEntryPoint<IRegisterBlockStateModelEvent> getRegisterBlockStateModelEvent();
+
+    /**
+     * The entry point for the registration event of the item model system.
+     *
+     * @return The entry point
+     */
+    IEventEntryPoint<IRegisterItemModelEvent> getRegisterItemModelEvent();
 }

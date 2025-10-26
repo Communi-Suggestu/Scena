@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.state.BlockOutlineRenderState;
 import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.network.chat.FormattedText;
@@ -159,5 +160,16 @@ public final class ForgeClientEvents implements IClientEvents {
                 );
             }
         }));
+    }
+
+    @Override
+    public IEventEntryPoint<IRegisterItemModelEvent> getRegisterItemModelEvent()
+    {
+        return EventBusEventEntryPoint.mod(
+            RegisterItemModelsEvent.class,
+            (forge, scena) -> {
+                scena.handle(forge::register);
+            }
+        );
     }
 }
