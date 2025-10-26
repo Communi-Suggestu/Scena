@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -59,6 +60,27 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @Override
+    public TextureAtlasSprite getParticleTexture(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos)
+    {
+        final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        RANDOM.setSeed(blockState.getSeed(pos));
+        return model.particleIcon(
+            new SingleBlockBlockAndTintGetter.Builder()
+                .withBlockState(blockState)
+                .withBlockEntity(blockEntitySupplier)
+                .withPos(pos)
+                .withSource(blockAndTintGetter)
+                .createSingleBlockBlockAndTintGetter(),
+            pos,
+            blockState
+        );
+    }
+
+    @Override
     public @Nullable Object determineModelCacheKey(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
@@ -85,7 +107,9 @@ public final class ForgeModelManager implements IModelManager
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         @Nullable final Direction cullDirection,
-        final @Nullable BlockAndTintGetter blockAndTintGetter, final BlockPos pos, final Consumer<ModelQuadLayer> pipeline)
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos,
+        final Consumer<ModelQuadLayer> pipeline)
     {
         final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));

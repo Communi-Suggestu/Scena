@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +38,23 @@ public interface IModelManager
      * @param callback The callback.
      */
     void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback);
+
+    /**
+     * Retrieves the particle texture for the block state in the given position.
+     *
+     * @param blockState The block state in question.
+     * @param blockEntitySupplier The supplier that potentially creates the block entity for the block state to get the model for.
+     * @param blockAndTintGetter The block and tint getter in which the block state is virtually placed.
+     * @param pos The position on which the block state is virtually placed.
+     *
+     * @return The particle texture.
+     */
+    TextureAtlasSprite getParticleTexture(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos
+    );
 
     /**
      * Determine the model cache for the {@link net.minecraft.client.renderer.block.model.BlockStateModel}

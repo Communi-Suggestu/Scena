@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -41,6 +42,29 @@ public final class FabricModelManager implements IModelManager
     public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
     {
         callback.accept(RangeSelectItemModelProperties.ID_MAPPER::put);
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture(
+        final BlockState blockState,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos)
+    {
+        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
+            .withBlockState(blockState)
+            .withBlockEntity(blockEntitySupplier)
+            .withPos(pos)
+            .withSource(blockAndTintGetter)
+            .createSingleBlockBlockAndTintGetter();
+        RANDOM.setSeed(blockState.getSeed(pos));
+
+        return blockStateModel.particleSprite(
+            wrapper,
+            pos,
+            blockState
+        );
     }
 
     @Override
