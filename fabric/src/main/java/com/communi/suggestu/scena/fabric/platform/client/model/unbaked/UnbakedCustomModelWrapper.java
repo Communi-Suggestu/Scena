@@ -7,13 +7,13 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
 import org.jetbrains.annotations.NotNull;
 
-public record UnbakedCustomModelWrapper(
-    MapCodec<BlockStateModel.Unbaked> mapCodec,
-    BlockStateModel.Unbaked model
+public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
+    MapCodec<T> mapCodec,
+    T model
 ) implements CustomUnbakedBlockStateModel
 {
     @Override
-    public @NotNull MapCodec<UnbakedCustomModelWrapper> codec()
+    public @NotNull MapCodec<UnbakedCustomModelWrapper<T>> codec()
     {
         return mapCodec().xmap(
             unbaked -> this,

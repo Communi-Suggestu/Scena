@@ -6,13 +6,14 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 import org.jetbrains.annotations.NotNull;
 
-public record UnbakedCustomModelWrapper(
-    MapCodec<BlockStateModel.Unbaked> mapCodec,
-    BlockStateModel.Unbaked model
+@SuppressWarnings("unchecked")
+public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
+    MapCodec<T> mapCodec,
+    T model
 ) implements CustomUnbakedBlockStateModel
 {
     @Override
-    public @NotNull MapCodec<UnbakedCustomModelWrapper> codec()
+    public @NotNull MapCodec<UnbakedCustomModelWrapper<?>> codec()
     {
         return mapCodec().xmap(
             unbaked -> this,

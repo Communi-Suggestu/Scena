@@ -5,12 +5,15 @@ import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.fabric.platform.event.FabricEventEntryPoint;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -139,12 +142,19 @@ public final class FabricClientEvents implements IClientEvents
     public IEventEntryPoint<IRegisterBlockStateModelEvent> getRegisterBlockStateModelEvent()
     {
         return handler ->
-            handler.handle((location, codec) -> CustomUnbakedBlockStateModel.register(
-                location,
-                codec.xmap(
-                    unbaked -> new UnbakedCustomModelWrapper(codec, unbaked),
-                    UnbakedCustomModelWrapper::model
-                )
-            ));
+            handler.handle(new IRegisterBlockStateModelEvent.Registrar()
+            {
+                @Override
+                public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+                {
+                    CustomUnbakedBlockStateModel.register(
+                        location,
+                        codec.xmap(
+                            unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
+                            UnbakedCustomModelWrapper::model
+                        )
+                    );
+                }
+            });
     }
 }

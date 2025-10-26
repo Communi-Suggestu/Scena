@@ -11,6 +11,6 @@ public interface IRegisterBlockStateModelEvent extends IEvent
     public void handle(Registrar registrar);
 
     public interface Registrar {
-        void registerModel(ResourceLocation location, MapCodec<BlockStateModel.Unbaked> codec);
+        <T extends BlockStateModel.Unbaked> void registerModel(ResourceLocation location, MapCodec<T> codec);
     }
 }

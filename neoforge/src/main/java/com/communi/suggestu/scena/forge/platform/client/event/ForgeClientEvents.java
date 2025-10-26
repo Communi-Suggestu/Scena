@@ -146,12 +146,18 @@ public final class ForgeClientEvents implements IClientEvents {
     @Override
     public IEventEntryPoint<IRegisterBlockStateModelEvent> getRegisterBlockStateModelEvent()
     {
-        return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle((location, codec) -> forge.registerModel(
-            location,
-            codec.xmap(
-                unbaked -> new UnbakedCustomModelWrapper(codec, unbaked),
-                UnbakedCustomModelWrapper::model
-            )
-        )));
+        return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle(new IRegisterBlockStateModelEvent.Registrar() {
+            @Override
+            public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+            {
+                forge.registerModel(
+                    location,
+                    codec.xmap(
+                        unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
+                        UnbakedCustomModelWrapper<T>::model
+                    )
+                );
+            }
+        }));
     }
 }
