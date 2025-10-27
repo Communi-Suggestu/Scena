@@ -64,9 +64,9 @@ public final class FabricGameEvents implements IGameEvents {
         }
     });
 
-    public static final Event<IDataPackSyncEvent> DATA_PACK_SYNC = EventFactory.createArrayBacked(IDataPackSyncEvent.class, callbacks -> (playerList, players) -> {
+    public static final Event<IDataPackSyncEvent> DATA_PACK_SYNC = EventFactory.createArrayBacked(IDataPackSyncEvent.class, callbacks -> (playerList, players, syncRecipeTypeConsumer) -> {
         for (IDataPackSyncEvent callback : callbacks) {
-            callback.onSync(playerList, players);
+            callback.onSync(playerList, players, syncRecipeTypeConsumer);
         }
     });
 
@@ -180,6 +180,12 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent() {
         return FabricEventEntryPoint.create(DATA_PACK_SYNC, Function.identity());
+    }
+
+    @Override
+    public IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent()
+    {
+        return new IEventEntryPoint.NotImplemented<>();
     }
 
     private static InteractionResult mapResult(

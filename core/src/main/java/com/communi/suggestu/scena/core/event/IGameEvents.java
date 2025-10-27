@@ -105,4 +105,11 @@ public interface IGameEvents {
      * @return The entry point for the data pack sync event.
      */
     IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent();
+
+    /**
+     * The entry point for when recipes are received on the client.
+     *
+     * @return The entry point for the recipes received event.
+     */
+    IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent();
 }

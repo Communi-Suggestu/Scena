@@ -3,7 +3,9 @@ package com.communi.suggestu.scena.forge.platform.event;
 import com.communi.suggestu.scena.core.event.*;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -14,6 +16,8 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+
+import java.util.function.Consumer;
 
 public final class ForgeGameEvents implements IGameEvents {
     private static final ForgeGameEvents INSTANCE = new ForgeGameEvents();
@@ -111,7 +115,15 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent() {
         return EventBusEventEntryPoint.forge(OnDatapackSyncEvent.class, (event, handler) -> {
-            handler.onSync(event.getPlayerList(), event.getRelevantPlayers());
+            handler.onSync(event.getPlayerList(), event.getRelevantPlayers(), event::sendRecipes);
+        });
+    }
+
+    @Override
+    public IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent()
+    {
+        return EventBusEventEntryPoint.forge(RecipesReceivedEvent.class, (forge, scena) -> {
+            scena.handle(forge.getRecipeMap());
         });
     }
 
