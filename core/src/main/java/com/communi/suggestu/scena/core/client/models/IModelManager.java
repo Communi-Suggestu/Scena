@@ -3,6 +3,8 @@ package com.communi.suggestu.scena.core.client.models;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.renderer.item.ConditionalItemModel;
+import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -95,8 +97,16 @@ public interface IModelManager
          * Register a new item model property to this registrar.
          *
          * @param name The name of the property.
-         * @param clampedItemPropertyFunction The function to get the property value.
+         * @param property The function to get the property value.
          */
-        void registerItemModelProperty(@NotNull final ResourceLocation name, @NotNull final MapCodec<? extends RangeSelectItemModelProperty> clampedItemPropertyFunction);
+        void registerRangeProperty(@NotNull final ResourceLocation name, @NotNull final MapCodec<? extends RangeSelectItemModelProperty> property);
+
+        /**
+         * Register a new item model property to this registrar.
+         *
+         * @param name The name of the property.
+         * @param property The function to get the property value.
+         */
+        void registerConditionalProperty(@NotNull final ResourceLocation name, @NotNull final MapCodec<? extends ConditionalItemModelProperty> property);
     }
 }

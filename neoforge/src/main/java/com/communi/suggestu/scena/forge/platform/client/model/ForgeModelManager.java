@@ -6,14 +6,18 @@ import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +25,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -144,6 +150,36 @@ public final class ForgeModelManager implements IModelManager
     @SubscribeEvent
     public void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
         getInstance().registeredModelProperties.set(true);
-        getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(event::register));
+        getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
+            @Override
+            public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
+            {
+                event.register(name, property);
+            }
+
+            @Override
+            public void registerConditionalProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
+            {
+                //Noop
+            }
+        }));
+    }
+
+    @SubscribeEvent
+    public void onRegisterConditionalSelectItemModelProperty(RegisterConditionalItemModelPropertyEvent event) {
+        getInstance().registeredModelProperties.set(true);
+        getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
+            @Override
+            public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
+            {
+                //Noop
+            }
+
+            @Override
+            public void registerConditionalProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
+            {
+                event.register(name, property);
+            }
+        }));
     }
 }
