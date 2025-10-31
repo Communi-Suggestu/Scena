@@ -148,7 +148,7 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @SubscribeEvent
-    public void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
+    public static void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
         getInstance().registeredModelProperties.set(true);
         getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
             @Override
@@ -166,7 +166,7 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @SubscribeEvent
-    public void onRegisterConditionalSelectItemModelProperty(RegisterConditionalItemModelPropertyEvent event) {
+    public static void onRegisterConditionalSelectItemModelProperty(RegisterConditionalItemModelPropertyEvent event) {
         getInstance().registeredModelProperties.set(true);
         getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
             @Override
