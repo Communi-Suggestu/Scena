@@ -5,6 +5,6 @@ import net.neoforged.neoforge.client.extensions.BlockStateModelExtension;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BlockStateModelExtension.class)
-public abstract class BlockStateModelExtensionMixin implements DataAwareBlockStateModel
+public interface BlockStateModelExtensionMixin extends DataAwareBlockStateModel
 {
 }
