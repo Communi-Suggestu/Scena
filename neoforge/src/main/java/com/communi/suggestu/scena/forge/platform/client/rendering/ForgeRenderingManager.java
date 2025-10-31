@@ -158,7 +158,7 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @SubscribeEvent
-    public void onRegisterSpecialBlockModelRenderer(RegisterSpecialBlockModelRendererEvent event) {
+    public static void onRegisterSpecialBlockModelRenderer(RegisterSpecialBlockModelRendererEvent event) {
         getInstance().blockEntityWithoutLevelRegistrars
             .forEach(consumer -> {
                 consumer.accept((name, renders, defaultUnbaked) -> {
