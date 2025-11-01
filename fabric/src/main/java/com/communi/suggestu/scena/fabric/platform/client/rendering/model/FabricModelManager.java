@@ -4,12 +4,14 @@ import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
+import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,6 +42,11 @@ public final class FabricModelManager implements IModelManager
     {
         return INSTANCE;
     }
+
+    private final Map<
+            MapCodec<? extends BlockStateModel.Unbaked>,
+            MapCodec<? extends BlockStateModel.Unbaked>
+        > blockStateModelCodecDelegates = Maps.newConcurrentMap();
 
     private FabricModelManager()
     {
@@ -157,6 +165,19 @@ public final class FabricModelManager implements IModelManager
             RANDOM,
             dir -> dir == cullDirection
         );
+    }
+
+    @Override
+    public MapCodec<? extends BlockStateModel.Unbaked> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
+    {
+        return blockStateModelCodecDelegates.getOrDefault(platformAgnosticCodec, platformAgnosticCodec);
+    }
+
+    public void registerUnbakedModelCodecWrapping(
+        final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
+        final MapCodec<? extends BlockStateModel.Unbaked> platformSpecific
+    ) {
+        this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific);
     }
 
     private static TriState toMinecraftTriState(net.fabricmc.fabric.api.util.TriState fabricTriState) {

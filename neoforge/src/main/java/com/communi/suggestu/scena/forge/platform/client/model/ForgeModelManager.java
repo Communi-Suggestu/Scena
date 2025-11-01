@@ -6,6 +6,7 @@ import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -50,6 +52,11 @@ public final class ForgeModelManager implements IModelManager
 
     private final Collection<Consumer<IItemModelPropertyRegistrar>> modelPropertyRegistrars = Collections.synchronizedCollection(Lists.newArrayList());
     private final AtomicBoolean registeredModelProperties = new AtomicBoolean(false);
+
+    private final Map<
+        MapCodec<? extends BlockStateModel.Unbaked>,
+        MapCodec<? extends BlockStateModel.Unbaked>
+        > blockStateModelCodecDelegates = Maps.newConcurrentMap();
 
     private ForgeModelManager()
     {
@@ -181,5 +188,18 @@ public final class ForgeModelManager implements IModelManager
                 event.register(name, property);
             }
         }));
+    }
+
+    @Override
+    public MapCodec<? extends BlockStateModel.Unbaked> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
+    {
+        return blockStateModelCodecDelegates.getOrDefault(platformAgnosticCodec, platformAgnosticCodec);
+    }
+
+    public void registerUnbakedModelCodecWrapping(
+        final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
+        final MapCodec<? extends BlockStateModel.Unbaked> platformSpecific
+    ) {
+        this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific);
     }
 }

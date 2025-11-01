@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.core.event.Settable;
+import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.model.block.CustomBlockModelDefinition;
 import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
@@ -149,15 +151,23 @@ public final class ForgeClientEvents implements IClientEvents {
     {
         return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle(new IRegisterBlockStateModelEvent.Registrar() {
             @Override
-            public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+            public <T extends BlockStateModel.Unbaked> MapCodec<? extends BlockStateModel.Unbaked> registerModel(final ResourceLocation location, final MapCodec<T> codec)
             {
+                final MapCodec<? extends CustomUnbakedBlockStateModel> resultCodec = codec.xmap(
+                    unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
+                    UnbakedCustomModelWrapper<T>::model
+                );
+
                 forge.registerModel(
                     location,
-                    codec.xmap(
-                        unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
-                        UnbakedCustomModelWrapper<T>::model
-                    )
+                    resultCodec
                 );
+
+                ForgeModelManager.getInstance().registerUnbakedModelCodecWrapping(
+                    codec, resultCodec
+                );
+
+                return resultCodec;
             }
         }));
     }

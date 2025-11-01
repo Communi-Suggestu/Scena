@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
+import com.communi.suggestu.scena.fabric.platform.client.rendering.model.FabricModelManager;
 import com.communi.suggestu.scena.fabric.platform.event.FabricEventEntryPoint;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -147,15 +148,22 @@ public final class FabricClientEvents implements IClientEvents
             handler.handle(new IRegisterBlockStateModelEvent.Registrar()
             {
                 @Override
-                public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+                public <T extends BlockStateModel.Unbaked> MapCodec<? extends BlockStateModel.Unbaked> registerModel(final ResourceLocation location, final MapCodec<T> codec)
                 {
+                    final MapCodec<? extends CustomUnbakedBlockStateModel> resultCodec = codec.xmap(
+                        unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
+                        UnbakedCustomModelWrapper::model
+                    );
                     CustomUnbakedBlockStateModel.register(
                         location,
-                        codec.xmap(
-                            unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
-                            UnbakedCustomModelWrapper::model
-                        )
+                        resultCodec
                     );
+
+                    FabricModelManager.getInstance().registerUnbakedModelCodecWrapping(
+                        codec, resultCodec
+                    );
+
+                    return resultCodec;
                 }
             });
     }

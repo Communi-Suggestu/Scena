@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.models;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.item.ConditionalItemModel;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
@@ -91,6 +92,16 @@ public interface IModelManager
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos,
         final Consumer<ModelQuadLayer> pipeline);
+
+    /**
+     * Gives access to the platform specific codec, in case it is needed for data generation.
+     *
+     * @param platformAgnosticCodec The codec.
+     * @return The platform specific codec for data generation which is registered.
+     */
+    MapCodec<? extends BlockStateModel.Unbaked> wrapUnbakedModelCodec(
+        MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec
+    );
 
     interface IItemModelPropertyRegistrar {
         /**
