@@ -150,6 +150,8 @@ public final class ForgeModelManager implements IModelManager
 
                 LightUtil.put(builder, quad);
 
+                builder.withSourceQuad(quad);
+
                 pipeline.accept(builder.build());
             }
         }
