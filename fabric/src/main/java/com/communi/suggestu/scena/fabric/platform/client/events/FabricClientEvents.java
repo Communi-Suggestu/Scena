@@ -148,22 +148,19 @@ public final class FabricClientEvents implements IClientEvents
             handler.handle(new IRegisterBlockStateModelEvent.Registrar()
             {
                 @Override
-                public <T extends BlockStateModel.Unbaked> MapCodec<? extends BlockStateModel.Unbaked> registerModel(final ResourceLocation location, final MapCodec<T> codec)
+                public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
                 {
-                    final MapCodec<? extends CustomUnbakedBlockStateModel> resultCodec = codec.xmap(
-                        unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
-                        UnbakedCustomModelWrapper::model
-                    );
-                    CustomUnbakedBlockStateModel.register(
-                        location,
-                        resultCodec
-                    );
+                    final UnbakedCustomModelWrapper<T> wrapper = new UnbakedCustomModelWrapper<T>(codec);
 
                     FabricModelManager.getInstance().registerUnbakedModelCodecWrapping(
-                        codec, resultCodec
+                        codec,
+                        wrapper.codec()
                     );
 
-                    return resultCodec;
+                    CustomUnbakedBlockStateModel.register(
+                        location,
+                        wrapper.codec()
+                    );
                 }
             });
     }

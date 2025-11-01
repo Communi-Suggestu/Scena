@@ -93,16 +93,6 @@ public interface IModelManager
         final BlockPos pos,
         final Consumer<ModelQuadLayer> pipeline);
 
-    /**
-     * Gives access to the platform specific codec, in case it is needed for data generation.
-     *
-     * @param platformAgnosticCodec The codec.
-     * @return The platform specific codec for data generation which is registered.
-     */
-    MapCodec<? extends BlockStateModel.Unbaked> wrapUnbakedModelCodec(
-        MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec
-    );
-
     interface IItemModelPropertyRegistrar {
         /**
          * Register a new item model property to this registrar.

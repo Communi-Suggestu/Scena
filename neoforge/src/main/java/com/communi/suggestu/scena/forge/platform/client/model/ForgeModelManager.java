@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
+import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -55,7 +56,7 @@ public final class ForgeModelManager implements IModelManager
 
     private final Map<
         MapCodec<? extends BlockStateModel.Unbaked>,
-        MapCodec<? extends BlockStateModel.Unbaked>
+        MapCodec<UnbakedCustomModelWrapper<?>>
         > blockStateModelCodecDelegates = Maps.newConcurrentMap();
 
     private ForgeModelManager()
@@ -190,15 +191,15 @@ public final class ForgeModelManager implements IModelManager
         }));
     }
 
-    @Override
-    public MapCodec<? extends BlockStateModel.Unbaked> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
+    @Nullable
+    public MapCodec<UnbakedCustomModelWrapper<?>> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
     {
-        return blockStateModelCodecDelegates.getOrDefault(platformAgnosticCodec, platformAgnosticCodec);
+        return blockStateModelCodecDelegates.get(platformAgnosticCodec);
     }
 
     public void registerUnbakedModelCodecWrapping(
         final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
-        final MapCodec<? extends BlockStateModel.Unbaked> platformSpecific
+        final MapCodec<UnbakedCustomModelWrapper<?>> platformSpecific
     ) {
         this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific);
     }

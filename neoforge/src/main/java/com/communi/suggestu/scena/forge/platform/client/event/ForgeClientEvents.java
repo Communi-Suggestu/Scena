@@ -11,11 +11,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.state.BlockOutlineRenderState;
 import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.network.chat.FormattedText;
@@ -23,15 +21,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.model.block.CustomBlockModelDefinition;
-import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public final class ForgeClientEvents implements IClientEvents {
     private static final ForgeClientEvents INSTANCE = new ForgeClientEvents();
@@ -151,23 +145,18 @@ public final class ForgeClientEvents implements IClientEvents {
     {
         return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle(new IRegisterBlockStateModelEvent.Registrar() {
             @Override
-            public <T extends BlockStateModel.Unbaked> MapCodec<? extends BlockStateModel.Unbaked> registerModel(final ResourceLocation location, final MapCodec<T> codec)
+            public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
             {
-                final MapCodec<? extends CustomUnbakedBlockStateModel> resultCodec = codec.xmap(
-                    unbaked -> new UnbakedCustomModelWrapper<>(codec, unbaked),
-                    UnbakedCustomModelWrapper<T>::model
+                final UnbakedCustomModelWrapper<T> wrapper = new UnbakedCustomModelWrapper<>(codec);
+
+                ForgeModelManager.getInstance().registerUnbakedModelCodecWrapping(
+                    codec, wrapper.codec()
                 );
 
                 forge.registerModel(
                     location,
-                    resultCodec
+                    wrapper.codec()
                 );
-
-                ForgeModelManager.getInstance().registerUnbakedModelCodecWrapping(
-                    codec, resultCodec
-                );
-
-                return resultCodec;
             }
         }));
     }
