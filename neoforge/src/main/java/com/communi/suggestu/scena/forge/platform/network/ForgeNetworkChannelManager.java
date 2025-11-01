@@ -16,10 +16,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,6 +66,52 @@ public class ForgeNetworkChannelManager implements INetworkChannelManager {
         });
     }
 
+    @SubscribeEvent
+    public static void onRegisterNetworkChannels(final RegisterClientPayloadHandlersEvent event) {
+        getInstance().initialized.set(true);
+        getInstance().channels.forEach((channel) -> {
+            channel.registrations().forEach(registration -> {
+                registerNetworkChannel(registration, event);
+            });
+        });
+    }
+
+    private static <T extends CustomPacketPayload, B extends FriendlyByteBuf> void registerNetworkChannel(
+        final ForgeNetworkChannel.Registration<T, B> registration,
+        final RegisterClientPayloadHandlersEvent event
+    ) {
+        if (registration.direction().requiresClientHandler()) {
+            event.register(
+                registration.type(),
+                HandlerThread.NETWORK,
+                createPayloadHandlerFor(registration)
+            );
+        }
+    }
+
+    private static <T extends CustomPacketPayload, B extends FriendlyByteBuf> @NotNull IPayloadHandler<T> createPayloadHandlerFor(final ForgeNetworkChannel.Registration<T, B> registration)
+    {
+        return (payload, context) -> {
+            Player player;
+            try
+            {
+                player = context.player();
+            }
+            catch (Exception e)
+            {
+                player = DistExecutor.safeRunForDist(
+                    () -> ClientAccessors::getPlayer,
+                    () -> CommonAccessors::getNull
+                );
+            }
+
+            registration.handler().execute(payload,
+                context.flow() == PacketFlow.SERVERBOUND,
+                player,
+                context::enqueueWork);
+        };
+    }
+
     private static <T extends CustomPacketPayload, B extends FriendlyByteBuf> void registerNetworkChannel(
             final ForgeNetworkChannel.Registration<T, B> registration,
             final PayloadRegistrar registrar
@@ -73,22 +122,7 @@ public class ForgeNetworkChannelManager implements INetworkChannelManager {
         final PayloadDirection direction = registration.direction();
 
         final Registrator<T, B> registrator = getRegistrator(registrar, phase, direction);
-        registrator.register(type, codec, (payload, context) -> {
-            Player player;
-            try {
-                player = context.player();
-            } catch (Exception e) {
-                player = DistExecutor.safeRunForDist(
-                        () -> ClientAccessors::getPlayer,
-                        () -> CommonAccessors::getNull
-                );
-            }
-
-            registration.handler().execute(payload,
-                    context.flow() == PacketFlow.SERVERBOUND,
-                    player,
-                    context::enqueueWork);
-        });
+        registrator.register(type, codec, createPayloadHandlerFor(registration));
     }
 
     @SuppressWarnings("unchecked")
