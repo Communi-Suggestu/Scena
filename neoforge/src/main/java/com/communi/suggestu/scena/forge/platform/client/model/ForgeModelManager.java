@@ -145,7 +145,8 @@ public final class ForgeModelManager implements IModelManager
                 final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
                     blockState,
                     part.particleIcon(),
-                    part.ambientOcclusion()
+                    part.ambientOcclusion(),
+                    part.getRenderType(blockState)
                 );
 
                 LightUtil.put(builder, quad);

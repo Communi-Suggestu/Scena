@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TriState;
@@ -136,12 +137,12 @@ public final class FabricModelManager implements IModelManager
         RANDOM.setSeed(blockState.getSeed(pos));
         blockStateModel.emitQuads(
             new MutableQuadViewImpl() {
-                @SuppressWarnings({"UnstableApiUsage", "deprecation"})
+                @SuppressWarnings({"UnstableApiUsage"})
                 @Override
                 protected void emitDirectly()
                 {
                     final BakedQuad quad = toBakedQuad(
-                        Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS)
+                        Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS)
                             .spriteFinder().find(this)
                     );
 
@@ -152,7 +153,8 @@ public final class FabricModelManager implements IModelManager
                             pos,
                             blockState
                         ),
-                        toMinecraftTriState(ambientOcclusion())
+                        toMinecraftTriState(ambientOcclusion()),
+                        renderLayer()
                     );
 
                     LightUtil.put(builder, quad);
