@@ -10,6 +10,15 @@ import net.minecraft.client.renderer.state.LevelRenderState;
  * An event called after the world has been rendered.
  */
 public interface IPostRenderWorldEvent extends IEvent {
+
+    /**
+     * Indicates whether the render outline for blocks should be rendered.
+     * @return
+     */
+    default boolean shouldRenderOutline() {
+        return true;
+    }
+
     /**
      * Invoked when the world has rendered.
      *
@@ -20,7 +29,6 @@ public interface IPostRenderWorldEvent extends IEvent {
     void handle(final LevelRenderer levelRenderer,
                 final PoseStack poseStack,
                 final MultiBufferSource.BufferSource buffer,
-                final boolean translucentPass,
                 final LevelRenderState levelRenderState,
                 final float partialTicks);
 }

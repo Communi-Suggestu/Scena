@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -46,7 +47,11 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return IEventEntryPoint.throwing("Use getPostRenderWorldEvent for block high light processing");
+        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
+            if (handler.handle()) {
+                event.setCanceled(true);
+            }
+        }, EventPriority.HIGHEST);
     }
 
     @Override
@@ -65,34 +70,15 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
-            event.addCustomRenderer(new PostRenderWorldWrapper(event.getLevelRenderer(), handler));
-        });
-    }
-
-    private record PostRenderWorldWrapper(
-        LevelRenderer renderer,
-        IPostRenderWorldEvent event
-    )  implements CustomBlockOutlineRenderer {
-
-        @Override
-        public boolean render(
-            final @NotNull BlockOutlineRenderState renderState,
-            final MultiBufferSource.@NotNull BufferSource buffer,
-            final @NotNull PoseStack poseStack,
-            final boolean translucentPass,
-            final @NotNull LevelRenderState levelRenderState)
-        {
-            event.handle(
-                renderer(),
-                poseStack,
-                buffer,
-                translucentPass,
-                levelRenderState,
-                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true)
+        return EventBusEventEntryPoint.forge(RenderLevelStageEvent.AfterTranslucentBlocks.class, (event, handler) -> {
+            handler.handle(
+                event.getLevelRenderer(),
+                event.getPoseStack(),
+                Minecraft.getInstance().renderBuffers().bufferSource(),
+                event.getLevelRenderState(),
+                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
             );
-            return false;
-        }
+        });
     }
 
     @Override
