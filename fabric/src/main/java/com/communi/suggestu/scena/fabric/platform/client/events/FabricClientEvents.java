@@ -170,4 +170,10 @@ public final class FabricClientEvents implements IClientEvents
     {
         return handler -> handler.handle(ItemModels.ID_MAPPER::put);
     }
+
+    @Override
+    public IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent()
+    {
+        return new IEventEntryPoint.NotImplemented<>();
+    }
 }

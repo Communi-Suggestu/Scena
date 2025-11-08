@@ -94,4 +94,11 @@ public interface IClientEvents {
      * @return The entry point
      */
     IEventEntryPoint<IRegisterItemModelEvent> getRegisterItemModelEvent();
+
+    /**
+     * The entry point for the registration event of resource reload listeners
+     *
+     * @return The entry point
+     */
+    IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent();
 }

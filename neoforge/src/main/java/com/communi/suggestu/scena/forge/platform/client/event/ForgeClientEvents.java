@@ -157,4 +157,15 @@ public final class ForgeClientEvents implements IClientEvents {
             }
         );
     }
+
+    @Override
+    public IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent()
+    {
+        return EventBusEventEntryPoint.mod(
+            AddClientReloadListenersEvent.class,
+            (forge, scena) -> {
+                scena.handle(forge::addListener);
+            }
+        );
+    }
 }
