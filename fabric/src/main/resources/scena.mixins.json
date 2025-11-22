@@ -11,6 +11,7 @@
     "platform.common.LevelChunkMixin",
     "platform.common.PlayerChunkSenderMixin",
     "platform.common.PlayerListMixin",
+    "platform.common.PlayerScopingMixin",
     "platform.common.ServerChunkCacheMixin",
     "platform.common.TagValueInputMixin",
     "platform.common.TagValueOutputMixin"

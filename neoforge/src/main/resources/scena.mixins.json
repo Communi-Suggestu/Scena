@@ -8,6 +8,7 @@
     "common.ChunkAccessMixin",
     "common.FluidTypeFluidMixin",
     "common.LevelChunkMixin",
+    "common.PlayerScopingMixin",
     "common.SingleBlockBlockReaderExtension",
     "common.TagValueInputMixin",
     "common.TagValueOutputMixin",

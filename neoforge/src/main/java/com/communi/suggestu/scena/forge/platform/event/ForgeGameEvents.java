@@ -3,9 +3,11 @@ package com.communi.suggestu.scena.forge.platform.event;
 import com.communi.suggestu.scena.core.event.*;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -16,8 +18,6 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-
-import java.util.function.Consumer;
 
 public final class ForgeGameEvents implements IGameEvents {
     private static final ForgeGameEvents INSTANCE = new ForgeGameEvents();
@@ -127,6 +127,15 @@ public final class ForgeGameEvents implements IGameEvents {
         });
     }
 
+    @Override
+    public IEventEntryPoint<IIsPlayerScopingEvent> getIsPlayerScopingEvent()
+    {
+        return EventBusEventEntryPoint.forge(ScenaInternalEvent.IsScoping.class, (forge, scena) -> {
+            if (scena.isScoping(forge.player()))
+                forge.scopes();
+        });
+    }
+
     private static TriState fromResult(ProcessingResult result) {
         return switch (result) {
             case DENY -> TriState.FALSE;
@@ -144,6 +153,35 @@ public final class ForgeGameEvents implements IGameEvents {
     }
 
     private ForgeGameEvents() {
+    }
+
+    public static class ScenaInternalEvent extends Event {
+
+        public static final class IsScoping extends ScenaInternalEvent {
+
+            public static IsScoping post(Player player) {
+                return NeoForge.EVENT_BUS.post(new IsScoping(player));
+            }
+            public IsScoping(final Player player) {
+                this.player = player;
+            }
+
+            private final Player player;
+            private boolean isScoping = false;
+
+            public Player player()
+            {
+                return player;
+            }
+
+            public boolean isScoping() {
+                return isScoping;
+            }
+
+            public void scopes() {
+                this.isScoping = true;
+            }
+        }
     }
 
 }

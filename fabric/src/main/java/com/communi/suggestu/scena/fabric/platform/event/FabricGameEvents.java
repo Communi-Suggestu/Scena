@@ -32,6 +32,16 @@ public final class FabricGameEvents implements IGameEvents {
         return INSTANCE;
     }
 
+    public static final Event<IIsPlayerScopingEvent> IS_PLAYER_SCOPING = EventFactory.createArrayBacked(IIsPlayerScopingEvent.class, callbacks -> (IIsPlayerScopingEvent) player -> {
+        for (final IIsPlayerScopingEvent callback : callbacks)
+        {
+            if (callback.isScoping(player))
+                return true;
+        }
+
+        return false;
+    });
+
     public static final Event<IItemEntityPickupEvent> ENTITY_ITEM_PICKUP = EventFactory.createArrayBacked(IItemEntityPickupEvent.class, callbacks -> (final ItemEntity entityToPickup, final Player player) -> {
         boolean handled = false;
         for (IItemEntityPickupEvent callback : callbacks) {
@@ -92,7 +102,7 @@ public final class FabricGameEvents implements IGameEvents {
 
             if (result.useBlockResult() != ProcessingResult.DEFAULT) {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                    if (Minecraft.getInstance() != null && Minecraft.getInstance().gameMode != null) {
+                    if (Minecraft.getInstance().gameMode != null) {
                         Minecraft.getInstance().gameMode.destroyDelay = 3;
                     }
                 });
@@ -186,6 +196,12 @@ public final class FabricGameEvents implements IGameEvents {
     public IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent()
     {
         return new IEventEntryPoint.NotImplemented<>();
+    }
+
+    @Override
+    public IEventEntryPoint<IIsPlayerScopingEvent> getIsPlayerScopingEvent()
+    {
+        return FabricEventEntryPoint.create(IS_PLAYER_SCOPING, Function.identity());
     }
 
     private static InteractionResult mapResult(
