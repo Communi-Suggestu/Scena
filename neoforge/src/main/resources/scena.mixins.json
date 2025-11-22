@@ -15,6 +15,7 @@
     "common.WorldlyBlockGrassGrowMixin"
   ],
   "client": [
+    "client.AbstractClientPlayerScopingMixin",
     "client.ActiveModelDataManagerMixin",
     "client.BlockStateModelExtensionMixin",
     "client.GuiGraphicsMixin"

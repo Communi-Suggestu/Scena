@@ -17,6 +17,7 @@
     "platform.common.TagValueOutputMixin"
   ],
   "client": [
+    "platform.client.AbstractClientPlayerScopingMixin",
     "platform.client.AbstractContainerScreenMixin",
     "platform.client.AtlasManagerMixin",
     "platform.client.BlockColorsResourceRegistrationEventMixin",
