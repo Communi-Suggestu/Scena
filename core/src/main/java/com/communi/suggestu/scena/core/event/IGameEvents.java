@@ -107,13 +107,6 @@ public interface IGameEvents {
     IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent();
 
     /**
-     * The entry point for when recipes are received on the client.
-     *
-     * @return The entry point for the recipes received event.
-     */
-    IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent();
-
-    /**
      * The entry point used for the event to check whether the player is scoping.
      *
      * @return The entry point for the scoping check.

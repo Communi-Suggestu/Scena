@@ -1,6 +1,18 @@
 package com.communi.suggestu.scena.fabric.platform.client.events;
 
-import com.communi.suggestu.scena.core.client.event.*;
+import com.communi.suggestu.scena.core.client.event.IClientEvents;
+import com.communi.suggestu.scena.core.client.event.IClientTickStartedEvent;
+import com.communi.suggestu.scena.core.client.event.IDrawHighlightEvent;
+import com.communi.suggestu.scena.core.client.event.IGatherTooltipComponentsEvent;
+import com.communi.suggestu.scena.core.client.event.IHudRenderEvent;
+import com.communi.suggestu.scena.core.client.event.IPostRenderWorldEvent;
+import com.communi.suggestu.scena.core.client.event.IRegisterBlockStateModelEvent;
+import com.communi.suggestu.scena.core.client.event.IRegisterClientReloadListenersEvent;
+import com.communi.suggestu.scena.core.client.event.IRegisterItemModelEvent;
+import com.communi.suggestu.scena.core.client.event.IRegisterPIPRenderersEvent;
+import com.communi.suggestu.scena.core.client.event.IRegisterTextureAtlasesEvent;
+import com.communi.suggestu.scena.core.client.event.IResourceRegistrationEvent;
+import com.communi.suggestu.scena.core.client.event.IScrollEvent;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
@@ -11,12 +23,17 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.util.function.Function;
 
@@ -75,6 +92,14 @@ public final class FabricClientEvents implements IClientEvents
             }
         });
 
+    public static Event<IRegisterPIPRenderersEvent> REGISTER_PIPS_EVENT = EventFactory.createArrayBacked(IRegisterPIPRenderersEvent.class,
+        events -> config -> {
+            for (final IRegisterPIPRenderersEvent iResourceRegistrationEvent : events)
+            {
+                iResourceRegistrationEvent.handle(config);
+            }
+        });
+
     private FabricClientEvents()
     {
     }
@@ -88,8 +113,15 @@ public final class FabricClientEvents implements IClientEvents
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent()
     {
-        return new IEventEntryPoint.NotImplemented<>();
-        //return FabricEventEntryPoint.create(WorldRenderEvents.BEFORE_BLOCK_OUTLINE, handler -> (context, hitResult) -> !handler.handle());
+        return FabricEventEntryPoint.create(
+            WorldRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION,
+            (scena) -> (context, result) -> {
+                if (scena.handle())
+                {
+                    context.worldState().blockOutlineRenderState = null;
+                }
+            }
+        );
     }
 
     @Override
@@ -107,8 +139,23 @@ public final class FabricClientEvents implements IClientEvents
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent()
     {
-        return new IEventEntryPoint.NotImplemented<>();
-        //return FabricEventEntryPoint.create(WorldRenderEvents.AFTER_TRANSLUCENT, handler -> (context) -> handler.handle(context.worldRenderer(), context.matrixStack(), context.camera().getPartialTickTime()));
+        return FabricEventEntryPoint.create(
+            WorldRenderEvents.END_MAIN,
+            scena -> new WorldRenderEvents.EndMain()
+            {
+                @Override
+                public void endMain(final WorldRenderContext context)
+                {
+                    scena.handle(
+                        context.worldRenderer(),
+                        context.matrices(),
+                        Minecraft.getInstance().renderBuffers().bufferSource(),
+                        context.worldState(),
+                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
+                    );
+                }
+            }
+        );
     }
 
     @Override
@@ -138,7 +185,7 @@ public final class FabricClientEvents implements IClientEvents
     @Override
     public IEventEntryPoint<IRegisterPIPRenderersEvent> getRegisterPIPRenderersEvent()
     {
-        return new IEventEntryPoint.NotImplemented<>();
+        return FabricEventEntryPoint.create(REGISTER_PIPS_EVENT, Function.identity());
     }
 
     @Override
@@ -174,6 +221,7 @@ public final class FabricClientEvents implements IClientEvents
     @Override
     public IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent()
     {
-        return new IEventEntryPoint.NotImplemented<>();
+        return handler -> handler.handle((key, listener) -> ResourceLoader.get(PackType.CLIENT_RESOURCES)
+            .registerReloader(key, listener));
     }
 }

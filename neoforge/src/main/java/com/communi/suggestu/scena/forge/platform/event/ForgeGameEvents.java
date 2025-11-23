@@ -120,14 +120,6 @@ public final class ForgeGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent()
-    {
-        return EventBusEventEntryPoint.forge(RecipesReceivedEvent.class, (forge, scena) -> {
-            scena.handle(forge.getRecipeMap());
-        });
-    }
-
-    @Override
     public IEventEntryPoint<IIsPlayerScopingEvent> getIsPlayerScopingEvent()
     {
         return EventBusEventEntryPoint.forge(ScenaInternalEvent.IsScoping.class, (forge, scena) -> {

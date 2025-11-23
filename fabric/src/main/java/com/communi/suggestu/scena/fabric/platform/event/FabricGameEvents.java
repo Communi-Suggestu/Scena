@@ -2,7 +2,22 @@ package com.communi.suggestu.scena.fabric.platform.event;
 
 import com.communi.suggestu.scena.core.dist.Dist;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
-import com.communi.suggestu.scena.core.event.*;
+import com.communi.suggestu.scena.core.event.IChunkLoadEvent;
+import com.communi.suggestu.scena.core.event.IChunkSentEvent;
+import com.communi.suggestu.scena.core.event.ICommonConfigurationLoaded;
+import com.communi.suggestu.scena.core.event.IDataPackSyncEvent;
+import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGameEvents;
+import com.communi.suggestu.scena.core.event.IIsPlayerScopingEvent;
+import com.communi.suggestu.scena.core.event.IItemEntityPickupEvent;
+import com.communi.suggestu.scena.core.event.IPlayerJoinedWorldEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLeftClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLoggedInEvent;
+import com.communi.suggestu.scena.core.event.IPlayerRightClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IRegisterCommandsEvent;
+import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
+import com.communi.suggestu.scena.core.event.IServerTickEvent;
+import com.communi.suggestu.scena.core.event.ProcessingResult;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.event.Event;
@@ -190,12 +205,6 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IDataPackSyncEvent> getDataPackSyncEvent() {
         return FabricEventEntryPoint.create(DATA_PACK_SYNC, Function.identity());
-    }
-
-    @Override
-    public IEventEntryPoint<IRecipesReceivedEvent> getRecipesReceivedEvent()
-    {
-        return new IEventEntryPoint.NotImplemented<>();
     }
 
     @Override
