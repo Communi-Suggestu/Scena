@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(FabricBlockStateModel.class)
-public abstract class FabricBlockStateModelMixin
+public interface FabricBlockStateModelMixin
 {
     @WrapOperation(
         method = "emitQuads(Lnet/fabricmc/fabric/api/renderer/v1/mesh/QuadEmitter;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Ljava/util/function/Predicate;)V",
