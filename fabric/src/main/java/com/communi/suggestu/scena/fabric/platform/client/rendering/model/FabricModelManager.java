@@ -149,7 +149,15 @@ public final class FabricModelManager implements IModelManager
             pos,
             blockState,
             RANDOM,
-            dir -> dir == cullDirection
+            dir -> {
+                if (dir == null && cullDirection == null)
+                    return false;
+
+                if (dir != null && dir == cullDirection)
+                    return false;
+
+                return true;
+            }
         );
     }
 
