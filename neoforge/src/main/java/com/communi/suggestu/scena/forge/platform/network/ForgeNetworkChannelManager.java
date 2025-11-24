@@ -99,9 +99,10 @@ public class ForgeNetworkChannelManager implements INetworkChannelManager {
             }
             catch (Exception e)
             {
-                player = DistExecutor.safeRunForDist(
-                    () -> ClientAccessors::getPlayer,
-                    () -> CommonAccessors::getNull
+                //noinspection Convert2MethodRef
+                player = DistExecutor.unsafeRunForDist(
+                    () -> () -> ClientAccessors.getPlayer(),
+                    () -> () -> CommonAccessors.getNull()
                 );
             }
 
