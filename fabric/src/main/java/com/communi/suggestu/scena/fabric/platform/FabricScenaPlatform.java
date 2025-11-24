@@ -14,7 +14,6 @@ import com.communi.suggestu.scena.fabric.platform.event.FabricGameEvents;
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
 import com.communi.suggestu.scena.fabric.platform.inventory.FabricPlayerInventoryManager;
 import com.communi.suggestu.scena.fabric.platform.item.FabricDyeItemHelper;
-import com.communi.suggestu.scena.fabric.platform.item.FabricItemComparisonHelper;
 import com.communi.suggestu.scena.fabric.platform.level.FabricLevelBasedPropertyAccessor;
 import com.communi.suggestu.scena.fabric.platform.network.FabricNetworkChannelManager;
 import com.communi.suggestu.scena.fabric.platform.registry.FabricRegistryManager;
@@ -28,7 +27,6 @@ import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
-import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
 import net.minecraft.server.MinecraftServer;
@@ -75,12 +73,6 @@ public final class FabricScenaPlatform implements IScenaPlatform
     public @NotNull ILevelBasedPropertyAccessor getLevelBasedPropertyAccessor()
     {
         return FabricLevelBasedPropertyAccessor.getInstance();
-    }
-
-    @Override
-    public @NotNull IItemComparisonHelper getItemComparisonHelper()
-    {
-        return FabricItemComparisonHelper.getInstance();
     }
 
     @Override

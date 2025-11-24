@@ -1,6 +1,5 @@
 package com.communi.suggestu.scena.core;
 
-import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.blockstate.ILevelBasedPropertyAccessor;
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.communi.suggestu.scena.core.config.IConfigurationManager;
@@ -9,10 +8,10 @@ import com.communi.suggestu.scena.core.dist.IDistributionManager;
 import com.communi.suggestu.scena.core.entity.IEntityInformationManager;
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
+import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
-import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
 import net.minecraft.server.MinecraftServer;
@@ -77,16 +76,6 @@ public interface IScenaPlatform
      */
     @NotNull
     ILevelBasedPropertyAccessor getLevelBasedPropertyAccessor();
-
-    /**
-     * The item comparison helper of the platform at large.
-     * Some platforms extend the functionality of itemstacks beyond item, meta and nbt.
-     * And sometimes these values have to be taken into account while comparing itemstacks.
-     *
-     * @return The item comparison helper.
-     */
-    @NotNull
-    IItemComparisonHelper getItemComparisonHelper();
 
     /**
      * Gives access to the player inventory manager.

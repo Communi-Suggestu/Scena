@@ -13,7 +13,6 @@ import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.event.IGameEvents;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
-import com.communi.suggestu.scena.core.item.IItemComparisonHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
 import com.communi.suggestu.scena.forge.platform.entity.ForgeBlockEntityPositionManager;
@@ -26,7 +25,6 @@ import com.communi.suggestu.scena.forge.platform.entity.ForgePlayerInventoryMana
 import com.communi.suggestu.scena.forge.platform.event.ForgeGameEvents;
 import com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager;
 import com.communi.suggestu.scena.forge.platform.item.DyeItemHelper;
-import com.communi.suggestu.scena.forge.platform.item.ForgeItemComparisonHelper;
 import com.communi.suggestu.scena.forge.platform.level.ForgeLevelBasedPropertyAccessor;
 import com.communi.suggestu.scena.forge.platform.network.ForgeNetworkChannelManager;
 import com.communi.suggestu.scena.forge.platform.registry.ForgeRegistryManager;
@@ -76,12 +74,6 @@ public final class ForgeScenaPlatform implements IScenaPlatform
     public @NotNull ILevelBasedPropertyAccessor getLevelBasedPropertyAccessor()
     {
         return ForgeLevelBasedPropertyAccessor.getInstance();
-    }
-
-    @Override
-    public @NotNull IItemComparisonHelper getItemComparisonHelper()
-    {
-        return ForgeItemComparisonHelper.getInstance();
     }
 
     @Override
