@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.forge.platform.client.rendering;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -18,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.api.distmarker.Dist;
@@ -30,11 +32,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
 public class ForgeRenderTypeManager implements IRenderTypeManager
 {
-    private static final ThreadLocal<RandomSource> RANDOM_SOURCE = ThreadLocal.withInitial(RandomSource::createNewThreadLocalInstance);
+    private static final RandomSource       RANDOM   = Util.make(RandomSource.createNewThreadLocalInstance(), (random) -> random.setSeed(42L));
     private static final ForgeRenderTypeManager INSTANCE = new ForgeRenderTypeManager();
 
     public static ForgeRenderTypeManager getInstance()
@@ -54,7 +57,7 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
     public boolean canRenderInType(final BlockState blockState, final ChunkSectionLayer renderType)
     {
         var partsList = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(blockState)
-            .collectParts(RANDOM_SOURCE.get());
+            .collectParts(RANDOM);
 
         for (final BlockModelPart blockModelPart : partsList)
         {
@@ -95,13 +98,14 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
 
     @Override
     public @NotNull Collection<ChunkSectionLayer> getRenderTypesFor(
-        final BlockStateModel model,
         final BlockAndTintGetter blockAndTintGetter,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final BlockPos position,
-        final BlockState state,
-        final RandomSource rand)
+        final BlockState state)
     {
-        var parts = model.collectParts(blockAndTintGetter, position, state, rand);
+        final var model = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state);
+        RANDOM.setSeed(state.getSeed(position));
+        var parts = model.collectParts(blockAndTintGetter, position, state, RANDOM);
         var layers = EnumSet.noneOf(ChunkSectionLayer.class);
 
         for (final BlockModelPart part : parts)

@@ -14,12 +14,15 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Manager for handling the different render types which are available to
@@ -65,15 +68,19 @@ public interface IRenderTypeManager
     /**
      * Retrieves the {@linkplain RenderType render types} for the given block state, data and model.
      *
-     * @param model              The model to get the types for.
      * @param blockAndTintGetter The level information
-     * @param position
+     * @param blockEntitySupplier The supplier of the block entity in the given position
+     * @param position           The position to get the layers for.
      * @param state              The block state to get the types for.
-     * @param rand               The random source to use.
+     *
      * @return The render types for the given block state, data and model.
      */
     @NotNull
-    Collection<ChunkSectionLayer> getRenderTypesFor(BlockStateModel model, BlockAndTintGetter blockAndTintGetter, final BlockPos position, BlockState state, RandomSource rand);
+    Collection<ChunkSectionLayer> getRenderTypesFor(
+        final BlockAndTintGetter blockAndTintGetter,
+        final Supplier<@Nullable BlockEntity> blockEntitySupplier,
+        final BlockPos position,
+        final BlockState state);
 
     /**
      * Retrieves the {@linkplain RenderType render types} for the given model, itemstack and if we are running in fabulous or not.
