@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCu
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
+import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,6 @@ import net.minecraft.client.renderer.item.properties.conditional.ConditionalItem
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,8 +46,8 @@ public final class FabricModelManager implements IModelManager
     }
 
     private final Map<
-            MapCodec<? extends BlockStateModel.Unbaked>,
-            MapCodec<UnbakedCustomModelWrapper<?>>
+        MapCodec<? extends BlockStateModel.Unbaked>,
+        MapCodec<UnbakedCustomModelWrapper<?>>
         > blockStateModelCodecDelegates = Maps.newConcurrentMap();
 
     private FabricModelManager()
@@ -57,7 +57,8 @@ public final class FabricModelManager implements IModelManager
     @Override
     public void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback)
     {
-        callback.accept(new IItemModelPropertyRegistrar() {
+        callback.accept(new IItemModelPropertyRegistrar()
+        {
             @Override
             public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
             {
@@ -119,13 +120,14 @@ public final class FabricModelManager implements IModelManager
         );
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void extractQuads(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final @Nullable Direction cullDirection,
-        final @Nullable BlockAndTintGetter blockAndTintGetter, final BlockPos pos, final Consumer<ModelQuadLayer> pipeline)
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final BlockPos pos,
+        final Consumer<ModelQuadLayer> pipeline)
     {
         final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
@@ -136,34 +138,13 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
         blockStateModel.emitQuads(
-            new MutableQuadViewImpl() {
-                @SuppressWarnings({"UnstableApiUsage"})
-                @Override
-                protected void emitDirectly()
-                {
-                    final BakedQuad quad = toBakedQuad(
-                        Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS)
-                            .spriteFinder().find(this)
-                    );
-
-                    final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                        blockState,
-                        blockStateModel.particleSprite(
-                            wrapper,
-                            pos,
-                            blockState
-                        ),
-                        toMinecraftTriState(ambientOcclusion()),
-                        renderLayer()
-                    );
-
-                    LightUtil.put(builder, quad);
-
-                    builder.withSourceQuad(quad);
-
-                    pipeline.accept(builder.build());
-                }
-            },
+            new QuadView(
+                blockState,
+                blockStateModel,
+                wrapper,
+                pos,
+                pipeline
+            ),
             wrapper,
             pos,
             blockState,
@@ -181,15 +162,70 @@ public final class FabricModelManager implements IModelManager
     public void registerUnbakedModelCodecWrapping(
         final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
         final MapCodec<UnbakedCustomModelWrapper<?>> platformSpecific
-    ) {
+    )
+    {
         this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific);
     }
 
-    private static TriState toMinecraftTriState(net.fabricmc.fabric.api.util.TriState fabricTriState) {
-        return switch (fabricTriState) {
+    private static TriState toMinecraftTriState(net.fabricmc.fabric.api.util.TriState fabricTriState)
+    {
+        return switch (fabricTriState)
+        {
             case FALSE -> TriState.FALSE;
             case DEFAULT -> TriState.DEFAULT;
             case TRUE -> TriState.TRUE;
         };
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static final class QuadView extends MutableQuadViewImpl
+    {
+
+        private final BlockState               blockState;
+        private final FabricBlockStateModel    blockStateModel;
+        private final BlockAndTintGetter       wrapper;
+        private final BlockPos                 pos;
+        private final Consumer<ModelQuadLayer> pipeline;
+
+        @SuppressWarnings("UnstableApiUsage")
+        private QuadView(
+            final BlockState blockState, final FabricBlockStateModel blockStateModel, final BlockAndTintGetter wrapper, final BlockPos pos,
+            final Consumer<ModelQuadLayer> pipeline)
+        {
+            this.blockState = blockState;
+            this.blockStateModel = blockStateModel;
+            this.wrapper = wrapper;
+            this.pos = pos;
+            this.pipeline = pipeline;
+
+            this.data = new int[EncodingFormat.TOTAL_STRIDE];
+        }
+
+        @SuppressWarnings({"UnstableApiUsage"})
+        @Override
+        protected void emitDirectly()
+        {
+            final BakedQuad quad = toBakedQuad(
+                Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS)
+                    .spriteFinder().find(this)
+            );
+
+            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
+                blockState,
+                blockStateModel.particleSprite(
+                    wrapper,
+                    pos,
+                    blockState
+                ),
+                toMinecraftTriState(ambientOcclusion()),
+                renderLayer()
+            );
+
+            LightUtil.put(builder, quad);
+
+            builder.withSourceQuad(quad);
+
+            pipeline.accept(builder.build());
+        }
     }
 }
