@@ -8,7 +8,11 @@ import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCus
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -201,9 +205,26 @@ public final class ForgeModelManager implements IModelManager
     }
 
     public void registerUnbakedModelCodecWrapping(
-        final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
+        final ResourceLocation location, final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
         final MapCodec<UnbakedCustomModelWrapper<?>> platformSpecific
     ) {
-        this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific);
+        //Right now DataGen needs both platform type mappers. So lets add it on the coApply.
+        this.blockStateModelCodecDelegates.put(platformAgnostic, platformSpecific
+            .mapResult(new MapCodec.ResultFunction<>()
+            {
+                @Override
+                public <T> DataResult<UnbakedCustomModelWrapper<?>> apply(final DynamicOps<T> ops, final MapLike<T> input, final DataResult<UnbakedCustomModelWrapper<?>> a)
+                {
+                    return a;
+                }
+
+                @Override
+                public <T> RecordBuilder<T> coApply(final DynamicOps<T> ops, final UnbakedCustomModelWrapper<?> input, final RecordBuilder<T> t)
+                {
+                    t.add("fabric:type", ops.createString(location.toString()));
+                    return t;
+                }
+            })
+        );
     }
 }

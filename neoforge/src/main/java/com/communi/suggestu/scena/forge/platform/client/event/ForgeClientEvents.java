@@ -136,7 +136,9 @@ public final class ForgeClientEvents implements IClientEvents {
                 final UnbakedCustomModelWrapper<T> wrapper = new UnbakedCustomModelWrapper<>(codec);
 
                 ForgeModelManager.getInstance().registerUnbakedModelCodecWrapping(
-                    codec, wrapper.codec()
+                    location,
+                    codec,
+                    wrapper.codec()
                 );
 
                 forge.registerModel(
