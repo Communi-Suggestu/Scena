@@ -1,53 +1,48 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
-import com.communi.suggestu.scena.core.client.models.vertices.IVertexConsumer;
+import com.communi.suggestu.scena.core.client.models.vertices.VertexProcessor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseModelReader implements IVertexConsumer
+public abstract class BaseModelReader implements VertexProcessor
 {
-    @NotNull
-    @Override
-    public VertexFormat getVertexFormat()
-    {
-        return DefaultVertexFormat.BLOCK;
-    }
 
     @Override
-    public void setQuadTint(
+    public void tintIndex(
       final int tint)
     {
     }
 
     @Override
-    public void setQuadOrientation(
-      @NotNull final Direction orientation)
+    public void cullDirection(
+      @Nullable final Direction orientation)
     {
     }
 
     @Override
-    public void setApplyDiffuseLighting(
+    public void shade(
       final boolean diffuse)
     {
 
     }
 
     @Override
-    public void setTexture(
+    public void texture(
       @NotNull final TextureAtlasSprite texture)
     {
     }
 
     @Override
-    public void setLightEmission(final int lightEmission)
+    public void light(final int lightEmission)
     {
     }
 
     @Override
-    public abstract void put(final int vertexIndex,
-                    final int element,
-                    final float @NotNull ... data);
+    public void vertex(final VertexData data)
+    {
+    }
 }

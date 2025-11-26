@@ -1,22 +1,38 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
 import com.communi.suggestu.scena.core.util.VectorUtils;
+import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import org.joml.Vector2f;
+import org.joml.Vector2fc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public record VertexData(float x, float y, float z, float u, float v, int vertexIndex) {
 
-    public VertexData(final Vector3f position, final Vector2f uv, final int vertexIndex) {
+    public static VertexData from(BakedQuad quad, int index) {
+        final long uv = quad.packedUV(index);
+        final Vector2f uvUnpacked = new Vector2f(
+            UVPair.unpackU(uv),
+            UVPair.unpackV(uv)
+        );
+
+        return new VertexData(
+            quad.position(index),
+            uvUnpacked,
+            index
+        );
+    }
+
+    public VertexData(final Vector3fc position, final Vector2fc uv, final int vertexIndex) {
         this(position.x(), position.y(), position.z(), uv.x(), uv.y(), vertexIndex);
     }
 
-    public float[] positionData() {
-        return new float[] {x, y, z, 0f};
-    }
-
-    public float[] uvData() {
-        return new float[] {u, v, 0, 0};
+    public long uv() {
+        return UVPair.pack(
+            u(), v()
+        );
     }
 
     public Vector3f position() {
@@ -25,10 +41,6 @@ public record VertexData(float x, float y, float z, float u, float v, int vertex
 
     public Vector2f projectOntoPlaneOf(Direction cullDirection) {
         return VectorUtils.projectOntoPlaneOf(position(), cullDirection);
-    }
-
-    public Vector2f uv() {
-        return new Vector2f(u, v);
     }
 
     @SuppressWarnings("UnusedReturnValue")

@@ -4,7 +4,7 @@ import com.communi.suggestu.scena.core.client.IClientManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemTintSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.Consumer;
@@ -65,6 +65,6 @@ public interface IColorManager
         /**
          * Registers the item tint source provider.
          */
-        void register(final ResourceLocation colorProviderName, MapCodec<? extends ItemTintSource> builder);
+        void register(final Identifier colorProviderName, MapCodec<? extends ItemTintSource> builder);
     }
 }

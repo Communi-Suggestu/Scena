@@ -3,8 +3,6 @@ package com.communi.suggestu.scena.fabric.platform.configuration;
 import com.communi.suggestu.scena.core.config.ConfigurationType;
 import com.communi.suggestu.scena.core.config.IConfigurationBuilder;
 import com.communi.suggestu.scena.core.config.IConfigurationManager;
-import com.communi.suggestu.scena.core.dist.Dist;
-import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -14,7 +12,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.FileReader;
@@ -31,8 +29,8 @@ public final class FabricConfigurationManager implements IConfigurationManager
             .setPrettyPrinting()
             .create();
 
-    public static final ResourceLocation CONFIG_SYNC_CHANNEL_ID = ResourceLocation.fromNamespaceAndPath("scena", "config_sync");
-    private static final FabricConfigurationManager INSTANCE = new FabricConfigurationManager();
+    public static final  Identifier                 CONFIG_SYNC_CHANNEL_ID = Identifier.fromNamespaceAndPath("scena", "config_sync");
+    private static final FabricConfigurationManager INSTANCE               = new FabricConfigurationManager();
 
     public static FabricConfigurationManager getInstance()
     {

@@ -22,7 +22,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TriState;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -60,13 +60,13 @@ public final class FabricModelManager implements IModelManager
         callback.accept(new IItemModelPropertyRegistrar()
         {
             @Override
-            public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
+            public void registerRangeProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
             {
                 RangeSelectItemModelProperties.ID_MAPPER.put(name, property);
             }
 
             @Override
-            public void registerConditionalProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
+            public void registerConditionalProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
             {
                 ConditionalItemModelProperties.ID_MAPPER.put(name, property);
             }
@@ -219,7 +219,6 @@ public final class FabricModelManager implements IModelManager
             );
 
             final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                blockState,
                 blockStateModel.particleSprite(
                     wrapper,
                     pos,

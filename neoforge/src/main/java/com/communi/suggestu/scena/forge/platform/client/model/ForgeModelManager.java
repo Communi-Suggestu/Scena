@@ -2,7 +2,6 @@ package com.communi.suggestu.scena.forge.platform.client.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
-import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.forge.utils.Constants;
@@ -13,7 +12,6 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
@@ -23,8 +21,9 @@ import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemMode
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,14 +146,12 @@ public final class ForgeModelManager implements IModelManager
             for (final BakedQuad quad : part.getQuads(cullDirection))
             {
                 final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                    blockState,
                     part.particleIcon(),
                     part.ambientOcclusion(),
                     part.getRenderType(blockState)
                 );
 
-                LightUtil.put(builder, quad);
-
+                builder.put(quad);
                 builder.withSourceQuad(quad);
 
                 pipeline.accept(builder.build());
@@ -167,13 +164,13 @@ public final class ForgeModelManager implements IModelManager
         getInstance().registeredModelProperties.set(true);
         getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
             @Override
-            public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
+            public void registerRangeProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
             {
                 event.register(name, property);
             }
 
             @Override
-            public void registerConditionalProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
+            public void registerConditionalProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
             {
                 //Noop
             }
@@ -185,13 +182,13 @@ public final class ForgeModelManager implements IModelManager
         getInstance().registeredModelProperties.set(true);
         getInstance().modelPropertyRegistrars.forEach(registrar -> registrar.accept(new IItemModelPropertyRegistrar() {
             @Override
-            public void registerRangeProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
+            public void registerRangeProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends RangeSelectItemModelProperty> property)
             {
                 //Noop
             }
 
             @Override
-            public void registerConditionalProperty(final @NotNull ResourceLocation name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
+            public void registerConditionalProperty(final @NotNull Identifier name, final @NotNull MapCodec<? extends ConditionalItemModelProperty> property)
             {
                 event.register(name, property);
             }
@@ -205,7 +202,7 @@ public final class ForgeModelManager implements IModelManager
     }
 
     public void registerUnbakedModelCodecWrapping(
-        final ResourceLocation location, final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
+        final Identifier location, final MapCodec<? extends BlockStateModel.Unbaked> platformAgnostic,
         final MapCodec<UnbakedCustomModelWrapper<?>> platformSpecific
     ) {
         //Right now DataGen needs both platform type mappers. So lets add it on the coApply.

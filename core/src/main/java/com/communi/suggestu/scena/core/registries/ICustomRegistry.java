@@ -4,7 +4,7 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistrarManager;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -41,7 +41,7 @@ public interface ICustomRegistry<T extends ICustomRegistryEntry>
      * Gives access to all names stored in the current registry.
      * @return All names as "ids" of the objects stored in the registry.
      */
-    Set<ResourceLocation> getNames();
+    Set<Identifier> getNames();
 
     /**
      * Gives access to the value with the given name in the registry.
@@ -50,7 +50,7 @@ public interface ICustomRegistry<T extends ICustomRegistryEntry>
      * @param name The name to lookup.
      * @return An optional with the lookup result, empty if the name is not used by any object in the registry.
      */
-    Optional<T> get(final ResourceLocation name);
+    Optional<T> get(final Identifier name);
 
     /**
      * Gives access to the value with the given name in the registry.
@@ -59,7 +59,7 @@ public interface ICustomRegistry<T extends ICustomRegistryEntry>
      * @param name The name to lookup.
      * @return The lookup result.
      */
-    default T getOrThrow(final ResourceLocation name) {
+    default T getOrThrow(final Identifier name) {
         return get(name).orElseThrow(() -> new IllegalStateException("Unknown registry name: " + name));
     }
 

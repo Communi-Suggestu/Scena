@@ -8,10 +8,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
 {
     private static final FabricKeyBindingManager INSTANCE = new FabricKeyBindingManager();
 
-    private final Map<ResourceLocation, KeyMapping.Category> categories = Maps.newHashMap();
+    private final Map<Identifier, KeyMapping.Category> categories = Maps.newHashMap();
 
     public static FabricKeyBindingManager getInstance()
     {
@@ -44,7 +43,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
 
     @Override
     public KeyMapping createNew(
-      final String translationKey, final IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int key, final ResourceLocation group)
+      final String translationKey, final IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int key, final Identifier group)
     {
         final KeyMapping.Category category = categories.computeIfAbsent(
             group,
@@ -66,7 +65,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
       final KeyModifier keyModifier,
       final InputConstants.Type inputType,
       final int key,
-      final ResourceLocation groupTranslationKey)
+      final Identifier groupTranslationKey)
     {
         final KeyMapping.Category category = categories.computeIfAbsent(
             groupTranslationKey,

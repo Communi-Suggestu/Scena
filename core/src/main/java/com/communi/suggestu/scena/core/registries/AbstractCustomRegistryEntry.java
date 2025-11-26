@@ -1,20 +1,20 @@
 package com.communi.suggestu.scena.core.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
 public abstract class AbstractCustomRegistryEntry implements ICustomRegistryEntry
 {
-    private ResourceLocation registryName;
+    private Identifier registryName;
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return registryName;
     }
 
-    public void setRegistryName(final ResourceLocation registryName)
+    public void setRegistryName(final Identifier registryName)
     {
         if (this.registryName != null)
         {

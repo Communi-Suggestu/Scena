@@ -15,14 +15,14 @@ pluginManagement {
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-    id 'com.communi-suggestu.placitum' version '0.0.50'
+    id 'com.communi-suggestu.placitum' version '0.0.55'
 }
 
 rootProject.name = "scena"
 
 platforms {
     core(':core')
-    fabric(':fabric')
+    //fabric(':fabric')
     neoforge(':neoforge')
 
     defaults {

@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 import com.communi.suggestu.scena.core.registries.ICustomRegistry;
 import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -16,10 +16,10 @@ import java.util.stream.Stream;
 public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> implements IRegistryObject<T>
 {
 
-    private final ResourceLocation entryName;
+    private final Identifier                   entryName;
     private final Supplier<ICustomRegistry<R>> registry;
 
-    public CustomRegistryObject(final ResourceLocation name, final Supplier<ICustomRegistry<R>> registry)
+    public CustomRegistryObject(final Identifier name, final Supplier<ICustomRegistry<R>> registry)
     {
         this.entryName = name;
         this.registry = registry;
@@ -44,7 +44,7 @@ public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> i
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return entryName;
     }

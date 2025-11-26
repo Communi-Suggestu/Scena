@@ -1,24 +1,24 @@
 package com.communi.suggestu.scena.core.client.models;
 
 import com.mojang.math.Quadrant;
-import com.mojang.math.Transformation;
-import net.minecraft.Util;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,22 +27,20 @@ import java.util.function.Function;
 public class UnbakedGeometryHelper
 {
 
+    private static final ModelBaker.PartCache DUMMY_PART_CACHE = vector -> vector;
     private UnbakedGeometryHelper()
     {
         throw new IllegalStateException("Can not instantiate an instance of: UnbakedGeometryHelper. This is a utility class");
     }
 
     public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite) {
-        var elements = ItemModelGenerator.processFrames(layerIndex, "layer" + layerIndex, sprite.contents());
-        fixItemModelSeams(elements, sprite);
-        return elements;
+        return createUnbakedItemMaskElements(layerIndex, sprite);
     }
 
     public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite) {
         List<BlockElement> elements = createUnbakedItemElements(layerIndex, sprite);
         elements.removeFirst(); // Remove north and south faces
 
-        float expand = -sprite.uvShrinkRatio();
         SpriteContents spriteContents = sprite.contents();
         int width = spriteContents.width();
         int height = spriteContents.height();
@@ -83,17 +81,9 @@ public class UnbakedGeometryHelper
 
                     Vector3f from = new Vector3f(16 * xStart / (float) width, 16 - 16 * yEnd / (float) height, 7.5F);
                     Vector3f to = new Vector3f(16 * x / (float) width, 16 - 16 * y / (float) height, 8.5F);
-                    // Create initial default UVs
+                    // Create UVs
                     BlockElementFace.UVs northUvs = FaceBakery.defaultFaceUV(from, to, Direction.NORTH);
                     BlockElementFace.UVs southUvs = FaceBakery.defaultFaceUV(from, to, Direction.SOUTH);
-                    // Expand coordinates to match the shrunk UVs of the front/back face on a standard generated model
-                    from.x = Mth.clamp(Mth.lerp(expand, from.x, 8F), 0F, 16F);
-                    from.y = Mth.clamp(Mth.lerp(expand, from.y, 8F), 0F, 16F);
-                    to.x = Mth.clamp(Mth.lerp(expand, to.x, 8F), 0F, 16F);
-                    to.y = Mth.clamp(Mth.lerp(expand, to.y, 8F), 0F, 16F);
-                    // Counteract sprite expansion to ensure pixel alignment
-                    northUvs = expandUVs(northUvs, expand);
-                    southUvs = expandUVs(southUvs, expand);
                     // Create faces
                     Map<Direction, BlockElementFace> faces = Map.of(
                         Direction.NORTH, new BlockElementFace(null, layerIndex, "layer" + layerIndex, northUvs, Quadrant.R0),
@@ -125,8 +115,11 @@ public class UnbakedGeometryHelper
     public static void bakeElements(QuadCollection.Builder builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
         for (BlockElement element : elements) {
             element.faces().forEach((side, face) -> {
-                var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.parse(face.texture())));
-                BakedQuad quad = SimpleUnbakedGeometry.bakeFace(element, face, sprite, side, modelState);
+                var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, Identifier.parse(face.texture())));
+                BakedQuad quad = FaceBakery.bakeQuad(
+                    DUMMY_PART_CACHE,
+                    element.from(), element.to(), face, sprite, side, modelState, element.rotation(), element.shade(), element.lightEmission()
+                );
                 if (face.cullForDirection() == null)
                     builder.addUnculledFace(quad);
                 else
@@ -144,59 +137,5 @@ public class UnbakedGeometryHelper
         var builder = new QuadCollection.Builder();
         bakeElements(builder, elements, spriteGetter, modelState);
         return builder.build().getAll();
-    }
-
-    /**
-     * Modify the position and UVs of the edge quads of generated item models to account for sprite expansion of the
-     * front and back quad. Fixes <a href="https://bugs.mojang.com/browse/MC-73186">MC-73186</a> on generated item models.
-     *
-     * @param elements The generated elements, may include the front and back face
-     * @param sprite   The texture from which the elements were generated
-     * @return the original elements list
-     */
-    public static List<BlockElement> fixItemModelSeams(List<BlockElement> elements, TextureAtlasSprite sprite) {
-        float expand = -sprite.uvShrinkRatio();
-        elements.replaceAll(element -> {
-            // Edge elements are guaranteed to have exactly one face, anything else is either invalid or the front/back
-            if (element.faces().size() != 1) return element;
-
-            var faceEntry = element.faces().entrySet().iterator().next();
-            if (faceEntry.getKey().getAxis() == Direction.Axis.Z) return element;
-
-            // Move edge quads to account for sprite expansion of the front and back quads
-            Vector3f from = new Vector3f(
-                Mth.clamp(Mth.lerp(expand, element.from().x(), 8F), 0F, 16F),
-                Mth.clamp(Mth.lerp(expand, element.from().y(), 8F), 0F, 16F),
-                element.from().z());
-            Vector3f to = new Vector3f(
-                Mth.clamp(Mth.lerp(expand, element.to().x(), 8F), 0F, 16F),
-                Mth.clamp(Mth.lerp(expand, element.to().y(), 8F), 0F, 16F),
-                element.to().z());
-
-            BlockElementFace face = faceEntry.getValue();
-            BlockElementFace.UVs uvs = face.uvs();
-            if (uvs == null) {
-                uvs = FaceBakery.defaultFaceUV(element.from(), element.to(), faceEntry.getKey());
-            }
-            float minU = uvs.minU();
-            float minV = uvs.minV();
-            float maxU = uvs.maxU();
-            float maxV = uvs.maxV();
-            // Counteract sprite expansion on edge quads to ensure alignment with pixels on the front and back quads
-            if (faceEntry.getKey().getAxis() == Direction.Axis.Y) {
-                float centerU = (minU + minU + maxU + maxU) / 4.0F;
-                minU = Mth.clamp(Mth.lerp(expand, minU, centerU), 0F, 16F);
-                maxU = Mth.clamp(Mth.lerp(expand, maxU, centerU), 0F, 16F);
-            } else {
-                float centerV = (minV + minV + maxV + maxV) / 4.0F;
-                minV = Mth.clamp(Mth.lerp(expand, minV, centerV), 0F, 16F);
-                maxV = Mth.clamp(Mth.lerp(expand, maxV, centerV), 0F, 16F);
-            }
-            uvs = new BlockElementFace.UVs(minU, minV, maxU, maxV);
-            face = new BlockElementFace(face.cullForDirection(), face.tintIndex(), face.texture(), uvs, face.rotation());
-
-            return new BlockElement(from, to, Map.of(faceEntry.getKey(), face), element.rotation(), element.shade(), element.lightEmission());
-        });
-        return elements;
     }
 }

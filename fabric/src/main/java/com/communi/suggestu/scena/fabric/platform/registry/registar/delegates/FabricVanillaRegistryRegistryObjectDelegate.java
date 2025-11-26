@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.registry.registar.delegates;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -13,10 +13,10 @@ import java.util.stream.Stream;
 
 public class FabricVanillaRegistryRegistryObjectDelegate<I extends R, R> implements IRegistryObject<I>
 {
-    private final ResourceLocation id;
-    private final I value;
+    private final Identifier id;
+    private final I          value;
 
-    public FabricVanillaRegistryRegistryObjectDelegate(final ResourceLocation id, final I value) {
+    public FabricVanillaRegistryRegistryObjectDelegate(final Identifier id, final I value) {
         this.id = id;
         this.value = value;}
 
@@ -27,7 +27,7 @@ public class FabricVanillaRegistryRegistryObjectDelegate<I extends R, R> impleme
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return id;
     }
@@ -111,7 +111,7 @@ public class FabricVanillaRegistryRegistryObjectDelegate<I extends R, R> impleme
         }
 
         @Override
-        public ResourceLocation getId()
+        public Identifier getId()
         {
             return null;
         }

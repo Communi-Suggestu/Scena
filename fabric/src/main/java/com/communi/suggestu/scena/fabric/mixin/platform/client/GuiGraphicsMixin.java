@@ -12,7 +12,7 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -64,7 +64,7 @@ public class GuiGraphicsMixin implements IGuiGraphicsTooltipHandler, IExtendedGu
         final int x,
         final int y,
         final ClientTooltipPositioner positioner,
-        final ResourceLocation background,
+        final Identifier background,
         final boolean focused,
         final Operation<Void> original) {
         if (!this.currentStack.isEmpty()) {

@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
@@ -62,7 +62,7 @@ public interface IRenderingManager
      * @param fluidInformation The fluid to get the texture for.
      * @return The texture.
      */
-    ResourceLocation getFlowingFluidTexture(final FluidInformation fluidInformation);
+    Identifier getFlowingFluidTexture(final FluidInformation fluidInformation);
 
     /**
      * Gains access to the texture that is used to render a flowing fluid.
@@ -70,7 +70,7 @@ public interface IRenderingManager
      * @param fluid The fluid to get the texture for.
      * @return The texture.
      */
-    ResourceLocation getFlowingFluidTexture(final Fluid fluid);
+    Identifier getFlowingFluidTexture(final Fluid fluid);
 
     /**
      * Gains access to the texture that is used to render a still fluid.
@@ -78,7 +78,7 @@ public interface IRenderingManager
      * @param fluidInformation The fluid to get the texture for.
      * @return The texture.
      */
-    ResourceLocation getStillFluidTexture(final FluidInformation fluidInformation);
+    Identifier getStillFluidTexture(final FluidInformation fluidInformation);
 
     /**
      * Gains access to the texture that is used to render a still fluid.
@@ -86,7 +86,7 @@ public interface IRenderingManager
      * @param fluid The fluid to get the texture for.
      * @return The texture.
      */
-    ResourceLocation getStillFluidTexture(final Fluid fluid);
+    Identifier getStillFluidTexture(final Fluid fluid);
 
     /**
      * The render type manager.
@@ -137,7 +137,7 @@ public interface IRenderingManager
      * A registrar for the {@link SpecialModelRenderer}s.
      */
     interface IBlockEntityWithoutLevelRendererRegistrar {
-        void registerBlockEntityWithoutLevelRenderer(final ResourceLocation name, Set<Block> renders, final SpecialModelRenderer.Unbaked defaultUnbaked);
+        void registerBlockEntityWithoutLevelRenderer(final Identifier name, Set<Block> renders, final SpecialModelRenderer.Unbaked defaultUnbaked);
     }
 
     interface IBlockEntityRendererRegistrar {

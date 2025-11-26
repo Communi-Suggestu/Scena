@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -16,11 +16,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class CustomRegistry<T extends ICustomRegistryEntry> implements ICustomRegistry<T> {
-    private final BiMap<ResourceLocation, T> registerMap = HashBiMap.create();
+    private final BiMap<Identifier, T> registerMap = HashBiMap.create();
 
     @Override
     public Codec<T> byNameCodec() {
-        return ResourceLocation.CODEC.comapFlatMap(resourceLocation -> {
+        return Identifier.CODEC.comapFlatMap(resourceLocation -> {
                     final Optional<T> optionalEntry = get(resourceLocation);
                     return optionalEntry.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Unknown registry name: " + resourceLocation));
                 },
@@ -29,7 +29,7 @@ public class CustomRegistry<T extends ICustomRegistryEntry> implements ICustomRe
 
     @Override
     public StreamCodec<ByteBuf, T> byNameStreamCodec() {
-        return ResourceLocation.STREAM_CODEC.map(
+        return Identifier.STREAM_CODEC.map(
                 this::getOrThrow,
                 ICustomRegistryEntry::getRegistryName
         );
@@ -43,14 +43,14 @@ public class CustomRegistry<T extends ICustomRegistryEntry> implements ICustomRe
     }
 
     @Override
-    public Set<ResourceLocation> getNames() {
+    public Set<Identifier> getNames() {
         synchronized (registerMap) {
             return registerMap.keySet();
         }
     }
 
     @Override
-    public Optional<T> get(final ResourceLocation name) {
+    public Optional<T> get(final Identifier name) {
         synchronized (registerMap) {
             return Optional.ofNullable(registerMap.get(name));
         }

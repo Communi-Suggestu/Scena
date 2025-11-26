@@ -7,23 +7,16 @@ import com.communi.suggestu.scena.core.event.Settable;
 import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.state.BlockOutlineRenderState;
-import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +124,7 @@ public final class ForgeClientEvents implements IClientEvents {
     {
         return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle(new IRegisterBlockStateModelEvent.Registrar() {
             @Override
-            public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+            public <T extends BlockStateModel.Unbaked> void registerModel(final Identifier location, final MapCodec<T> codec)
             {
                 final UnbakedCustomModelWrapper<T> wrapper = new UnbakedCustomModelWrapper<>(codec);
 

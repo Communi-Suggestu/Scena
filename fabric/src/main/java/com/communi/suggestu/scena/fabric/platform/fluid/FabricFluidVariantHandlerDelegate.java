@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 import java.util.Optional;
@@ -81,7 +81,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
     }
 
     @Override
-    public Optional<ResourceLocation> getStillTexture(final FluidInformation variant)
+    public Optional<Identifier> getStillTexture(final FluidInformation variant)
     {
 
         return DistExecutor.unsafeRunForDist(
@@ -98,7 +98,7 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
     }
 
     @Override
-    public Optional<ResourceLocation> getFlowingTexture(final FluidInformation variant)
+    public Optional<Identifier> getFlowingTexture(final FluidInformation variant)
     {
         return DistExecutor.unsafeRunForDist(
                 () -> () -> {

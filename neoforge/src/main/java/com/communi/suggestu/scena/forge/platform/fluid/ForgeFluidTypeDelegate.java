@@ -2,17 +2,13 @@ package com.communi.suggestu.scena.forge.platform.fluid;
 
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundAction;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 import static com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager.buildFluidInformation;
 

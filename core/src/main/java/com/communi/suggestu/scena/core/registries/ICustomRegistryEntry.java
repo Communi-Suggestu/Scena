@@ -1,7 +1,6 @@
 package com.communi.suggestu.scena.core.registries;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Represents an object which is part of a registry.
@@ -10,8 +9,8 @@ public interface ICustomRegistryEntry
 {
     /**
      * The name of the object in the registry.
-     * Namespaced using {@link ResourceLocation}.
+     * Namespaced using {@link Identifier}.
      * @return The "id" as name of the object in the registry.
      */
-    ResourceLocation getRegistryName();
+    Identifier getRegistryName();
 }

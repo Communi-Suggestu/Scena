@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.core.client.key;
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Platform manager for registering new keybindings on the system
@@ -45,7 +45,7 @@ public interface IKeyBindingManager
      * @param group              The translation key for the group that the key belongs to.
      * @return The new key mapping.
      */
-    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, InputConstants.Type inputType, int key, ResourceLocation group);
+    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, InputConstants.Type inputType, int key, Identifier group);
 
     /**
      * Creates a new key mapping with the given properties.
@@ -59,7 +59,7 @@ public interface IKeyBindingManager
      * @param groupTranslationKey The translation key for the group that the key belongs to.
      * @return The new key mapping.
      */
-    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputConstants.Type inputType, int key, ResourceLocation groupTranslationKey);
+    KeyMapping createNew(String translationKey, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputConstants.Type inputType, int key, Identifier groupTranslationKey);
 
     /**
      * Checks if the key conflict context of the key mapping is active or not.

@@ -9,26 +9,21 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import com.communi.suggestu.scena.forge.platform.ForgeScenaPlatform;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidUtil;
-import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +43,7 @@ public class ForgeFluidManager implements IFluidManager {
     }
 
     @Override
-    public FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler) {
+    public FluidRegistration registerFluidAndVariant(final Identifier name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler) {
         final IFluidVariantHandler handler = variantHandler.get();
 
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
@@ -64,13 +59,13 @@ public class ForgeFluidManager implements IFluidManager {
                 }
 
                 @Override
-                public @NotNull ResourceLocation getStillTexture(final @NotNull FluidStack stack)
+                public @NotNull Identifier getStillTexture(final @NotNull FluidStack stack)
                 {
                     return handler.getStillTexture(buildFluidInformation(stack)).orElseThrow();
                 }
 
                 @Override
-                public @NotNull ResourceLocation getFlowingTexture(final @NotNull FluidStack stack)
+                public @NotNull Identifier getFlowingTexture(final @NotNull FluidStack stack)
                 {
                     return handler.getFlowingTexture(buildFluidInformation(stack)).orElseThrow();
                 }

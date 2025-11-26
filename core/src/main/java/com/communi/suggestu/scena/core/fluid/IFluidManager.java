@@ -1,9 +1,8 @@
 package com.communi.suggestu.scena.core.fluid;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
@@ -33,7 +32,7 @@ public interface IFluidManager
      * @param variantHandler The builder that will be used to create the handler.
      * @return A supplier which will return the registered variant handler.
      */
-    FluidRegistration registerFluidAndVariant(final ResourceLocation name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler);
+    FluidRegistration registerFluidAndVariant(final Identifier name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler);
 
     /**
      * Returns the fluid variant handler for the given fluid.

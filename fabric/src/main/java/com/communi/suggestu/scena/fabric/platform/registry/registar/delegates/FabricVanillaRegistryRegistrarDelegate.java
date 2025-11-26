@@ -5,7 +5,7 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
@@ -29,10 +29,10 @@ public class FabricVanillaRegistryRegistrarDelegate<R extends T, T> implements I
     {
         final I entry = factory.get();
         if (entry instanceof SimpleCustomRegistryEntry<?> registryEntry)
-            registryEntry.setRegistryName(ResourceLocation.fromNamespaceAndPath(modId, name));
+            registryEntry.setRegistryName(Identifier.fromNamespaceAndPath(modId, name));
 
-        Registry.register(this.vanillaRegistry, ResourceLocation.fromNamespaceAndPath(modId, name), entry);
+        Registry.register(this.vanillaRegistry, Identifier.fromNamespaceAndPath(modId, name), entry);
 
-        return new FabricVanillaRegistryRegistryObjectDelegate<>(ResourceLocation.fromNamespaceAndPath(modId, name), entry);
+        return new FabricVanillaRegistryRegistryObjectDelegate<>(Identifier.fromNamespaceAndPath(modId, name), entry);
     }
 }

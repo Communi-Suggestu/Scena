@@ -13,11 +13,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.SpecialBlockRendererRegistry;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,25 +63,25 @@ public final class FabricRenderingManager implements IRenderingManager
     }
 
     @Override
-    public ResourceLocation getFlowingFluidTexture(final FluidInformation fluidInformation)
+    public Identifier getFlowingFluidTexture(final FluidInformation fluidInformation)
     {
         return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).contents().name();
     }
 
     @Override
-    public ResourceLocation getFlowingFluidTexture(final Fluid fluid)
+    public Identifier getFlowingFluidTexture(final Fluid fluid)
     {
         return getFlowingFluidTexture(new FluidInformation(fluid));
     }
 
     @Override
-    public ResourceLocation getStillFluidTexture(final FluidInformation fluidInformation)
+    public Identifier getStillFluidTexture(final FluidInformation fluidInformation)
     {
         return FluidVariantRendering.getSprite(FabricFluidManager.makeVariant(fluidInformation)).contents().name();
     }
 
     @Override
-    public ResourceLocation getStillFluidTexture(final Fluid fluid)
+    public Identifier getStillFluidTexture(final Fluid fluid)
     {
         return getFlowingFluidTexture(new FluidInformation(fluid));
     }

@@ -1,18 +1,13 @@
 package com.communi.suggestu.scena.fabric.platform.creativetab;
 
 import com.communi.suggestu.scena.core.creativetab.ICreativeTabManager;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class FabricCreativeTabManager implements ICreativeTabManager {

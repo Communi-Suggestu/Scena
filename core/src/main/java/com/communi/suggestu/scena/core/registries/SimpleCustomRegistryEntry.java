@@ -1,19 +1,19 @@
 package com.communi.suggestu.scena.core.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SimpleCustomRegistryEntry<V> implements ICustomRegistryEntry
 {
-    private ResourceLocation name;
+    private Identifier name;
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return name;
     }
 
     @SuppressWarnings("unchecked")
-    public V setRegistryName(final ResourceLocation name)
+    public V setRegistryName(final Identifier name)
     {
         this.name = name;
         return (V) this;

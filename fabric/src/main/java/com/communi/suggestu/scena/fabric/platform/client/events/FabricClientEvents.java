@@ -31,9 +31,8 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.item.ItemModels;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.util.function.Function;
 
@@ -195,7 +194,7 @@ public final class FabricClientEvents implements IClientEvents
             handler.handle(new IRegisterBlockStateModelEvent.Registrar()
             {
                 @Override
-                public <T extends BlockStateModel.Unbaked> void registerModel(final ResourceLocation location, final MapCodec<T> codec)
+                public <T extends BlockStateModel.Unbaked> void registerModel(final Identifier location, final MapCodec<T> codec)
                 {
                     final UnbakedCustomModelWrapper<T> wrapper = new UnbakedCustomModelWrapper<T>(codec);
 

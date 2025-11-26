@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 
 public class EmptyCustomRegistryObject<T> implements IRegistryObject<T>
 {
-    private final ResourceLocation entryName;
+    private final Identifier entryName;
 
-    public EmptyCustomRegistryObject(final ResourceLocation entryName) {
+    public EmptyCustomRegistryObject(final Identifier entryName) {
         this.entryName = entryName;
     }
 
@@ -26,7 +26,7 @@ public class EmptyCustomRegistryObject<T> implements IRegistryObject<T>
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return entryName;
     }

@@ -2,7 +2,7 @@ package com.communi.suggestu.scena.forge.platform.registry.delegates;
 
 import com.communi.suggestu.scena.core.registries.IPlatformRegistry;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,13 +22,13 @@ public class ForgeRegistryPlatformDelegate<T> implements IPlatformRegistry<T>
     }
 
     @Override
-    public Set<ResourceLocation> getKeys()
+    public Set<Identifier> getKeys()
     {
         return delegate.keySet();
     }
 
     @Override
-    public Optional<T> getValue(final ResourceLocation key)
+    public Optional<T> getValue(final Identifier key)
     {
         if (!delegate.containsKey(key))
             return Optional.empty();
@@ -37,7 +37,7 @@ public class ForgeRegistryPlatformDelegate<T> implements IPlatformRegistry<T>
     }
 
     @Override
-    public ResourceLocation getKey(final T value)
+    public Identifier getKey(final T value)
     {
         return delegate.getKey(value);
     }

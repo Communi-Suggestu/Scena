@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public interface IPlatformRegistry<T>
      *
      * @return All keys stored in the registry.
      */
-    Set<ResourceLocation> getKeys();
+    Set<Identifier> getKeys();
 
     /**
      * Returns the value associated with the given key, if it is present.
@@ -34,7 +34,7 @@ public interface IPlatformRegistry<T>
      * @param key The key to lookup.
      * @return An optional with the value for the given key, or empty if unknown.
      */
-    Optional<T> getValue(final ResourceLocation key);
+    Optional<T> getValue(final Identifier key);
 
     /**
      * Returns the key associated with the value.
@@ -43,6 +43,6 @@ public interface IPlatformRegistry<T>
      * @param value The value to get the key for.
      * @return The key for the value.
      */
-    ResourceLocation getKey(final T value);
+    Identifier getKey(final T value);
 
 }

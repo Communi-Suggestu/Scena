@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -30,8 +30,8 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
     }
 
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private final List<KeyMapping> mappingsToRegister = Lists.newArrayList();
-    private final Map<ResourceLocation, KeyMapping.Category> categoriesToRegister = Maps.newHashMap();
+    private final List<KeyMapping>                     mappingsToRegister   = Lists.newArrayList();
+    private final Map<Identifier, KeyMapping.Category> categoriesToRegister = Maps.newHashMap();
 
     private ForgeKeyBindingManager()
     {
@@ -65,7 +65,7 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
         final IKeyConflictContext keyConflictContext,
         final InputConstants.Type inputType,
         final int key,
-        final ResourceLocation group)
+        final Identifier group)
     {
         final var category = categoriesToRegister.computeIfAbsent(
             group,
@@ -88,7 +88,7 @@ public class ForgeKeyBindingManager implements IKeyBindingManager
       final KeyModifier keyModifier,
       final InputConstants.Type inputType,
       final int key,
-      final ResourceLocation group)
+      final Identifier group)
     {
         final var category = categoriesToRegister.computeIfAbsent(
             group,

@@ -9,8 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.resources.Identifier;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -84,15 +83,15 @@ public class FluidCuboidUtils
       float z2,
       int color)
     {
-        ResourceLocation still = IRenderingManager.getInstance().getStillFluidTexture(fluid);
-        ResourceLocation flowing = IRenderingManager.getInstance().getFlowingFluidTexture(fluid);
+        Identifier still = IRenderingManager.getInstance().getStillFluidTexture(fluid);
+        Identifier flowing = IRenderingManager.getInstance().getFlowingFluidTexture(fluid);
 
         renderFluidCuboid(still, flowing, color, matrices, renderer, combinedOverlay, combinedLight, x1, y1, z1, x2, y2, z2);
     }
 
     public static void renderFluidCuboid(
-      ResourceLocation still,
-      ResourceLocation flowing,
+      Identifier still,
+      Identifier flowing,
       int color,
       PoseStack matrices,
       VertexConsumer renderer,

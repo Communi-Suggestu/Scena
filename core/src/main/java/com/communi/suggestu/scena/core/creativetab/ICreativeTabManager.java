@@ -2,15 +2,9 @@ package com.communi.suggestu.scena.core.creativetab;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Manager which is used to handle the creation of new creative tabs.

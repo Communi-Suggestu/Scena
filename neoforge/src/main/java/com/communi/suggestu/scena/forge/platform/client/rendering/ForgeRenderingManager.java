@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
@@ -85,28 +85,28 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @Override
-    public ResourceLocation getFlowingFluidTexture(final FluidInformation fluidInformation)
+    public Identifier getFlowingFluidTexture(final FluidInformation fluidInformation)
     {
         return IClientFluidTypeExtensions.of(fluidInformation.fluid())
                 .getFlowingTexture(buildFluidStack(fluidInformation));
     }
 
     @Override
-    public ResourceLocation getFlowingFluidTexture(final Fluid fluid)
+    public Identifier getFlowingFluidTexture(final Fluid fluid)
     {
         return IClientFluidTypeExtensions.of(fluid)
                        .getFlowingTexture();
     }
 
     @Override
-    public ResourceLocation getStillFluidTexture(final FluidInformation fluidInformation)
+    public Identifier getStillFluidTexture(final FluidInformation fluidInformation)
     {
         return IClientFluidTypeExtensions.of(fluidInformation.fluid())
                                          .getStillTexture(buildFluidStack(fluidInformation));
     }
 
     @Override
-    public ResourceLocation getStillFluidTexture(final Fluid fluid)
+    public Identifier getStillFluidTexture(final Fluid fluid)
     {
         return IClientFluidTypeExtensions.of(fluid)
                                          .getStillTexture();

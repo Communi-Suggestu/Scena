@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.forge.platform.fluid;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundActions;
@@ -70,13 +70,13 @@ public class ForgeFluidVariantHandlerDelegate implements IFluidVariantHandler
     }
 
     @Override
-    public Optional<ResourceLocation> getStillTexture(final FluidInformation variant)
+    public Optional<Identifier> getStillTexture(final FluidInformation variant)
     {
         return Optional.ofNullable(IClientFluidTypeExtensions.of(delegate).getStillTexture(buildFluidStack(variant)));
     }
 
     @Override
-    public Optional<ResourceLocation> getFlowingTexture(final FluidInformation variant)
+    public Optional<Identifier> getFlowingTexture(final FluidInformation variant)
     {
         return Optional.ofNullable(IClientFluidTypeExtensions.of(delegate).getFlowingTexture(buildFluidStack(variant)));
     }

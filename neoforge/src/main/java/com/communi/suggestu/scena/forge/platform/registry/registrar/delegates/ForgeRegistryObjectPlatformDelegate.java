@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.registry.registrar.delegates;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -15,10 +15,10 @@ import java.util.stream.Stream;
 public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IRegistryObject<T>
 {
 
-    private final ResourceLocation id;
+    private final Identifier            id;
     private final Supplier<Optional<T>> delegate;
 
-    public ForgeRegistryObjectPlatformDelegate(ResourceLocation id, final Supplier<Optional<T>> delegate) {
+    public ForgeRegistryObjectPlatformDelegate(Identifier id, final Supplier<Optional<T>> delegate) {
         this.id = id;
         this.delegate = delegate;}
 
@@ -29,7 +29,7 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return id;
     }

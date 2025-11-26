@@ -5,7 +5,7 @@ import com.communi.suggestu.scena.core.registries.ICustomRegistry;
 import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.ICustomRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -44,7 +44,7 @@ public class CustomRegistrar<T extends ICustomRegistryEntry> implements ICustomR
             preBuildValueSuppliers.add(() -> {
                 final T entry = factory.get();
                 if (entry instanceof AbstractCustomRegistryEntry) {
-                    ((AbstractCustomRegistryEntry) entry).setRegistryName(ResourceLocation.fromNamespaceAndPath(owner, name));
+                    ((AbstractCustomRegistryEntry) entry).setRegistryName(Identifier.fromNamespaceAndPath(owner, name));
                 } else if (entry.getRegistryName() == null)
                 {
                     throw new IllegalStateException("Tried to create a registry entry which does not extend SimpleChiselsAndBitsRegistryEntry and also has no name set!");
@@ -53,12 +53,12 @@ public class CustomRegistrar<T extends ICustomRegistryEntry> implements ICustomR
                 return entry;
             });
 
-            return new CustomRegistryObject<>(ResourceLocation.fromNamespaceAndPath(owner, name), () -> registry);
+            return new CustomRegistryObject<>(Identifier.fromNamespaceAndPath(owner, name), () -> registry);
         }
 
         final T entry = factory.get();
         if (entry instanceof AbstractCustomRegistryEntry) {
-            ((AbstractCustomRegistryEntry) entry).setRegistryName(ResourceLocation.fromNamespaceAndPath(owner, name));
+            ((AbstractCustomRegistryEntry) entry).setRegistryName(Identifier.fromNamespaceAndPath(owner, name));
         } else if (entry.getRegistryName() == null)
         {
             throw new IllegalStateException("Tried to create a registry entry which does not extend SimpleChiselsAndBitsRegistryEntry and also has no name set!");
@@ -66,6 +66,6 @@ public class CustomRegistrar<T extends ICustomRegistryEntry> implements ICustomR
 
         ((CustomRegistry<T>) registry).register(entry);
 
-        return new CustomRegistryObject<>(ResourceLocation.fromNamespaceAndPath(owner, name), () -> registry);
+        return new CustomRegistryObject<>(Identifier.fromNamespaceAndPath(owner, name), () -> registry);
     }
 }

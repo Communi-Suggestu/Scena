@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.registries.deferred;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public interface IRegistryObject<T> extends Supplier<T>
     @NotNull
     T get();
 
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * Streams the content of the registry object if it is available.

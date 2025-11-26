@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.client.event;
 
 import com.communi.suggestu.scena.core.event.IEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 /**
@@ -28,6 +28,6 @@ public interface IRegisterClientReloadListenersEvent extends IEvent
          * @param key The key
          * @param listener The listener
          */
-        void addListener(ResourceLocation key, PreparableReloadListener listener);
+        void addListener(Identifier key, PreparableReloadListener listener);
     }
 }
