@@ -161,7 +161,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
             builder.cullDirection(cullDirection);
             builder.tintIndex(tintIndex);
             builder.shade(true);
-            manualVertexData.forEach(builder::vertex);
+            manualVertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).forEach(builder::vertex);
             builder.onComplete();
             return builder.build();
         }
