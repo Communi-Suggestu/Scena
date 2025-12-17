@@ -10,6 +10,7 @@ import com.communi.suggestu.scena.fabric.platform.client.tooltip.ClientTooltipCo
 import com.communi.suggestu.scena.fabric.platform.fluid.FabricFluidManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialBlockRendererRegistry;
+import net.fabricmc.fabric.api.renderer.v1.render.FabricBlockRenderManager;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,8 +52,12 @@ public final class FabricRenderingManager implements IRenderingManager
         final BlockPos blockPos,
         final BlockState blockState)
     {
+        final var blockRenderer = Minecraft.getInstance().getBlockRenderer();
+        if (!(blockRenderer instanceof FabricBlockRenderManager fabricBlockRenderManager))
+            return;
+
         //TODO: Figure out what to do with rendering the colors!
-        Minecraft.getInstance().getBlockRenderer().renderBlockAsEntity(
+        fabricBlockRenderManager.renderBlockAsEntity(
             blockState,
             matrices,
             source,

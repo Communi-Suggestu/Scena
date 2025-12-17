@@ -10,6 +10,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
@@ -68,7 +70,10 @@ public class FabricRenderTypeManager implements IRenderTypeManager
         final BlockState state)
     {
         final EnumSet<ChunkSectionLayer> layers = EnumSet.noneOf(ChunkSectionLayer.class);
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
+            return Collections.emptyList();
+
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(state)
             .withPos(position)
@@ -76,7 +81,7 @@ public class FabricRenderTypeManager implements IRenderTypeManager
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(state.getSeed(position));
-        blockStateModel.emitQuads(
+        fabricBlockStateModel.emitQuads(
             new QuadView(
                 layer -> {
                     if (layer != null)
@@ -100,12 +105,10 @@ public class FabricRenderTypeManager implements IRenderTypeManager
         return List.of(ItemBlockRenderTypes.getRenderType(stack));
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private static final class QuadView extends MutableQuadViewImpl
     {
         private final Consumer<@Nullable ChunkSectionLayer> pipeline;
 
-        @SuppressWarnings("UnstableApiUsage")
         private QuadView(
             final Consumer<@Nullable ChunkSectionLayer> pipeline
         ) {
@@ -114,7 +117,6 @@ public class FabricRenderTypeManager implements IRenderTypeManager
             this.data = new int[EncodingFormat.TOTAL_STRIDE];
         }
 
-        @SuppressWarnings({"UnstableApiUsage"})
         @Override
         protected void emitDirectly()
         {

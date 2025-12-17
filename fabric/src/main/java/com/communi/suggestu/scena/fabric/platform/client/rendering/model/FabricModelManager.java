@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCu
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
+import net.fabricmc.fabric.api.renderer.v1.sprite.FabricSpriteAtlasTexture;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
 import net.minecraft.Util;
@@ -80,7 +81,10 @@ public final class FabricModelManager implements IModelManager
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
+            return blockStateModel.particleIcon();
+
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -89,7 +93,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        return blockStateModel.particleSprite(
+        return fabricBlockStateModel.particleSprite(
             wrapper,
             pos,
             blockState
@@ -103,7 +107,10 @@ public final class FabricModelManager implements IModelManager
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
+            return null;
+
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -112,7 +119,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        return blockStateModel.createGeometryKey(
+        return fabricBlockStateModel.createGeometryKey(
             wrapper,
             pos,
             blockState,
@@ -129,7 +136,11 @@ public final class FabricModelManager implements IModelManager
         final BlockPos pos,
         final Consumer<ModelQuadLayer> pipeline)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+
+        final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
+            return;
+
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -137,10 +148,10 @@ public final class FabricModelManager implements IModelManager
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
-        blockStateModel.emitQuads(
+        fabricBlockStateModel.emitQuads(
             new QuadView(
                 blockState,
-                blockStateModel,
+                fabricBlockStateModel,
                 wrapper,
                 pos,
                 pipeline
@@ -153,10 +164,7 @@ public final class FabricModelManager implements IModelManager
                 if (dir == null && cullDirection == null)
                     return false;
 
-                if (dir != null && dir == cullDirection)
-                    return false;
-
-                return true;
+                return dir == null || dir != cullDirection;
             }
         );
     }
@@ -185,7 +193,6 @@ public final class FabricModelManager implements IModelManager
         };
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private static final class QuadView extends MutableQuadViewImpl
     {
 
@@ -195,7 +202,6 @@ public final class FabricModelManager implements IModelManager
         private final BlockPos                 pos;
         private final Consumer<ModelQuadLayer> pipeline;
 
-        @SuppressWarnings("UnstableApiUsage")
         private QuadView(
             final BlockState blockState, final FabricBlockStateModel blockStateModel, final BlockAndTintGetter wrapper, final BlockPos pos,
             final Consumer<ModelQuadLayer> pipeline)
@@ -209,12 +215,15 @@ public final class FabricModelManager implements IModelManager
             this.data = new int[EncodingFormat.TOTAL_STRIDE];
         }
 
-        @SuppressWarnings({"UnstableApiUsage"})
         @Override
         protected void emitDirectly()
         {
+            final var textureAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
+            if (!(textureAtlas instanceof FabricSpriteAtlasTexture fabricSpriteAtlasTexture))
+                return;
+
             final BakedQuad quad = toBakedQuad(
-                Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS)
+                fabricSpriteAtlasTexture
                     .spriteFinder().find(this)
             );
 
