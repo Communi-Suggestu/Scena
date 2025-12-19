@@ -23,7 +23,6 @@
   },
   "mixins": [
     "scena.mixins.json",
-    "scena.shaders.mixins.json"
   ],
   "accessWidener" : "scena.accesswidener",
   "depends": {
