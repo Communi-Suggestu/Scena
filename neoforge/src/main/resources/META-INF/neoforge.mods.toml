@@ -29,11 +29,5 @@ $project.description
     versionRange="$dependencies.com.communi_suggestu.saecularia_caudices.neoforge.maven"
     ordering="AFTER"
     side="BOTH"
-[[dependencies.$project.mod.id]]
-    modId="embeddium"
-    type="OPTIONAL"
-    versionRange="[$project.compat.shaders.versions.embeddium,)"
-    ordering="AFTER"
-    side="BOTH"
 [[mixins]]
 config="scena.mixins.json"
