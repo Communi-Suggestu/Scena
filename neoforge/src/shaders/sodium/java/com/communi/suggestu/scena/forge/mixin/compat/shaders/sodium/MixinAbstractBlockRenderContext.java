@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.forge.mixin.compat.shaders.sodium;
 
 import com.communi.suggestu.scena.core.client.models.baked.BlockStateAwareQuad;
+import com.communi.suggestu.scena.forge.compat.shaders.sodium.BuffersAccessor;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
@@ -37,8 +38,8 @@ public class MixinAbstractBlockRenderContext {
     private void beforeEmitVanillaQuad(BakedModel model, BlockState state, CallbackInfo ci, @Local BakedQuad q) {
         if ((Object) this instanceof BlockRenderer r && WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && q instanceof BlockStateAwareQuad blockStateAwareQuad) {
             final BlockState blockState = blockStateAwareQuad.getBlockState();
-            ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).endBlock();
-            ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(blockState), (byte) 0, (byte) blockState.getLightEmission(), pos.getX(), pos.getY(), pos.getZ());
+            ((BlockSensitiveBufferBuilder) ((BuffersAccessor) r).getBuffers()).endBlock();
+            ((BlockSensitiveBufferBuilder) ((BuffersAccessor) r).getBuffers()).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(blockState), (byte) 0, (byte) blockState.getLightEmission(), pos.getX(), pos.getY(), pos.getZ());
         }
     }
 }
