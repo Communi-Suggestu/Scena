@@ -4,14 +4,20 @@ import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.mixin.platform.client.FabricBlockStateModelMixin;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
+import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
+import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -66,7 +74,7 @@ public class FabricRenderTypeManager implements IRenderTypeManager
         final BlockState state)
     {
         final EnumSet<ChunkSectionLayer> layers = EnumSet.noneOf(ChunkSectionLayer.class);
-        final FabricBlockStateModelMixin blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+        final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(state)
             .withPos(position)
@@ -74,6 +82,7 @@ public class FabricRenderTypeManager implements IRenderTypeManager
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(state.getSeed(position));
+
         blockStateModel.emitQuads(
             new QuadView(
                 layer -> {
@@ -95,24 +104,37 @@ public class FabricRenderTypeManager implements IRenderTypeManager
     @Override
     public @NotNull Collection<RenderType> getRenderTypesFor(final ItemModel model, final ItemStack stack, final boolean isFabulous)
     {
-        return List.of(ItemBlockRenderTypes.getRenderType(stack));
+        var state = new ItemStackRenderState();
+        Minecraft.getInstance().getItemModelResolver().appendItemLayers(
+            state,
+            stack,
+            ItemDisplayContext.NONE,
+            null,
+            null,
+            0
+        );
+
+        var types = new HashSet<RenderType>();
+        for (final ItemStackRenderState.LayerRenderState layer : state.layers)
+        {
+            if (layer.renderType != null)
+                types.add(layer.renderType);
+        }
+
+        return types;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private static final class QuadView extends MutableQuadViewImpl
     {
         private final Consumer<@Nullable ChunkSectionLayer> pipeline;
 
-        @SuppressWarnings("UnstableApiUsage")
         private QuadView(
             final Consumer<@Nullable ChunkSectionLayer> pipeline
         ) {
             this.pipeline = pipeline;
-
             this.data = new int[EncodingFormat.TOTAL_STRIDE];
         }
 
-        @SuppressWarnings({"UnstableApiUsage"})
         @Override
         protected void emitDirectly()
         {

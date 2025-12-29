@@ -69,7 +69,7 @@ public final class FabricRegistrarManager implements IRegistrarManager
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, registry);
         }
 
-        throw new IllegalArgumentException("The registry type class: " + typeClass.location() + " is not supported.");
+        throw new IllegalArgumentException("The registry type class: " + typeClass.identifier() + " is not supported.");
     }
 
     @Override

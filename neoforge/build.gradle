@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.tableau.maven.publishing)
-    alias(libs.plugins.obumbratio)
 }
 
 repositories {
@@ -39,15 +38,6 @@ tableau {
         })
     }
 }
-
-/*
-shaders {
-    enable()
-    sodium()
-    embeddium()
-    neoforge()
-}
-*/
 
 dependencies {
     includedLibraries "com.communi-suggestu.saecularia-caudices:neoforge:${project.property('communi.suggestu.saecularia.caudices.version')}"

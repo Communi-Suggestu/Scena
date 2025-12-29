@@ -17,3 +17,5 @@ accessible method net/minecraft/world/level/block/entity/BlockEntityType <init> 
 accessible class net/minecraft/client/resources/model/AtlasManager$AtlasEntry
 accessible method net/minecraft/client/resources/model/AtlasManager$AtlasEntry <init> (Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/client/resources/model/AtlasManager$AtlasConfig;)V
 accessible method net/minecraft/world/level/storage/TagValueInput <init> (Lnet/minecraft/util/ProblemReporter;Lnet/minecraft/world/level/storage/ValueInputContextHelper;Lnet/minecraft/nbt/CompoundTag;)V
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState layers [Lnet/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState;
+accessible field net/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState renderType Lnet/minecraft/client/renderer/rendertype/RenderType;

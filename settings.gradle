@@ -22,7 +22,7 @@ rootProject.name = "scena"
 
 platforms {
     core(':core')
-    //fabric(':fabric')
+    fabric(':fabric')
     neoforge(':neoforge')
 
     defaults {

@@ -2,7 +2,6 @@ package com.communi.suggestu.scena.fabric.platform.client.rendering.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
-import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.google.common.collect.Maps;
@@ -10,7 +9,6 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -25,6 +23,7 @@ import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TriState;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,8 +159,6 @@ public final class FabricModelManager implements IModelManager
             }
         );
     }
-
-    @Nullable
     public MapCodec<UnbakedCustomModelWrapper<?>> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
     {
         return blockStateModelCodecDelegates.get(platformAgnosticCodec);
@@ -185,7 +182,6 @@ public final class FabricModelManager implements IModelManager
         };
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private static final class QuadView extends MutableQuadViewImpl
     {
 
@@ -195,7 +191,6 @@ public final class FabricModelManager implements IModelManager
         private final BlockPos                 pos;
         private final Consumer<ModelQuadLayer> pipeline;
 
-        @SuppressWarnings("UnstableApiUsage")
         private QuadView(
             final BlockState blockState, final FabricBlockStateModel blockStateModel, final BlockAndTintGetter wrapper, final BlockPos pos,
             final Consumer<ModelQuadLayer> pipeline)
@@ -209,7 +204,6 @@ public final class FabricModelManager implements IModelManager
             this.data = new int[EncodingFormat.TOTAL_STRIDE];
         }
 
-        @SuppressWarnings({"UnstableApiUsage"})
         @Override
         protected void emitDirectly()
         {
@@ -228,8 +222,7 @@ public final class FabricModelManager implements IModelManager
                 renderLayer()
             );
 
-            LightUtil.put(builder, quad);
-
+            builder.put(quad);
             builder.withSourceQuad(quad);
 
             pipeline.accept(builder.build());
