@@ -35,6 +35,7 @@ public abstract class ModelBakeryFromModelManagerAccessorMixin implements IModel
     )
     private static void onApply(
         final SpriteLoader.Preparations preparations,
+        final SpriteLoader.Preparations preparations2,
         final ModelBakery modelBakery,
         final Object2IntMap<BlockState> object2IntMap,
         final EntityModelSet entityModelSet,
