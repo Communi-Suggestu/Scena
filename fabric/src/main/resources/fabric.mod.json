@@ -22,7 +22,7 @@
     ]
   },
   "mixins": [
-    "scena.mixins.json",
+    "scena.mixins.json"
   ],
   "accessWidener" : "scena.accesswidener",
   "depends": {
