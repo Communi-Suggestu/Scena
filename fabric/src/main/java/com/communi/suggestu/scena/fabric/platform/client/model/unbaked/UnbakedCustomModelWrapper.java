@@ -16,7 +16,6 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,12 +63,12 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
 
         @Override
         public void emitQuads(
-            final @NonNull QuadEmitter emitter,
-            final @NonNull BlockAndTintGetter blockView,
-            final @NonNull BlockPos pos,
-            final @NonNull BlockState state,
-            final @NonNull RandomSource random,
-            final @NonNull Predicate<@org.jspecify.annotations.Nullable Direction> cullTest)
+            final @NotNull QuadEmitter emitter,
+            final @NotNull BlockAndTintGetter blockView,
+            final @NotNull BlockPos pos,
+            final @NotNull BlockState state,
+            final @NotNull RandomSource random,
+            final @NotNull Predicate<@Nullable Direction> cullTest)
         {
             final List<BlockModelPart> parts = new ArrayList<>();
             if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
@@ -90,17 +89,17 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         }
 
         @Override
-        public void collectParts(final @NonNull RandomSource random, final @NonNull List<BlockModelPart> output)
+        public void collectParts(final @NotNull RandomSource random, final @NotNull List<BlockModelPart> output)
         {
             inner().collectParts(random, output);
         }
 
         @Override
         public @Nullable Object createGeometryKey(
-            final @NonNull BlockAndTintGetter blockView,
-            final @NonNull BlockPos pos,
-            final @NonNull BlockState state,
-            final @NonNull RandomSource random)
+            final @NotNull BlockAndTintGetter blockView,
+            final @NotNull BlockPos pos,
+            final @NotNull BlockState state,
+            final @NotNull RandomSource random)
         {
             if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
                 return dataAwareBlockStateModel.createGeometryKey(
@@ -111,7 +110,7 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         }
 
         @Override
-        public @NonNull TextureAtlasSprite particleSprite(final @NonNull BlockAndTintGetter blockView, final @NonNull BlockPos pos, final @NonNull BlockState state)
+        public @NotNull TextureAtlasSprite particleSprite(final @NotNull BlockAndTintGetter blockView, final @NotNull BlockPos pos, final @NotNull BlockState state)
         {
             if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
                 return dataAwareBlockStateModel.particleIcon(
@@ -122,7 +121,7 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         }
 
         @Override
-        public @NonNull TextureAtlasSprite particleIcon()
+        public @NotNull TextureAtlasSprite particleIcon()
         {
             return inner().particleIcon();
         }
