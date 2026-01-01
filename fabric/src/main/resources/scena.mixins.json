@@ -17,7 +17,6 @@
     "platform.common.TagValueOutputMixin"
   ],
   "client": [
-    "platform.client.GameRendererMixin",
     "platform.client.AbstractClientPlayerScopingMixin",
     "platform.client.AbstractContainerScreenMixin",
     "platform.client.AtlasManagerMixin",
@@ -25,9 +24,10 @@
     "platform.client.ClientChunkCacheChunkLoadMixin",
     "platform.client.ClientTooltipComponentMixin",
     "platform.client.FabricBlockStateModelMixin",
+    "platform.client.GameRendererMixin",
     "platform.client.GuiGraphicsMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
-    "platform.client.ScrollWheelHandlerEventMixin",
+    "platform.client.MouseHandlerMixin",
     "platform.client.VanillaBlockModelPartEncoderMixin"
   ],
   "injectors": {
