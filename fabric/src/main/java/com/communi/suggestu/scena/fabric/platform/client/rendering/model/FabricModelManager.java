@@ -7,6 +7,7 @@ import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.api.renderer.v1.sprite.FabricSpriteAtlasTexture;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
@@ -82,9 +83,6 @@ public final class FabricModelManager implements IModelManager
         final BlockPos pos)
     {
         final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
-        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
-            return blockStateModel.particleIcon();
-
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -93,7 +91,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        return fabricBlockStateModel.particleSprite(
+        return blockStateModel.particleSprite(
             wrapper,
             pos,
             blockState
@@ -108,9 +106,6 @@ public final class FabricModelManager implements IModelManager
         final BlockPos pos)
     {
         final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
-        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
-            return null;
-
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -119,7 +114,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        return fabricBlockStateModel.createGeometryKey(
+        return blockStateModel.createGeometryKey(
             wrapper,
             pos,
             blockState,
@@ -138,9 +133,6 @@ public final class FabricModelManager implements IModelManager
     {
 
         final BlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
-        if (!(blockStateModel instanceof FabricBlockStateModel fabricBlockStateModel))
-            return;
-
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -148,14 +140,10 @@ public final class FabricModelManager implements IModelManager
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
-        fabricBlockStateModel.emitQuads(
-            new QuadView(
-                blockState,
-                fabricBlockStateModel,
-                wrapper,
-                pos,
-                pipeline
-            ),
+
+        var mutableMesh = Renderer.get().mutableMesh();
+        blockStateModel.emitQuads(
+            mutableMesh.emitter(),
             wrapper,
             pos,
             blockState,
@@ -167,12 +155,31 @@ public final class FabricModelManager implements IModelManager
                 return dir == null || dir != cullDirection;
             }
         );
-    }
 
-    @Nullable
-    public MapCodec<UnbakedCustomModelWrapper<?>> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
-    {
-        return blockStateModelCodecDelegates.get(platformAgnosticCodec);
+        mutableMesh.forEachMutable(view -> {
+            final var textureAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
+            final BakedQuad quad = view.toBakedQuad(
+                textureAtlas
+                    .spriteFinder().find(view)
+            );
+
+            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
+                blockState,
+                blockStateModel.particleSprite(
+                    wrapper,
+                    pos,
+                    blockState
+                ),
+                toMinecraftTriState(view.ambientOcclusion()),
+                view.renderLayer()
+            );
+
+            LightUtil.put(builder, quad);
+
+            builder.withSourceQuad(quad);
+
+            pipeline.accept(builder.build());
+        });
     }
 
     public void registerUnbakedModelCodecWrapping(
@@ -191,58 +198,5 @@ public final class FabricModelManager implements IModelManager
             case DEFAULT -> TriState.DEFAULT;
             case TRUE -> TriState.TRUE;
         };
-    }
-
-    private static final class QuadView extends MutableQuadViewImpl
-    {
-
-        private final BlockState               blockState;
-        private final FabricBlockStateModel    blockStateModel;
-        private final BlockAndTintGetter       wrapper;
-        private final BlockPos                 pos;
-        private final Consumer<ModelQuadLayer> pipeline;
-
-        private QuadView(
-            final BlockState blockState, final FabricBlockStateModel blockStateModel, final BlockAndTintGetter wrapper, final BlockPos pos,
-            final Consumer<ModelQuadLayer> pipeline)
-        {
-            this.blockState = blockState;
-            this.blockStateModel = blockStateModel;
-            this.wrapper = wrapper;
-            this.pos = pos;
-            this.pipeline = pipeline;
-
-            this.data = new int[EncodingFormat.TOTAL_STRIDE];
-        }
-
-        @Override
-        protected void emitDirectly()
-        {
-            final var textureAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
-            if (!(textureAtlas instanceof FabricSpriteAtlasTexture fabricSpriteAtlasTexture))
-                return;
-
-            final BakedQuad quad = toBakedQuad(
-                fabricSpriteAtlasTexture
-                    .spriteFinder().find(this)
-            );
-
-            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                blockState,
-                blockStateModel.particleSprite(
-                    wrapper,
-                    pos,
-                    blockState
-                ),
-                toMinecraftTriState(ambientOcclusion()),
-                renderLayer()
-            );
-
-            LightUtil.put(builder, quad);
-
-            builder.withSourceQuad(quad);
-
-            pipeline.accept(builder.build());
-        }
     }
 }
