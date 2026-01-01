@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.mixin.platform.client.FabricBlockStateModelMixin;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
@@ -83,21 +84,22 @@ public class FabricRenderTypeManager implements IRenderTypeManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(state.getSeed(position));
 
+        var mutableMesh = Renderer.get().mutableMesh();
         blockStateModel.emitQuads(
-            new QuadView(
-                layer -> {
-                    if (layer != null)
-                        layers.add(layer);
-                }
-            ),
+            mutableMesh.emitter(),
             wrapper,
             position,
             state,
             RANDOM,
-            dir -> {
-                return false;
-            }
+            dir -> false
         );
+
+        mutableMesh.forEachMutable(view -> {
+            if (view.renderLayer() != null) {
+                layers.add(view.renderLayer());
+            }
+        });
+
         return layers;
     }
 
@@ -122,24 +124,6 @@ public class FabricRenderTypeManager implements IRenderTypeManager
         }
 
         return types;
-    }
-
-    private static final class QuadView extends MutableQuadViewImpl
-    {
-        private final Consumer<@Nullable ChunkSectionLayer> pipeline;
-
-        private QuadView(
-            final Consumer<@Nullable ChunkSectionLayer> pipeline
-        ) {
-            this.pipeline = pipeline;
-            this.data = new int[EncodingFormat.TOTAL_STRIDE];
-        }
-
-        @Override
-        protected void emitDirectly()
-        {
-            pipeline.accept(renderLayer());
-        }
     }
 
 }
