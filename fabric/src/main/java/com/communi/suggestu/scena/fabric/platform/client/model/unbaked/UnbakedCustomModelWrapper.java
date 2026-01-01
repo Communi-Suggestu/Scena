@@ -1,12 +1,26 @@
 package com.communi.suggestu.scena.fabric.platform.client.model.unbaked;
 
+import com.communi.suggestu.scena.core.client.rendering.DataAwareBlockStateModel;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
     MapCodec<T> mapCodec,
@@ -34,7 +48,7 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         if (model() == null)
             throw new IllegalStateException("Data registration mode can not be used for baking!");
 
-        return model().bake(baker);
+        return new DataAware(model().bake(baker));
     }
 
     @Override
@@ -44,5 +58,73 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
             throw new IllegalStateException("Data registration mode can not be used for baking!");
 
         model().resolveDependencies(resolver);
+    }
+
+    public record DataAware(BlockStateModel inner) implements BlockStateModel {
+
+        @Override
+        public void emitQuads(
+            final @NonNull QuadEmitter emitter,
+            final @NonNull BlockAndTintGetter blockView,
+            final @NonNull BlockPos pos,
+            final @NonNull BlockState state,
+            final @NonNull RandomSource random,
+            final @NonNull Predicate<@org.jspecify.annotations.Nullable Direction> cullTest)
+        {
+            final List<BlockModelPart> parts = new ArrayList<>();
+            if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
+                dataAwareBlockStateModel.collectParts(
+                    blockView,
+                    pos,
+                    state,
+                    random,
+                    parts
+                );
+            } else {
+                collectParts(random, parts);
+            }
+            for (BlockModelPart part : parts)
+            {
+                part.emitQuads(emitter, cullTest);
+            }
+        }
+
+        @Override
+        public void collectParts(final @NonNull RandomSource random, final @NonNull List<BlockModelPart> output)
+        {
+            inner().collectParts(random, output);
+        }
+
+        @Override
+        public @Nullable Object createGeometryKey(
+            final @NonNull BlockAndTintGetter blockView,
+            final @NonNull BlockPos pos,
+            final @NonNull BlockState state,
+            final @NonNull RandomSource random)
+        {
+            if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
+                return dataAwareBlockStateModel.createGeometryKey(
+                    blockView, pos, state, random
+                );
+            }
+            return BlockStateModel.super.createGeometryKey(blockView, pos, state, random);
+        }
+
+        @Override
+        public @NonNull TextureAtlasSprite particleSprite(final @NonNull BlockAndTintGetter blockView, final @NonNull BlockPos pos, final @NonNull BlockState state)
+        {
+            if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
+                return dataAwareBlockStateModel.particleIcon(
+                    blockView, pos, state
+                );
+            }
+            return BlockStateModel.super.particleSprite(blockView, pos, state);
+        }
+
+        @Override
+        public @NonNull TextureAtlasSprite particleIcon()
+        {
+            return inner().particleIcon();
+        }
     }
 }
