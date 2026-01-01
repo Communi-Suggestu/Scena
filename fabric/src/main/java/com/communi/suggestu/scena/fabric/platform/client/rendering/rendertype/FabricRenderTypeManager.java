@@ -100,6 +100,12 @@ public class FabricRenderTypeManager implements IRenderTypeManager
             }
         });
 
+        if (layers.isEmpty()) {
+            return Collections.singleton(
+                ItemBlockRenderTypes.getChunkRenderType(state)
+            );
+        }
+
         return layers;
     }
 
