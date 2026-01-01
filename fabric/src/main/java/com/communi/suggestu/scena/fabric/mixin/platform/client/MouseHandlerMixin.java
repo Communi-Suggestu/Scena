@@ -21,7 +21,7 @@ public class MouseHandlerMixin
         )
     )
     public void onScrollEventHook(
-        final long windowPointer, final double xOffset, final double yOffset, final CallbackInfo ci, @Local(ordinal = 4) double d2) {
+        final long windowPointer, final double xOffset, final double yOffset, final CallbackInfo ci, @Local(name = "scaledYOffset") double d2) {
         if (FabricClientEvents.SCROLL.invoker().handle(d2))
         {
             ci.cancel();
