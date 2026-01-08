@@ -62,7 +62,7 @@ public interface IGameEvents {
      *
      * @return The entry point for the server about to start event.
      */
-    IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent();
+    IEventEntryPoint<IGeneralServerEvent> getServerAboutToStartEvent();
 
     /**
      * The entry point for when a chunk is loaded.
@@ -98,6 +98,13 @@ public interface IGameEvents {
      * @return The entry point for the server post tick event.
      */
     IEventEntryPoint<IServerTickEvent> getServerPostTickEvent();
+
+    /**
+     * The entry point for when a server has been started.
+     *
+     * @return The entry point for when a server has been started.
+     */
+    IEventEntryPoint<IGeneralServerEvent> getServerStartedEvent();
 
     /**
      * The entry point for when a data pack is synchronized.

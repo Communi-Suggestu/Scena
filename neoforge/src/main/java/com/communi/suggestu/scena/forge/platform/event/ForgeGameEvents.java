@@ -4,7 +4,6 @@ import com.communi.suggestu.scena.core.event.*;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -17,6 +16,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
@@ -79,7 +79,7 @@ public final class ForgeGameEvents implements IGameEvents {
     }
 
     @Override
-    public IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent() {
+    public IEventEntryPoint<IGeneralServerEvent> getServerAboutToStartEvent() {
         return EventBusEventEntryPoint.forge(ServerAboutToStartEvent.class, (event, handler) -> handler.handle(event.getServer()));
     }
 
@@ -109,6 +109,14 @@ public final class ForgeGameEvents implements IGameEvents {
     public IEventEntryPoint<IServerTickEvent> getServerPostTickEvent() {
         return EventBusEventEntryPoint.forge(ServerTickEvent.Post.class, (event, handler) -> {
             handler.onTick(event.getServer());
+        });
+    }
+
+    @Override
+    public IEventEntryPoint<IGeneralServerEvent> getServerStartedEvent()
+    {
+        return EventBusEventEntryPoint.forge(ServerStartedEvent.class, (event, handler) -> {
+            handler.handle(event.getServer());
         });
     }
 
