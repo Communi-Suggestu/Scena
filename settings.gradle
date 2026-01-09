@@ -15,7 +15,7 @@ pluginManagement {
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-    id 'com.communi-suggestu.placitum' version '0.0.61'
+    id 'com.communi-suggestu.placitum' version '0.0.82'
 }
 
 rootProject.name = "scena"
@@ -31,12 +31,6 @@ platforms {
         }
         project {
             owner = "communi-suggestu"
-        }
-        minecraft {
-            version = "1.21.1"
-        }
-        parchment {
-            version = "2024.11.13"
         }
     }
 }
