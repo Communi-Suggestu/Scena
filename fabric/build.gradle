@@ -41,3 +41,7 @@ dependencies {
     modImplementation "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
     include "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
 }
+
+tasks.withType(Jar.class).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
