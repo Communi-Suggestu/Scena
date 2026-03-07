@@ -146,7 +146,7 @@ public class ForgeFluidManager implements IFluidManager {
             return new FluidStack(fluid.fluid(), (int) fluid.amount());
 
         return new FluidStack(
-                new Holder.Direct<>(fluid.fluid()),
+                fluid.fluid(),
                 (int) fluid.amount(),
                 fluid.data());
     }

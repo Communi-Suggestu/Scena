@@ -51,19 +51,19 @@ public final class FabricNetworkChannel implements INetworkChannel {
     private static <B extends FriendlyByteBuf> Iterable<PayloadTypeRegistry<B>> getTypeRegistry(PayloadPhase<B> phase, PayloadDirection payloadDirection) {
         if (phase == PayloadPhase.CONFIG) {
             if (payloadDirection == PayloadDirection.SERVERBOUND) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.configurationC2S());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.serverboundConfiguration());
             } else if (payloadDirection == PayloadDirection.CLIENTBOUND) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.configurationS2C());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.clientboundConfiguration());
             } else if (payloadDirection == PayloadDirection.BOTH) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.configurationC2S(), (PayloadTypeRegistry<B>) PayloadTypeRegistry.configurationS2C());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.serverboundConfiguration(), (PayloadTypeRegistry<B>) PayloadTypeRegistry.clientboundConfiguration());
             }
         } else if (phase == PayloadPhase.PLAY) {
             if (payloadDirection == PayloadDirection.SERVERBOUND) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.playC2S());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.serverboundPlay());
             } else if (payloadDirection == PayloadDirection.CLIENTBOUND) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.playS2C());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.clientboundPlay());
             } else if (payloadDirection == PayloadDirection.BOTH) {
-                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.playC2S(), (PayloadTypeRegistry<B>) PayloadTypeRegistry.playS2C());
+                return List.of((PayloadTypeRegistry<B>) PayloadTypeRegistry.serverboundPlay(), (PayloadTypeRegistry<B>) PayloadTypeRegistry.clientboundPlay());
             }
         }
 

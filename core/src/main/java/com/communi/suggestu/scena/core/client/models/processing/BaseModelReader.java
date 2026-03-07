@@ -3,6 +3,7 @@ package com.communi.suggestu.scena.core.client.models.processing;
 import com.communi.suggestu.scena.core.client.models.vertices.VertexProcessor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,7 @@ public abstract class BaseModelReader implements VertexProcessor
 
     @Override
     public void texture(
-      @NotNull final TextureAtlasSprite texture)
+      @NotNull final BakedQuad.SpriteInfo texture)
     {
     }
 

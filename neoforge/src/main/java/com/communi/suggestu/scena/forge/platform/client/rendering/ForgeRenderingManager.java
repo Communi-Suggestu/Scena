@@ -10,12 +10,14 @@ import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
@@ -60,7 +62,7 @@ public class ForgeRenderingManager implements IRenderingManager
     @Override
     public void renderModel(
         final PoseStack matrices,
-        final MultiBufferSource source,
+        final BakedQuadOutput output,
         final BlockStateModel blockStateModel,
         final float r,
         final float g,
@@ -73,9 +75,9 @@ public class ForgeRenderingManager implements IRenderingManager
     {
         ModelBlockRenderer.renderModel(
             matrices.last(),
-            source,
+            output,
             blockStateModel,
-            r, g, b,
+            ARGB.color((int) (r * 255f), (int) (g * 255f), (int) (b * 255f)),
             combinedLight,
             combinedOverlay,
             level,
@@ -200,6 +202,6 @@ public class ForgeRenderingManager implements IRenderingManager
             return new FluidStack(fluid.fluid(), (int) fluid.amount());
 
         return new FluidStack(
-                new Holder.Direct<>(fluid.fluid()), (int) fluid.amount(), fluid.data());
+            fluid.fluid(), (int) fluid.amount(), fluid.data());
     }
 }

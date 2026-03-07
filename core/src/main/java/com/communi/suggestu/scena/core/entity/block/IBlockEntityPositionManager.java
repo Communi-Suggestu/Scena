@@ -53,7 +53,7 @@ public interface IBlockEntityPositionManager {
      * @return All positions of the given block entity class in the given chunk.
      */
     default Set<BlockPos> getPositions(Class<? extends BlockEntity> blockEntityClass, LevelReader level, BlockPos pos) {
-        return getPositions(blockEntityClass, level, new ChunkPos(pos));
+        return getPositions(blockEntityClass, level, ChunkPos.containing(pos));
     }
 
     /**

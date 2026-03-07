@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.core.client.models.processing;
 
 import com.communi.suggestu.scena.core.client.utils.RenderTypeUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,63 +17,35 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 public record ModelQuadLayer(VertexData[] vertexData,
-                             TextureAtlasSprite sprite,
+                             BakedQuad.SpriteInfo sprite,
                              int light,
                              int tint,
                              boolean shade,
                              @Nullable Direction cullDirection,
                              BakedQuad sourceQuad,
-                             TextureAtlasSprite particleSprite,
-                             TriState usesAmbientOcclusion,
-                             @Nullable RenderType renderType,
-                             @Nullable ChunkSectionLayer chunkSectionLayer) {
+                             Material.Baked particleSprite,
+                             TriState usesAmbientOcclusion) {
 
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder extends BaseModelReader {
         private final Collection<VertexData> manualVertexData = new ArrayList<>();
         private final Collection<VertexData> vertexData = new ArrayList<>(4);
-        private TextureAtlasSprite sprite;
+        private BakedQuad.SpriteInfo sprite;
         private int light;
         private int     tintIndex = -1;
         private boolean shade;
         @Nullable
         private Direction cullDirection;
-        private       BakedQuad          sourceQuad;
-        private final TextureAtlasSprite particleSprite;
-        private final TriState           usesAmbientOcclusion;
-        @Nullable
-        private       RenderType         renderType = null;
-        @Nullable
-        private ChunkSectionLayer chunkSectionLayer = null;
-
-        private Builder(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion) {
+        private       BakedQuad      sourceQuad;
+        private final Material.Baked particleSprite;
+        private final TriState       usesAmbientOcclusion;
+        private Builder(Material.Baked particleSprite, TriState usesAmbientOcclusion) {
             this.particleSprite = particleSprite;
             this.usesAmbientOcclusion = usesAmbientOcclusion;
         }
 
-        private Builder(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion, @Nullable RenderType renderType) {
-            this.particleSprite = particleSprite;
-            this.usesAmbientOcclusion = usesAmbientOcclusion;
-            this.renderType = renderType;
-        }
-
-        private Builder(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion, @Nullable ChunkSectionLayer chunkSectionLayer) {
-            this.particleSprite = particleSprite;
-            this.usesAmbientOcclusion = usesAmbientOcclusion;
-            this.chunkSectionLayer = chunkSectionLayer;
-            this.renderType = RenderTypeUtils.renderTypeFor(chunkSectionLayer);
-        }
-
-        public static Builder create(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion) {
+        public static Builder create(Material.Baked particleSprite, TriState usesAmbientOcclusion) {
             return new Builder(particleSprite, usesAmbientOcclusion);
-        }
-
-        public static Builder create(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion, @Nullable RenderType renderType) {
-            return new Builder(particleSprite, usesAmbientOcclusion, renderType);
-        }
-
-        public static Builder create(TextureAtlasSprite particleSprite, TriState usesAmbientOcclusion, ChunkSectionLayer chunkSectionLayer) {
-            return new Builder(particleSprite, usesAmbientOcclusion, chunkSectionLayer);
         }
 
         public Builder withVertexData(final Consumer<VertexData.Builder> vertexDataConsumer) {
@@ -82,7 +55,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
             return this;
         }
 
-        public Builder withSprite(TextureAtlasSprite sprite) {
+        public Builder withSprite(BakedQuad.SpriteInfo sprite) {
             this.sprite = sprite;
             return this;
         }
@@ -134,7 +107,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
         }
 
         @Override
-        public void texture(@NotNull TextureAtlasSprite texture) {
+        public void texture(@NotNull BakedQuad.SpriteInfo texture) {
             withSprite(texture);
         }
 
@@ -149,7 +122,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
 
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
             vertexData = vertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).toList();
-            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), sprite, light, tintIndex, shade, cullDirection, sourceQuad, particleSprite, usesAmbientOcclusion, renderType, chunkSectionLayer);
+            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), sprite, light, tintIndex, shade, cullDirection, sourceQuad, particleSprite, usesAmbientOcclusion);
         }
 
         private BakedQuad buildSourceQuad() {

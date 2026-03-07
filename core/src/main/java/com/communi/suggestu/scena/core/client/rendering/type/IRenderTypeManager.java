@@ -58,12 +58,6 @@ public interface IRenderTypeManager
     boolean canRenderInType(final FluidState fluidState, final ChunkSectionLayer renderType);
 
     /**
-     * Registers a callback which can be used to register render types for blocks.
-     * @param consumer The configurator.
-     */
-    void registerBlockFallbackRenderTypes(final Consumer<IFallbackBlockRenderTypeRegistrar> consumer);
-
-    /**
      * Retrieves the {@linkplain RenderType render types} for the given block state, data and model.
      *
      * @param blockAndTintGetter The level information
@@ -109,17 +103,4 @@ public interface IRenderTypeManager
         return RenderTypeUtils.renderTypeFor(chunkSectionLayer);
     }
 
-    /**
-     * A registrar for fallback render types for blocks, in case the platform does not support model based render types.
-     */
-    interface IFallbackBlockRenderTypeRegistrar
-    {
-        /**
-         * Registers a fallback render type for the given block.
-         *
-         * @param block The block to register the fallback render type for.
-         * @param renderType The render type to use as a fallback.
-         */
-        void register(final Block block, final ChunkSectionLayer renderType);
-    }
 }

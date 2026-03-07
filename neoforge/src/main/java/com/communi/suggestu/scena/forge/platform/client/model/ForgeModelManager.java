@@ -16,9 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -77,7 +77,7 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture(
+    public Material.Baked getParticleTexture(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
@@ -85,7 +85,7 @@ public final class ForgeModelManager implements IModelManager
     {
         final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));
-        return model.particleIcon(
+        return model.particleMaterial(
             new SingleBlockBlockAndTintGetter.Builder()
                 .withBlockState(blockState)
                 .withBlockEntity(blockEntitySupplier)
@@ -146,9 +146,8 @@ public final class ForgeModelManager implements IModelManager
             for (final BakedQuad quad : part.getQuads(cullDirection))
             {
                 final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                    part.particleIcon(),
-                    part.ambientOcclusion(),
-                    part.getRenderType(blockState)
+                    part.particleMaterial(),
+                    part.ambientOcclusion()
                 );
 
                 builder.put(quad);

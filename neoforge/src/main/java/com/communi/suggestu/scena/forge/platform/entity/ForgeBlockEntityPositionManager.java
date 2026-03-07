@@ -23,7 +23,7 @@ public class ForgeBlockEntityPositionManager implements IBlockEntityPositionMana
 
     @Nullable
     private IForgeBlockEntityPositionHolder getHolder(LevelReader level, ChunkPos chunkPos) {
-        return (IForgeBlockEntityPositionHolder) level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FULL, false);
+        return (IForgeBlockEntityPositionHolder) level.getChunk(chunkPos.x(), chunkPos.z(), ChunkStatus.FULL, false);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ForgeBlockEntityPositionManager implements IBlockEntityPositionMana
         if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be added to the position manager");
 
-        final IForgeBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos()));
+        final IForgeBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), ChunkPos.containing(blockEntity.getBlockPos()));
         if (holder == null) {
             return;
         }
@@ -54,7 +54,7 @@ public class ForgeBlockEntityPositionManager implements IBlockEntityPositionMana
         if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be removed from the position manager");
 
-        final IForgeBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos()));
+        final IForgeBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), ChunkPos.containing(blockEntity.getBlockPos()));
         if (holder == null) {
             return;
         }

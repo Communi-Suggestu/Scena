@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.client.rendering;
 
 import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -48,7 +49,7 @@ public interface DataAwareBlockStateModel
     void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts);
 
     /**
-     * Returns the particle icon.
+     * Returns the particle material.
      */
-    TextureAtlasSprite particleIcon(BlockAndTintGetter level, BlockPos pos, BlockState state);
+    Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state);
 }

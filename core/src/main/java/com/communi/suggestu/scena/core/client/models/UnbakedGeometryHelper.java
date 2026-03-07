@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.Material;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.QuadCollection;
@@ -23,11 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-@SuppressWarnings("resource")
 public class UnbakedGeometryHelper
 {
-
-    private static final ModelBaker.PartCache DUMMY_PART_CACHE = vector -> vector;
     private UnbakedGeometryHelper()
     {
         throw new IllegalStateException("Can not instantiate an instance of: UnbakedGeometryHelper. This is a utility class");
@@ -112,13 +109,13 @@ public class UnbakedGeometryHelper
     /**
      * Bakes a list of {@linkplain BlockElement block elements} and feeds the baked quads to a {@linkplain QuadCollection.Builder quad collection builder}.
      */
-    public static void bakeElements(QuadCollection.Builder builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
+    public static void bakeElements(QuadCollection.Builder builder, ModelBaker modelBaker, List<BlockElement> elements, Function<String, Material.Baked> materialGetter, ModelState modelState) {
         for (BlockElement element : elements) {
             element.faces().forEach((side, face) -> {
-                var sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, Identifier.parse(face.texture())));
+                Material.Baked material = materialGetter.apply(face.texture());
                 BakedQuad quad = FaceBakery.bakeQuad(
-                    DUMMY_PART_CACHE,
-                    element.from(), element.to(), face, sprite, side, modelState, element.rotation(), element.shade(), element.lightEmission()
+                    modelBaker,
+                    element.from(), element.to(), face, material, side, modelState, element.rotation(), element.shade(), element.lightEmission()
                 );
                 if (face.cullForDirection() == null)
                     builder.addUnculledFace(quad);
@@ -131,11 +128,11 @@ public class UnbakedGeometryHelper
     /**
      * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
      */
-    public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
+    public static List<BakedQuad> bakeElements(List<BlockElement> elements, ModelBaker baker, Function<String, Material.Baked> materialGetter, ModelState modelState) {
         if (elements.isEmpty())
             return List.of();
         var builder = new QuadCollection.Builder();
-        bakeElements(builder, elements, spriteGetter, modelState);
+        bakeElements(builder, baker, elements, materialGetter, modelState);
         return builder.build().getAll();
     }
 }

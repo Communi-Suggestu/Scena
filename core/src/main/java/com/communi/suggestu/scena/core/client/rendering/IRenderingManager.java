@@ -7,6 +7,7 @@ import com.communi.suggestu.scena.core.client.tooltip.IClientTooltipComponentCon
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BakedQuadOutput;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -45,7 +46,7 @@ public interface IRenderingManager
      */
     void renderModel(
         PoseStack matrices,
-        MultiBufferSource source,
+        final BakedQuadOutput output,
         BlockStateModel blockStateModel,
         float r,
         float g,

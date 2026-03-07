@@ -3,7 +3,6 @@ package com.communi.suggestu.scena.core.client.models.vertices;
 import com.communi.suggestu.scena.core.client.models.processing.VertexData;
 import com.communi.suggestu.scena.core.client.utils.BakedQuadUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,14 +16,14 @@ public interface VertexProcessor
     void tintIndex(int tint);
     void cullDirection(@Nullable Direction orientation);
     void shade(boolean diffuse);
-    void texture(TextureAtlasSprite texture);
+    void texture(BakedQuad.SpriteInfo texture);
     void vertex(VertexData data);
     void light(int lightEmission);
     default void onComplete() {}
 
     default void put(BakedQuad quad)
     {
-        this.texture(quad.sprite());
+        this.texture(quad.spriteInfo());
         this.cullDirection(quad.direction());
         this.light(quad.lightEmission());
         if(quad.isTinted())

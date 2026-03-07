@@ -15,11 +15,11 @@ public class BakedQuadBuilder implements VertexProcessor
     private       int          tint       = -1;
     private int lightEmission = 0;
     private Direction orientation;
-    private TextureAtlasSprite texture;
+    private BakedQuad.SpriteInfo texture;
     private boolean applyDiffuseLighting = true;
 
 
-    public BakedQuadBuilder(TextureAtlasSprite texture) {
+    public BakedQuadBuilder(BakedQuad.SpriteInfo texture) {
         this.texture = texture;
     }
 
@@ -37,7 +37,7 @@ public class BakedQuadBuilder implements VertexProcessor
     }
 
     @Override
-    public void texture(TextureAtlasSprite texture) {
+    public void texture(BakedQuad.SpriteInfo texture) {
         this.texture = texture;
     }
 

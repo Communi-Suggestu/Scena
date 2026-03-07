@@ -2,7 +2,7 @@ package com.communi.suggestu.scena.fabric.mixin.platform.client;
 
 import com.communi.suggestu.scena.core.client.event.IRegisterPIPRenderersEvent;
 import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
@@ -36,8 +36,8 @@ public abstract class GameRendererMixin
                     final Class<T> stateClass,
                     final Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<T>> factory)
                 {
-                    SpecialGuiElementRegistry.register(
-                        ctx -> factory.apply(ctx.vertexConsumers())
+                    PictureInPictureRendererRegistry.register(
+                        ctx -> factory.apply(ctx.bufferSource())
                     );
                 }
             });

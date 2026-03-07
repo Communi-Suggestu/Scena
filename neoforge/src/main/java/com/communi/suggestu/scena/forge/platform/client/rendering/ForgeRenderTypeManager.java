@@ -2,18 +2,16 @@ package com.communi.suggestu.scena.forge.platform.client.rendering;
 
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.forge.utils.Constants;
-import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -23,15 +21,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
@@ -44,9 +40,6 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
     {
         return INSTANCE;
     }
-
-    private final AtomicBoolean registeredRenderTypes = new AtomicBoolean(false);
-    private final List<Consumer<IFallbackBlockRenderTypeRegistrar>> fallbackBlockRenderTypeRegistrars = Collections.synchronizedList(Lists.newArrayList());
 
     private ForgeRenderTypeManager()
     {
@@ -61,8 +54,20 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
 
         for (final BlockModelPart blockModelPart : partsList)
         {
-            if (blockModelPart.getRenderType(blockState) == renderType)
-                return true;
+            for (final Direction direction : Direction.values())
+            {
+                for (final BakedQuad quad : blockModelPart.getQuads(direction))
+                {
+                    if (quad.spriteInfo().layer() == renderType)
+                        return true;
+                }
+            }
+
+            for (final BakedQuad quad : blockModelPart.getQuads(null))
+            {
+                if (quad.spriteInfo().layer() == renderType)
+                    return true;
+            }
         }
 
         return false;
@@ -72,28 +77,6 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
     public boolean canRenderInType(final FluidState fluidState, final ChunkSectionLayer renderType)
     {
         return ItemBlockRenderTypes.getRenderLayer(fluidState) == renderType;
-    }
-
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void onClientInit(final FMLClientSetupEvent clientSetupEvent) {
-        getInstance().registeredRenderTypes.set(true);
-
-        for (final Consumer<IFallbackBlockRenderTypeRegistrar> fallbackBlockRenderTypeRegistrar : getInstance().fallbackBlockRenderTypeRegistrars)
-        {
-            fallbackBlockRenderTypeRegistrar.accept(ItemBlockRenderTypes::setRenderLayer);
-        }
-    }
-
-    @Override
-    public void registerBlockFallbackRenderTypes(final Consumer<IFallbackBlockRenderTypeRegistrar> consumer)
-    {
-        if (registeredRenderTypes.get())
-        {
-            throw new IllegalStateException("Cannot register fallback render types after they have been registered.");
-        }
-
-        fallbackBlockRenderTypeRegistrars.add(consumer);
     }
 
     @Override
@@ -110,7 +93,18 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
 
         for (final BlockModelPart part : parts)
         {
-            layers.add(part.getRenderType(state));
+            for (final Direction direction : Direction.values())
+            {
+                for (final BakedQuad quad : part.getQuads(direction))
+                {
+                    layers.add(quad.spriteInfo().layer());
+                }
+            }
+
+            for (final BakedQuad quad : part.getQuads(null))
+            {
+                layers.add(quad.spriteInfo().layer());
+            }
         }
 
         return layers;
@@ -132,8 +126,10 @@ public class ForgeRenderTypeManager implements IRenderTypeManager
         var types = new HashSet<RenderType>();
         for (final ItemStackRenderState.LayerRenderState layer : state.layers)
         {
-            if (layer.renderType != null)
-                types.add(layer.renderType);
+            for (final BakedQuad bakedQuad : layer.prepareQuadList())
+            {
+                types.add(bakedQuad.spriteInfo().itemRenderType());
+            }
         }
 
         return types;
