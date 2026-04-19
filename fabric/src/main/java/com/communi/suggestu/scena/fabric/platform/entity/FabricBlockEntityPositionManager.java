@@ -23,7 +23,7 @@ public class FabricBlockEntityPositionManager implements IBlockEntityPositionMan
 
     @Nullable
     private IFabricBlockEntityPositionHolder getHolder(LevelReader level, ChunkPos chunkPos) {
-        return (IFabricBlockEntityPositionHolder) level.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FULL, false);
+        return (IFabricBlockEntityPositionHolder) level.getChunk(chunkPos.x(), chunkPos.z(), ChunkStatus.FULL, false);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class FabricBlockEntityPositionManager implements IBlockEntityPositionMan
         if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be added to the position manager");
 
-        final IFabricBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos()));
+        final IFabricBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), ChunkPos.containing(blockEntity.getBlockPos()));
         if (holder == null) {
             return;
         }
@@ -54,7 +54,7 @@ public class FabricBlockEntityPositionManager implements IBlockEntityPositionMan
         if (blockEntity.getLevel() == null)
             throw new IllegalArgumentException("Block entity must be in a level to be removed from the position manager");
 
-        final IFabricBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), new ChunkPos(blockEntity.getBlockPos()));
+        final IFabricBlockEntityPositionHolder holder = getHolder(blockEntity.getLevel(), ChunkPos.containing(blockEntity.getBlockPos()));
         if (holder == null) {
             return;
         }

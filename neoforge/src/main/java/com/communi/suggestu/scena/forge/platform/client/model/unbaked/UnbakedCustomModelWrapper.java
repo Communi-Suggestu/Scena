@@ -3,7 +3,7 @@ package com.communi.suggestu.scena.forge.platform.client.model.unbaked;
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 import org.jetbrains.annotations.NotNull;

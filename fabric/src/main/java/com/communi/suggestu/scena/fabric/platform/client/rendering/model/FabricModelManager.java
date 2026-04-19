@@ -6,26 +6,23 @@ import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel;
-import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
-import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
+import net.fabricmc.fabric.api.client.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TriState;
-import net.minecraft.util.Util;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +35,7 @@ import java.util.function.Supplier;
 public final class FabricModelManager implements IModelManager
 {
     private static final FabricModelManager INSTANCE = new FabricModelManager();
-    private static final RandomSource       RANDOM   = Util.make(RandomSource.createNewThreadLocalInstance(), (random) -> random.setSeed(42L));
+    private static final RandomSource       RANDOM   = RandomSource.createThreadLocalInstance(42L);
 
     public static FabricModelManager getInstance()
     {
@@ -74,13 +71,13 @@ public final class FabricModelManager implements IModelManager
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture(
+    public Material.Baked getParticleMaterial(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -89,7 +86,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        return blockStateModel.particleSprite(
+        return blockStateModel.particleMaterial(
             wrapper,
             pos,
             blockState
@@ -103,7 +100,7 @@ public final class FabricModelManager implements IModelManager
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -129,7 +126,7 @@ public final class FabricModelManager implements IModelManager
         final BlockPos pos,
         final Consumer<ModelQuadLayer> pipeline)
     {
-        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
             .withBlockState(blockState)
             .withBlockEntity(blockEntitySupplier)
@@ -149,10 +146,7 @@ public final class FabricModelManager implements IModelManager
                 if (dir == null && cullDirection == null)
                     return false;
 
-                if (dir != null && dir == cullDirection)
-                    return false;
-
-                return true;
+                return dir == null || dir != cullDirection;
             }
         );
 
@@ -163,13 +157,12 @@ public final class FabricModelManager implements IModelManager
             );
 
             final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                blockStateModel.particleSprite(
+                blockStateModel.particleMaterial(
                     wrapper,
                     pos,
                     blockState
                 ),
-                toMinecraftTriState(view.ambientOcclusion()),
-                view.renderLayer()
+                toMinecraftTriState(view.ambientOcclusion())
             );
 
             builder.put(quad);

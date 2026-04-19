@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.client.rendering;
 
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.minecraft.client.color.item.ItemTintSources;
 
 import java.util.function.Consumer;
@@ -22,9 +22,7 @@ public final class FabricColorManager implements IColorManager
     @Override
     public void setupBlockColors(final Consumer<IBlockColorSetter> configurator)
     {
-        final IBlockColorSetter setter = ColorProviderRegistry.BLOCK::register;
-
-        configurator.accept(setter);
+        configurator.accept(BlockColorRegistry::register);
     }
 
     @Override

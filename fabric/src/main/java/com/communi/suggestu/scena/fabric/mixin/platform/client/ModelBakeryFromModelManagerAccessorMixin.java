@@ -4,7 +4,7 @@ import com.communi.suggestu.scena.fabric.platform.client.rendering.model.IModelB
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.SpecialBlockModelRenderer;
+import net.minecraft.client.renderer.block.LoadedBlockModels;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
@@ -34,16 +34,17 @@ public abstract class ModelBakeryFromModelManagerAccessorMixin implements IModel
             )
     )
     private static void onApply(
-        final SpriteLoader.Preparations preparations,
-        final ModelBakery modelBakery,
-        final Object2IntMap<BlockState> object2IntMap,
+        final SpriteLoader.Preparations blockAtlas,
+        final SpriteLoader.Preparations itemAtlas,
+        final ModelBakery bakery,
+        final LoadedBlockModels blockModels,
+        final Object2IntMap<BlockState> modelGroups,
         final EntityModelSet entityModelSet,
-        final SpecialBlockModelRenderer specialBlockModelRenderer,
-        final Executor executor,
+        final Executor taskExecutor,
         final CallbackInfoReturnable<CompletableFuture<ModelManager.ReloadState>> cir) {
         final IModelBakeryAccessor accessor = (IModelBakeryAccessor) Minecraft.getInstance().getModelManager();
 
-        accessor.scena$setModelBakeryInternal(modelBakery);
+        accessor.scena$setModelBakeryInternal(bakery);
     }
     @Override
     public void scena$setModelBakeryInternal(ModelBakery modelBakery)

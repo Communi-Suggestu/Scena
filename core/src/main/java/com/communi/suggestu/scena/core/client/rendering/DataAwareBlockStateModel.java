@@ -1,12 +1,13 @@
 package com.communi.suggestu.scena.core.client.rendering;
 
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,10 +47,29 @@ public interface DataAwareBlockStateModel
      * @param random a random source for random model variations
      * @param parts  the list that should receive all parts to be rendered
      */
-    void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts);
+    void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts);
 
     /**
      * Returns the particle material.
      */
     Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state);
+
+    /// Returns the material flags of this model.
+    ///
+    /// @param level a level to query block entity data or other world state
+    /// @param pos   the position of the block being rendered
+    /// @param state the state of the block being rendered
+    @BakedQuad.MaterialFlags
+    int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state);
+
+    /// Returns whether this model has the provided material flag.
+    ///
+    /// @param level a level to query block entity data or other world state
+    /// @param pos   the position of the block being rendered
+    /// @param state the state of the block being rendered
+    /// @param flag  the material flag to check
+    @ApiStatus.NonExtendable
+    default boolean hasMaterialFlag(BlockAndTintGetter level, BlockPos pos, BlockState state, @BakedQuad.MaterialFlags int flag) {
+        return (this.materialFlags(level, pos, state) & flag) != 0;
+    }
 }

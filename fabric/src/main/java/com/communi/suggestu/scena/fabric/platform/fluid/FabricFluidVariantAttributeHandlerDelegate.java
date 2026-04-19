@@ -42,12 +42,6 @@ public class FabricFluidVariantAttributeHandlerDelegate implements FluidVariantA
     }
 
     @Override
-    public int getLuminance(final FluidVariant variant)
-    {
-        return delegate.getLuminance(makeInformation(variant));
-    }
-
-    @Override
     public int getTemperature(final FluidVariant variant)
     {
         return delegate.getTemperature(makeInformation(variant));

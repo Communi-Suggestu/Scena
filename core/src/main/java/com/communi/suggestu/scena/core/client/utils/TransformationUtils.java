@@ -20,15 +20,15 @@ public final class TransformationUtils
             stack.pushPose();
         }
 
-        Vector3fc trans = transformation.getTranslation();
+        Vector3fc trans = transformation.translation();
         stack.translate(trans.x(), trans.y(), trans.z());
 
-        stack.mulPose(transformation.getLeftRotation());
+        stack.mulPose(transformation.leftRotation());
 
-        Vector3fc scale = transformation.getScale();
+        Vector3fc scale = transformation.scale();
         stack.scale(scale.x(), scale.y(), scale.z());
 
-        stack.mulPose(transformation.getRightRotation());
+        stack.mulPose(transformation.rightRotation());
     }
 
 }

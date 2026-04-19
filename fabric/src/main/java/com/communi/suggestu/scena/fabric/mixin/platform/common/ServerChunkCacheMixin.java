@@ -35,8 +35,8 @@ public abstract class ServerChunkCacheMixin {
             allow = 1,
             cancellable = true
     )
-    public void shortCircuitChunkLoadingFutureIfInCurrentlyLoadingChunk(int x, int z, ChunkStatus chunkStatus, boolean requireChunk, CallbackInfoReturnable<ChunkAccess> cir) {
-        long l = ChunkPos.asLong(x, z);
+    public void shortCircuitChunkLoadingFutureIfInCurrentlyLoadingChunk(int x, int z, ChunkStatus targetStatus, boolean loadOrGenerate, CallbackInfoReturnable<ChunkAccess> cir) {
+        long l = new ChunkPos(x, z).pack();
         ChunkHolder chunkholder = this.getVisibleChunkIfPresent(l);
         if (chunkholder instanceof ILoadingAwareChunkHolder loadingAwareChunkHolder && loadingAwareChunkHolder.scena$getCurrentlyLoading() != null) {
             cir.setReturnValue(loadingAwareChunkHolder.scena$getCurrentlyLoading());

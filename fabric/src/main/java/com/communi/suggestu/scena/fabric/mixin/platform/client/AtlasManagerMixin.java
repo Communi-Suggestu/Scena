@@ -5,7 +5,7 @@ import com.google.common.collect.Iterators;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -18,7 +18,7 @@ public class AtlasManagerMixin
 {
 
     @Definition(id = "iterator", method = "Ljava/util/List;iterator()Ljava/util/Iterator;")
-    @Definition(id = "KNOWN_ATLASES", field = "Lnet/minecraft/client/resources/model/AtlasManager;KNOWN_ATLASES:Ljava/util/List;")
+    @Definition(id = "KNOWN_ATLASES", field = "Lnet/minecraft/client/resources/model/sprite/AtlasManager;KNOWN_ATLASES:Ljava/util/List;")
     @Expression("KNOWN_ATLASES.iterator()")
     @ModifyExpressionValue(method = "<init>", at = @At("MIXINEXTRAS:EXPRESSION"))
     private Iterator<AtlasManager.AtlasConfig> onInit(final Iterator<AtlasManager.AtlasConfig> original) {

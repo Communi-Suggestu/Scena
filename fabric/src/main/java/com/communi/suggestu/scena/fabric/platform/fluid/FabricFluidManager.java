@@ -9,7 +9,6 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
-import com.communi.suggestu.scena.fabric.platform.client.fluid.ClientFabricFluidManager;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -30,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@SuppressWarnings("UnstableApiUsage")
 public class FabricFluidManager implements IFluidManager
 {
     private static final FabricFluidManager INSTANCE = new FabricFluidManager();
@@ -52,10 +50,6 @@ public class FabricFluidManager implements IFluidManager
 
         final IFluidVariantHandler handler = variantHandler.get();
         FluidVariantAttributes.register(fluidRegistration.get(), new FabricFluidVariantAttributeHandlerDelegate(handler));
-
-        if (Dist.current().isClient()) {
-            ClientFabricFluidManager.registerFluidAndVariant(fluidRegistration, handler);
-        }
 
         return new FluidRegistration(fluidRegistration, () -> handler);
     }
@@ -86,7 +80,7 @@ public class FabricFluidManager implements IFluidManager
               new FluidInformation(
                 view.getResource().getFluid(),
                 view.getAmount(),
-                view.getResource().getComponents()
+                view.getResource().getComponentsPatch()
               )
             );
         }
@@ -159,14 +153,14 @@ public class FabricFluidManager implements IFluidManager
             //We have a flowing fluid.
             //Let's make a none flowing variant of it.
             if (fluid.getFluid() instanceof FlowingFluid flowingFluid) {
-                return makeInformation(FluidVariant.of(flowingFluid.getSource(), fluid.getComponents()), count);
+                return makeInformation(FluidVariant.of(flowingFluid.getSource(), fluid.getComponentsPatch()), count);
             }
         }
 
         if (fluid.getComponents().isEmpty())
             return new FluidInformation(fluid.getFluid(), count);
 
-        return new FluidInformation(fluid.getFluid(), count, fluid.getComponents());
+        return new FluidInformation(fluid.getFluid(), count, fluid.getComponentsPatch());
     }
 
     public static FluidInformation makeInformation(final FluidVariant fluid) {

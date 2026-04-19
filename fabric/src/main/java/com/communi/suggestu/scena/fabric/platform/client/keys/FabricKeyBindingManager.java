@@ -5,12 +5,13 @@ import com.communi.suggestu.scena.core.client.key.IKeyConflictContext;
 import com.communi.suggestu.scena.core.client.key.KeyModifier;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
     @Override
     public void register(final KeyMapping mapping)
     {
-        KeyBindingHelper.registerKeyBinding(mapping);
+        KeyMappingHelper.registerKeyMapping(mapping);
     }
 
     @Override
@@ -152,7 +153,7 @@ public final class FabricKeyBindingManager implements IKeyBindingManager
         }
 
         @Override
-        public Component getTranslatedKeyMessage()
+        public @NonNull Component getTranslatedKeyMessage()
         {
             return getKeyModifierMessage().append(super.getTranslatedKeyMessage());
         }

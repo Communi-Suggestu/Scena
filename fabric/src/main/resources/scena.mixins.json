@@ -25,9 +25,10 @@
     "platform.client.ClientTooltipComponentMixin",
     "platform.client.FabricBlockStateModelMixin",
     "platform.client.GameRendererMixin",
-    "platform.client.GuiGraphicsMixin",
+    "platform.client.GuiGraphicsExtractorMixin",
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
     "platform.client.MouseHandlerMixin",
+    "platform.client.SpecialModelRenderersMixin",
     "platform.client.VanillaBlockModelPartEncoderMixin"
   ],
   "injectors": {

@@ -3,13 +3,14 @@ package com.communi.suggestu.scena.core.client.models;
 import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.renderer.block.model.Material;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +50,7 @@ public interface IModelManager
      * @param pos                 The position on which the block state is virtually placed.
      * @return The particle texture.
      */
-    Material.Baked getParticleTexture(
+    Material.Baked getParticleMaterial(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
@@ -57,7 +58,7 @@ public interface IModelManager
     );
 
     /**
-     * Determine the model cache for the {@link net.minecraft.client.renderer.block.model.BlockStateModel}
+     * Determine the model cache for the {@link net.minecraft.client.renderer.block.dispatch.BlockStateModel}
      * of a block state in the given position.
      *
      * @param blockState The block state in question.
@@ -73,7 +74,7 @@ public interface IModelManager
         final BlockPos pos);
 
     /**
-     * Provides the ability to extract quad information of a {@link net.minecraft.client.renderer.block.model.BlockStateModel}
+     * Provides the ability to extract quad information of a {@link BlockStateModel}
      *
      * @param blockState The block state to get the quad information of.
      * @param blockEntitySupplier The supplier that potentially creates the block entity for the block state to get the model for.

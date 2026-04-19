@@ -2,34 +2,19 @@ package com.communi.suggestu.scena.forge.platform.client.rendering;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
-import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.client.tooltip.IClientTooltipComponentConverter;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.forge.platform.client.model.ForgeModelManager;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.neoforged.neoforge.client.event.RegisterSpecialBlockModelRendererEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,74 +35,13 @@ public class ForgeRenderingManager implements IRenderingManager
         return INSTANCE;
     }
 
-    private final List<Consumer<IBlockEntityRendererRegistrar>> blockEntityRegistrars = Collections.synchronizedList(Lists.newArrayList());
-    private final List<Consumer<IBlockEntityWithoutLevelRendererRegistrar>> blockEntityWithoutLevelRegistrars = Collections.synchronizedList(Lists.newArrayList());
+    private final List<Consumer<IBlockEntityRendererRegistrar>>             blockEntityRegistrars                     = Collections.synchronizedList(Lists.newArrayList());
+    private final List<Consumer<ISpecialModelRendererRegistrar>>            blockEntityWithoutLevelRegistrars         = Collections.synchronizedList(Lists.newArrayList());
     private final List<Consumer<IClientTooltipComponentConverterRegistrar>> clientTooltipComponentConverterRegistrars = Collections.synchronizedList(Lists.newArrayList());
     private final AtomicBoolean                                                           registered = new AtomicBoolean(false);
 
     private ForgeRenderingManager()
     {
-    }
-
-    @Override
-    public void renderModel(
-        final PoseStack matrices,
-        final BakedQuadOutput output,
-        final BlockStateModel blockStateModel,
-        final float r,
-        final float g,
-        final float b,
-        final int combinedLight,
-        final int combinedOverlay,
-        final BlockAndTintGetter level,
-        final BlockPos blockPos,
-        final BlockState blockState)
-    {
-        ModelBlockRenderer.renderModel(
-            matrices.last(),
-            output,
-            blockStateModel,
-            ARGB.color((int) (r * 255f), (int) (g * 255f), (int) (b * 255f)),
-            combinedLight,
-            combinedOverlay,
-            level,
-            blockPos,
-            blockState
-        );
-    }
-
-    @Override
-    public Identifier getFlowingFluidTexture(final FluidInformation fluidInformation)
-    {
-        return IClientFluidTypeExtensions.of(fluidInformation.fluid())
-                .getFlowingTexture(buildFluidStack(fluidInformation));
-    }
-
-    @Override
-    public Identifier getFlowingFluidTexture(final Fluid fluid)
-    {
-        return IClientFluidTypeExtensions.of(fluid)
-                       .getFlowingTexture();
-    }
-
-    @Override
-    public Identifier getStillFluidTexture(final FluidInformation fluidInformation)
-    {
-        return IClientFluidTypeExtensions.of(fluidInformation.fluid())
-                                         .getStillTexture(buildFluidStack(fluidInformation));
-    }
-
-    @Override
-    public Identifier getStillFluidTexture(final Fluid fluid)
-    {
-        return IClientFluidTypeExtensions.of(fluid)
-                                         .getStillTexture();
-    }
-
-    @Override
-    public @NotNull IRenderTypeManager getRenderTypeManager()
-    {
-        return ForgeRenderTypeManager.getInstance();
     }
 
     @Override
@@ -131,7 +55,7 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @Override
-    public void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback)
+    public void registerSpecialModelRenderer(final Consumer<ISpecialModelRendererRegistrar> callback)
     {
         if (registered.get())
         {
@@ -160,15 +84,10 @@ public class ForgeRenderingManager implements IRenderingManager
     }
 
     @SubscribeEvent
-    public static void onRegisterSpecialBlockModelRenderer(RegisterSpecialBlockModelRendererEvent event) {
+    public static void onRegisterSpecialBlockModelRenderer(RegisterSpecialModelRendererEvent event) {
         getInstance().blockEntityWithoutLevelRegistrars
             .forEach(consumer -> {
-                consumer.accept((name, renders, defaultUnbaked) -> {
-                    for (final Block render : renders)
-                    {
-                        event.register(render, defaultUnbaked);
-                    }
-                });
+                consumer.accept(event::register);
             });
     }
 

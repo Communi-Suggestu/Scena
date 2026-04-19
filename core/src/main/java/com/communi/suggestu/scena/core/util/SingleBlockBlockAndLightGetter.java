@@ -3,8 +3,6 @@ package com.communi.suggestu.scena.core.util;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndLightGetter;
-import net.minecraft.world.level.CardinalLighting;
-import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
@@ -13,15 +11,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class SingleBlockBlockAndTintGetter extends SingleBlockBlockReader implements BlockAndTintGetter
+public class SingleBlockBlockAndLightGetter extends SingleBlockBlockReader implements BlockAndLightGetter
 {
     @Nullable
-    private final BlockAndTintGetter source;
+    private final BlockAndLightGetter source;
 
-    protected SingleBlockBlockAndTintGetter(
+    protected SingleBlockBlockAndLightGetter(
         final BlockState blockState,
         final BlockPos pos,
-        final @Nullable BlockAndTintGetter source,
+        final @Nullable BlockAndLightGetter source,
         final @Nullable BlockEntity blockEntity)
     {
         super(blockState, pos, source, blockEntity);
@@ -36,24 +34,6 @@ public class SingleBlockBlockAndTintGetter extends SingleBlockBlockReader implem
             throw new IllegalStateException("No reader available.");
 
         return this.source.getLightEngine();
-    }
-
-    @Override
-    public int getBlockTint(final @NotNull BlockPos blockPos, final @NotNull ColorResolver colorResolver)
-    {
-        if (this.source == null)
-            return -1;
-
-        return this.source.getBlockTint(blockPos, colorResolver);
-    }
-
-    @Override
-    public CardinalLighting cardinalLighting()
-    {
-        if (this.source == null)
-            return CardinalLighting.DEFAULT;
-
-        return this.source.cardinalLighting();
     }
 
     public static class Builder
@@ -87,13 +67,13 @@ public class SingleBlockBlockAndTintGetter extends SingleBlockBlockReader implem
             return this;
         }
 
-        public SingleBlockBlockAndTintGetter createSingleBlockBlockAndTintGetter()
+        public SingleBlockBlockAndLightGetter createSingleBlockBlockAndTintGetter()
         {
             if (blockState == null)
                 throw new IllegalStateException("A blockstate is required for a single block block and tint getter!");
 
             final BlockEntity blockEntity = blockEntityBuilder != null ? blockEntityBuilder.get() : null;
-            return new SingleBlockBlockAndTintGetter(blockState, pos, source, blockEntity);
+            return new SingleBlockBlockAndLightGetter(blockState, pos, source, blockEntity);
         }
     }
 }

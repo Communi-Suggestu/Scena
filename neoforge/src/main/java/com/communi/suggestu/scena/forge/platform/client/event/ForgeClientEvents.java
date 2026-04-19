@@ -10,7 +10,7 @@ import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -76,7 +76,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {
-        return EventBusEventEntryPoint.mod(RegisterColorHandlersEvent.Block.class, (event, handler) -> {
+        return EventBusEventEntryPoint.mod(RegisterColorHandlersEvent.BlockTintSources.class, (event, handler) -> {
             handler.handle();
         });
     }
@@ -123,6 +123,7 @@ public final class ForgeClientEvents implements IClientEvents {
     public IEventEntryPoint<IRegisterBlockStateModelEvent> getRegisterBlockStateModelEvent()
     {
         return EventBusEventEntryPoint.mod(RegisterBlockStateModels.class, (forge, scena) -> scena.handle(new IRegisterBlockStateModelEvent.Registrar() {
+
             @Override
             public <T extends BlockStateModel.Unbaked> void registerModel(final Identifier location, final MapCodec<T> codec)
             {

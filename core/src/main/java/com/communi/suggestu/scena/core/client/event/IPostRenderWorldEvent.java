@@ -4,7 +4,7 @@ import com.communi.suggestu.scena.core.event.IEvent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 
 /**
  * An event called after the world has been rendered.

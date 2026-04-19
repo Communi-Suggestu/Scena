@@ -5,12 +5,12 @@ import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEven
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,7 +27,7 @@ public abstract class GameRendererMixin
         final Minecraft minecraft,
         final ItemInHandRenderer itemInHandRenderer,
         final RenderBuffers renderBuffers,
-        final BlockRenderDispatcher blockRenderDispatcher,
+        final ModelManager modelManager,
         final CallbackInfo ci) {
         FabricClientEvents.REGISTER_PIPS_EVENT.invoker()
             .handle(new IRegisterPIPRenderersEvent.Registrar() {

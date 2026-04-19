@@ -41,12 +41,6 @@ public class ForgeFluidTypeDelegate extends FluidType
     }
 
     @Override
-    public int getLightLevel(final @NotNull FluidStack stack)
-    {
-        return delegate.getLuminance(buildFluidInformation(stack));
-    }
-
-    @Override
     public int getDensity(final @NotNull FluidStack stack)
     {
         return delegate.getDensity(buildFluidInformation(stack));

@@ -44,12 +44,6 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
     }
 
     @Override
-    public int getLuminance(final FluidInformation variant)
-    {
-        return delegate.getLuminance(makeVariant(variant));
-    }
-
-    @Override
     public int getTemperature(final FluidInformation variant)
     {
         return delegate.getTemperature(makeVariant(variant));
@@ -69,47 +63,5 @@ public class FabricFluidVariantHandlerDelegate implements IFluidVariantHandler
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public int getTintColor(final FluidInformation variant)
-    {
-        return DistExecutor.unsafeRunForDist(
-                () -> () -> FluidVariantRendering.getColor(makeVariant(variant)),
-                () -> () -> 0xffffff
-        );
-    }
-
-    @Override
-    public Optional<Identifier> getStillTexture(final FluidInformation variant)
-    {
-
-        return DistExecutor.unsafeRunForDist(
-                () -> () -> {
-                    final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
-                    if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
-                        return renderDelegate.delegate().getStillTexture(variant);
-                    }
-
-                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[0]).map(TextureAtlasSprite::contents).map(SpriteContents::name);
-                },
-                () -> Optional::empty
-        );
-    }
-
-    @Override
-    public Optional<Identifier> getFlowingTexture(final FluidInformation variant)
-    {
-        return DistExecutor.unsafeRunForDist(
-                () -> () -> {
-                    final FluidVariantRenderHandler handler = FluidVariantRendering.getHandlerOrDefault(variant.fluid());
-                    if (handler instanceof FabricFluidVariantRenderHandlerDelegate renderDelegate) {
-                        return renderDelegate.delegate().getFlowingTexture(variant);
-                    }
-
-                    return Optional.ofNullable(FluidVariantRendering.getSprites(makeVariant(variant))).map(sprites -> sprites[1]).map(TextureAtlasSprite::contents).map(SpriteContents::name);
-                },
-                () -> Optional::empty
-        );
     }
 }

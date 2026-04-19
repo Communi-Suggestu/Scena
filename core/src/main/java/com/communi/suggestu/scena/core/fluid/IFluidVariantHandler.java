@@ -27,11 +27,6 @@ public interface IFluidVariantHandler
     Optional<SoundEvent> getEmptySound(FluidInformation variant);
 
     /**
-     * Return an integer in [0, 15]: the light level emitted by this fluid, or 0 if it doesn't naturally emit light.
-     */
-    int getLuminance(FluidInformation variant);
-
-    /**
      * Return a non-negative integer, representing the temperature of this fluid in Kelvin.
      */
     int getTemperature(FluidInformation variant);
@@ -50,28 +45,4 @@ public interface IFluidVariantHandler
      * @return The density of the fluid
      */
     int getDensity(FluidInformation variant);
-
-    /**
-     * Returns the color of the fluid.
-     *
-     * @param variant The fluid variant
-     * @return The color of the fluid
-     */
-    int getTintColor(FluidInformation variant);
-
-    /**
-     * Returns the resource location of the still texture of the fluid.
-     *
-     * @param variant The fluid variant
-     * @return The resource location of the still texture of the fluid
-     */
-    Optional<Identifier> getStillTexture(FluidInformation variant);
-
-    /**
-     * Returns the resource location of the flowing texture of the fluid.
-     *
-     * @param variant The fluid variant
-     * @return The resource location of the flowing texture of the fluid
-     */
-    Optional<Identifier> getFlowingTexture(FluidInformation variant);
 }

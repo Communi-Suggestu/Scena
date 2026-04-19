@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
-public class SingleBlockLevelReader extends SingleBlockBlockAndTintGetter implements LevelReader
+public class SingleBlockLevelReader extends SingleBlockBlockAndLightGetter implements LevelReader
 {
     @Nullable
     private final LevelReader reader;

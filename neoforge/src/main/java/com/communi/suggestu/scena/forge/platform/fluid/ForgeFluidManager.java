@@ -49,29 +49,6 @@ public class ForgeFluidManager implements IFluidManager {
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
         final IRegistryObject<FluidType> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            ForgeScenaPlatform platform = (ForgeScenaPlatform) IScenaPlatform.getInstance();
-            platform.getModBus().addListener((Consumer<RegisterClientExtensionsEvent>) registerClientExtensionsEvent -> registerClientExtensionsEvent.registerFluidType(new IClientFluidTypeExtensions() {
-                @Override
-                public int getTintColor(final @NotNull FluidStack stack)
-                {
-                    return handler.getTintColor(buildFluidInformation(stack));
-                }
-
-                @Override
-                public @NotNull Identifier getStillTexture(final @NotNull FluidStack stack)
-                {
-                    return handler.getStillTexture(buildFluidInformation(stack)).orElseThrow();
-                }
-
-                @Override
-                public @NotNull Identifier getFlowingTexture(final @NotNull FluidStack stack)
-                {
-                    return handler.getFlowingTexture(buildFluidInformation(stack)).orElseThrow();
-                }
-            }, fluidTypeRegistration.get()));
-        });
-
         final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registries.FLUID, name.getNamespace());
         final IRegistryObject<Fluid> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
 

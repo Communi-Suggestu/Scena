@@ -1,15 +1,15 @@
 package com.communi.suggestu.scena.forge.mixin.platform.client;
 
 import com.communi.suggestu.scena.core.client.rendering.IExtendedGuiGraphics;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(GuiGraphics.class)
-public abstract class GuiGraphicsMixin implements IExtendedGuiGraphics
+@Mixin(GuiGraphicsExtractor.class)
+public abstract class GuiGraphicsExtractorMixin implements IExtendedGuiGraphics
 {
 
     @Override
@@ -19,7 +19,7 @@ public abstract class GuiGraphicsMixin implements IExtendedGuiGraphics
     }
 
     @Shadow
-    public abstract void submitPictureInPictureRenderState(final PictureInPictureRenderState par1);
+    public abstract void submitPictureInPictureRenderState(final PictureInPictureRenderState state);
 
     @Override
     public @Nullable ScreenRectangle currentScissorArea()

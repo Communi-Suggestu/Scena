@@ -19,7 +19,7 @@ import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
 import com.communi.suggestu.scena.core.event.IServerTickEvent;
 import com.communi.suggestu.scena.core.event.ProcessingResult;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -159,7 +159,7 @@ public final class FabricGameEvents implements IGameEvents {
 
     @Override
     public IEventEntryPoint<IPlayerJoinedWorldEvent> getPlayerJoinedWorldEvent() {
-        return FabricEventEntryPoint.create(ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD, handler -> (player, origin, destination) -> handler.handle(player, destination));
+        return FabricEventEntryPoint.create(ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL, handler -> (player, origin, destination) -> handler.handle(player, destination));
     }
 
     @Override

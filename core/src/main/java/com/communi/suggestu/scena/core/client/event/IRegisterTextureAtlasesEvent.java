@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.client.event;
 
 import com.communi.suggestu.scena.core.event.IEvent;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 
 import java.util.function.Consumer;
 

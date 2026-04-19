@@ -2,11 +2,13 @@ package com.communi.suggestu.scena.core.client.rendering;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.color.block.BlockTintSources;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -47,13 +49,12 @@ public interface IColorManager
      */
     @FunctionalInterface
     interface IBlockColorSetter {
-
         /**
          * Sets the color manager for the given blocks.
          * @param colorManager The color manager to use for the given block.
          * @param blocks The blocks which use the given color manager.
          */
-        void register(final BlockColor colorManager, final Block... blocks);
+        void register(final List<BlockTintSource> colorManager, final Block... blocks);
     }
 
     /**

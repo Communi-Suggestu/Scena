@@ -22,14 +22,15 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
@@ -62,6 +63,18 @@ public final class FabricClientEvents implements IClientEvents
 
         return false;
     });
+
+    public static final Event<IHudRenderEvent> HUD_RENDER = EventFactory.createArrayBacked(
+        IHudRenderEvent.class,
+        handlers -> (IHudRenderEvent) poseStack -> {
+            for (final IHudRenderEvent eventHandler : handlers)
+            {
+                eventHandler.handle(poseStack);
+            }
+        }
+    );
+
+    private static final HudElement HUD_EVENT_HOOK = (graphics, _) -> HUD_RENDER.invoker().handle(graphics);
 
     public static final Event<IResourceRegistrationEvent> RESOURCE_REGISTRATION = EventFactory.createArrayBacked(IResourceRegistrationEvent.class, callbacks -> () -> {
         for (IResourceRegistrationEvent callback : callbacks)
@@ -101,6 +114,13 @@ public final class FabricClientEvents implements IClientEvents
 
     private FabricClientEvents()
     {
+        HudElementRegistry.attachElementAfter(
+            VanillaHudElements.CHAT,
+            Identifier.fromNamespaceAndPath(
+                "scena", "hud_event_hook"
+            ),
+            HUD_EVENT_HOOK
+        );
     }
 
     @Override
@@ -113,11 +133,11 @@ public final class FabricClientEvents implements IClientEvents
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent()
     {
         return FabricEventEntryPoint.create(
-            WorldRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION,
-            (scena) -> (context, result) -> {
+            LevelRenderEvents.AFTER_BLOCK_OUTLINE_EXTRACTION,
+            (scena) -> (context, _) -> {
                 if (scena.handle())
                 {
-                    context.worldState().blockOutlineRenderState = null;
+                    context.levelState().blockOutlineRenderState = null;
                 }
             }
         );
@@ -126,34 +146,29 @@ public final class FabricClientEvents implements IClientEvents
     @Override
     public IEventEntryPoint<IHudRenderEvent> getHUDRenderEvent()
     {
-        return FabricEventEntryPoint.create(HudRenderCallback.EVENT, handler -> (matrixStack, tickDelta) -> handler.handle(matrixStack));
+
+
+        return FabricEventEntryPoint.create(HUD_RENDER);
     }
 
     @Override
     public IEventEntryPoint<IScrollEvent> getScrollEvent()
     {
-        return FabricEventEntryPoint.create(SCROLL, Function.identity());
+        return FabricEventEntryPoint.create(SCROLL);
     }
 
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent()
     {
         return FabricEventEntryPoint.create(
-            WorldRenderEvents.END_MAIN,
-            scena -> new WorldRenderEvents.EndMain()
-            {
-                @Override
-                public void endMain(final WorldRenderContext context)
-                {
-                    scena.handle(
-                        context.worldRenderer(),
-                        context.matrices(),
-                        Minecraft.getInstance().renderBuffers().bufferSource(),
-                        context.worldState(),
-                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
-                    );
-                }
-            }
+            LevelRenderEvents.END_MAIN,
+            scena -> context -> scena.handle(
+                context.levelRenderer(),
+                context.poseStack(),
+                Minecraft.getInstance().renderBuffers().bufferSource(),
+                context.levelState(),
+                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
+            )
         );
     }
 
@@ -221,6 +236,6 @@ public final class FabricClientEvents implements IClientEvents
     public IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent()
     {
         return handler -> handler.handle((key, listener) -> ResourceLoader.get(PackType.CLIENT_RESOURCES)
-            .registerReloader(key, listener));
+            .registerReloadListener(key, listener));
     }
 }

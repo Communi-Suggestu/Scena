@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.core.client.utils;
 
 import com.communi.suggestu.scena.core.client.models.processing.VertexData;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 
 import java.util.function.Consumer;
 

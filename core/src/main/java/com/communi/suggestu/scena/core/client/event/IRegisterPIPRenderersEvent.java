@@ -2,8 +2,8 @@ package com.communi.suggestu.scena.core.client.event;
 
 import com.communi.suggestu.scena.core.event.IEvent;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 
 import java.util.function.Function;
 

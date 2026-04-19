@@ -1,8 +1,8 @@
 package com.communi.suggestu.scena.fabric.platform.creativetab;
 
 import com.communi.suggestu.scena.core.creativetab.ICreativeTabManager;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTabOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -22,13 +22,14 @@ public final class FabricCreativeTabManager implements ICreativeTabManager {
 
     @Override
     public void modifyTab(final ResourceKey<CreativeModeTab> key, DisplayItemsAdapter adapterConsumer) {
-        ItemGroupEvents.modifyEntriesEvent(key).register(entries -> adapterConsumer.accept(entries.getEnabledFeatures(), new Adapter(entries), entries.shouldShowOpRestrictedItems()));
+
+        CreativeModeTabEvents.modifyOutputEvent(key).register(entries -> adapterConsumer.accept(entries.getEnabledFeatures(), new Adapter(entries), entries.shouldShowOpRestrictedItems()));
     }
 
     public static final class Adapter implements ICreativeTabManager.CreativeModeTabPopulator {
-        private final FabricItemGroupEntries delegate;
+        private final FabricCreativeModeTabOutput delegate;
 
-        public Adapter(FabricItemGroupEntries delegate) {
+        public Adapter(FabricCreativeModeTabOutput delegate) {
             this.delegate = delegate;
         }
 
@@ -39,12 +40,12 @@ public final class FabricCreativeTabManager implements ICreativeTabManager {
 
         @Override
         public void addAfter(ItemStack stack, CreativeModeTab.TabVisibility visibility, ItemStack after) {
-            delegate.addAfter(after, List.of(stack), visibility);
+            delegate.insertAfter(after, List.of(stack), visibility);
         }
 
         @Override
         public void addBefore(ItemStack stack, CreativeModeTab.TabVisibility visibility, ItemStack before) {
-            delegate.addBefore(before, List.of(stack), visibility);
+            delegate.insertBefore(before, List.of(stack), visibility);
         }
     }
 }

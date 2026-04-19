@@ -2,28 +2,16 @@ package com.communi.suggestu.scena.core.client.rendering;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
 import com.communi.suggestu.scena.core.client.models.IModelManager;
-import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.client.tooltip.IClientTooltipComponentConverter;
-import com.communi.suggestu.scena.core.fluid.FluidInformation;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BakedQuadOutput;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -42,63 +30,6 @@ public interface IRenderingManager
     }
 
     /**
-     * Renders a specific blockstate on the given position.
-     */
-    void renderModel(
-        PoseStack matrices,
-        final BakedQuadOutput output,
-        BlockStateModel blockStateModel,
-        float r,
-        float g,
-        float b,
-        int combinedLight,
-        int combinedOverlay,
-        BlockAndTintGetter level,
-        BlockPos blockPos,
-        BlockState blockState);
-
-    /**
-     * Gains access to the texture that is used to render a flowing fluid.
-     *
-     * @param fluidInformation The fluid to get the texture for.
-     * @return The texture.
-     */
-    Identifier getFlowingFluidTexture(final FluidInformation fluidInformation);
-
-    /**
-     * Gains access to the texture that is used to render a flowing fluid.
-     *
-     * @param fluid The fluid to get the texture for.
-     * @return The texture.
-     */
-    Identifier getFlowingFluidTexture(final Fluid fluid);
-
-    /**
-     * Gains access to the texture that is used to render a still fluid.
-     *
-     * @param fluidInformation The fluid to get the texture for.
-     * @return The texture.
-     */
-    Identifier getStillFluidTexture(final FluidInformation fluidInformation);
-
-    /**
-     * Gains access to the texture that is used to render a still fluid.
-     *
-     * @param fluid The fluid to get the texture for.
-     * @return The texture.
-     */
-    Identifier getStillFluidTexture(final Fluid fluid);
-
-    /**
-     * The render type manager.
-     * Deals with the render types which are available on different platforms.
-     *
-     * @return The render type manager.
-     */
-    @NotNull
-    IRenderTypeManager getRenderTypeManager();
-
-    /**
      * Registers a callback which can register a new {@link IClientTooltipComponentConverter} for the current platform.
      *
      * @param callback The callback that registers the converter.
@@ -110,7 +41,7 @@ public interface IRenderingManager
      *
      * @param callback The callback that registers the renderer.
      */
-    void registerBlockEntityWithoutLevelRenderer(final Consumer<IBlockEntityWithoutLevelRendererRegistrar> callback);
+    void registerSpecialModelRenderer(final Consumer<ISpecialModelRendererRegistrar> callback);
 
     /**
      * Registers a callback which can register a new {@link BlockEntityRendererProvider} for a specific {@link BlockEntityType}.
@@ -137,8 +68,15 @@ public interface IRenderingManager
     /**
      * A registrar for the {@link SpecialModelRenderer}s.
      */
-    interface IBlockEntityWithoutLevelRendererRegistrar {
-        void registerBlockEntityWithoutLevelRenderer(final Identifier name, Set<Block> renders, final SpecialModelRenderer.Unbaked defaultUnbaked);
+    interface ISpecialModelRendererRegistrar
+    {
+        /**
+         * Invoke to register a new codec to instantiate a given renderer.
+         *
+         * @param name The name to use.
+         * @param source The codec to instantiate with.
+         */
+        void register(final Identifier name, final MapCodec<? extends SpecialModelRenderer.Unbaked<?>> source);
     }
 
     interface IBlockEntityRendererRegistrar {

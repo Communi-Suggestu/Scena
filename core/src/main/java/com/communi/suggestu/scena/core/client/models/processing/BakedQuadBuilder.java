@@ -1,9 +1,7 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
 import com.communi.suggestu.scena.core.client.models.vertices.VertexProcessor;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
@@ -12,32 +10,22 @@ import java.util.List;
 public class BakedQuadBuilder implements VertexProcessor
 {
     private final List<VertexData> data = new ArrayList<>(4);
-    private       int          tint       = -1;
-    private int lightEmission = 0;
-    private Direction orientation;
-    private BakedQuad.SpriteInfo texture;
-    private boolean applyDiffuseLighting = true;
+    private Direction            orientation;
+    private BakedQuad.MaterialInfo texture;
 
-
-    public BakedQuadBuilder(BakedQuad.SpriteInfo texture) {
+    public BakedQuadBuilder(BakedQuad.MaterialInfo texture) {
         this.texture = texture;
     }
 
     protected BakedQuadBuilder() {
     }
-
-    @Override
-    public void tintIndex(int tint) {
-        this.tint = tint;
-    }
-
     @Override
     public void cullDirection(Direction orientation) {
         this.orientation = orientation;
     }
 
     @Override
-    public void texture(BakedQuad.SpriteInfo texture) {
+    public void texture(BakedQuad.MaterialInfo texture) {
         this.texture = texture;
     }
 
@@ -45,17 +33,6 @@ public class BakedQuadBuilder implements VertexProcessor
     public void vertex(final VertexData data)
     {
         this.data.add(data.vertexIndex(), data);
-    }
-
-    @Override
-    public void shade(boolean diffuse) {
-        this.applyDiffuseLighting = diffuse;
-    }
-
-    @Override
-    public void light(final int lightEmission)
-    {
-        this.lightEmission = lightEmission;
     }
 
     public BakedQuad build() {
@@ -80,11 +57,8 @@ public class BakedQuadBuilder implements VertexProcessor
             v1.uv(),
             v2.uv(),
             v3.uv(),
-            tint,
             orientation,
-            texture,
-            applyDiffuseLighting,
-            lightEmission
+            texture
         );
     }
 }

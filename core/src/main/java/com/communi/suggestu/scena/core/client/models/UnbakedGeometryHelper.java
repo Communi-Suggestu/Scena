@@ -1,27 +1,24 @@
 package com.communi.suggestu.scena.core.client.models;
 
 import com.mojang.math.Quadrant;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
-import net.minecraft.client.renderer.block.model.FaceBakery;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
-import net.minecraft.client.renderer.block.model.Material;
+import com.mojang.math.Transformation;
+import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.client.renderer.texture.SpriteContents;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBaker;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.QuadCollection;
+import net.minecraft.client.resources.model.cuboid.CuboidFace;
+import net.minecraft.client.resources.model.cuboid.CuboidModelElement;
+import net.minecraft.client.resources.model.cuboid.FaceBakery;
+import net.minecraft.client.resources.model.cuboid.ItemModelGenerator;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class UnbakedGeometryHelper
 {
@@ -30,15 +27,25 @@ public class UnbakedGeometryHelper
         throw new IllegalStateException("Can not instantiate an instance of: UnbakedGeometryHelper. This is a utility class");
     }
 
-    public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite) {
-        return createUnbakedItemMaskElements(layerIndex, sprite);
+    public static QuadCollection bakeItemMaskQuads(ModelBaker baker, int layerIndex, Material.Baked maskMaterial, Material.Baked outputMaterial, ModelState modelState) {
+        return bakeItemMaskQuads(baker, layerIndex, maskMaterial, outputMaterial, modelState, UnaryOperator.identity());
     }
 
-    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite) {
-        List<BlockElement> elements = createUnbakedItemElements(layerIndex, sprite);
-        elements.removeFirst(); // Remove north and south faces
+    /**
+     * Bakes quads in the shape of the specified mask texture with the specified output texture applied to them.
+     * <p>
+     * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the mask texture uses.
+     */
+    public static QuadCollection bakeItemMaskQuads(ModelBaker baker, int layerIndex, Material.Baked maskMaterial, Material.Baked outputMaterial, ModelState modelState, UnaryOperator<BakedQuad.MaterialInfo> materialModifier) {
+        QuadCollection.Builder builder = new QuadCollection.Builder();
+        ModelBaker.Interner interner = baker.interner();
+        BakedQuad.MaterialInfo maskMaterialInfo = interner.materialInfo(BakedQuad.MaterialInfo.of(maskMaterial, maskMaterial.sprite().transparency(), layerIndex, true, 0));
+        BakedQuad.MaterialInfo outMaterialInfo = interner.materialInfo(materialModifier.apply(BakedQuad.MaterialInfo.of(outputMaterial, outputMaterial.sprite().transparency(), layerIndex, true, 0)));
 
-        SpriteContents spriteContents = sprite.contents();
+        // TODO 26.1: why are the side faces included at all?
+        ItemModelGenerator.bakeSideFaces(builder, interner, modelState, maskMaterialInfo);
+
+        SpriteContents spriteContents = maskMaterial.sprite().contents();
         int width = spriteContents.width();
         int height = spriteContents.height();
         BitSet bits = new BitSet(width * height);
@@ -79,44 +86,39 @@ public class UnbakedGeometryHelper
                     Vector3f from = new Vector3f(16 * xStart / (float) width, 16 - 16 * yEnd / (float) height, 7.5F);
                     Vector3f to = new Vector3f(16 * x / (float) width, 16 - 16 * y / (float) height, 8.5F);
                     // Create UVs
-                    BlockElementFace.UVs northUvs = FaceBakery.defaultFaceUV(from, to, Direction.NORTH);
-                    BlockElementFace.UVs southUvs = FaceBakery.defaultFaceUV(from, to, Direction.SOUTH);
-                    // Create faces
-                    Map<Direction, BlockElementFace> faces = Map.of(
-                        Direction.NORTH, new BlockElementFace(null, layerIndex, "layer" + layerIndex, northUvs, Quadrant.R0),
-                        Direction.SOUTH, new BlockElementFace(null, layerIndex, "layer" + layerIndex, southUvs, Quadrant.R0));
-                    // Create element
-                    elements.add(new BlockElement(from, to, faces, null, true, 0));
+                    CuboidFace.UVs northUvs = FaceBakery.defaultFaceUV(from, to, Direction.NORTH);
+                    CuboidFace.UVs southUvs = FaceBakery.defaultFaceUV(from, to, Direction.SOUTH);
+
+                    // Create quads
+                    builder.addUnculledFace(FaceBakery.bakeQuad(interner, from, to, northUvs, Quadrant.R0, outMaterialInfo, Direction.SOUTH, modelState, null));
+                    builder.addUnculledFace(FaceBakery.bakeQuad(interner, from, to, southUvs, Quadrant.R0, outMaterialInfo, Direction.NORTH, modelState, null));
 
                     // Reset xStart
                     xStart = -1;
                 }
             }
         }
-        return elements;
-    }
-
-    private static BlockElementFace.UVs expandUVs(BlockElementFace.UVs uvs, float expand) {
-        float centerU = (uvs.minU() + uvs.minU() + uvs.maxU() + uvs.maxU()) / 4.0F;
-        float centerV = (uvs.minV() + uvs.minV() + uvs.maxV() + uvs.maxV()) / 4.0F;
-        return new BlockElementFace.UVs(
-            Mth.clamp(Mth.lerp(expand, uvs.minU(), centerU), 0F, 16F),
-            Mth.clamp(Mth.lerp(expand, uvs.minV(), centerV), 0F, 16F),
-            Mth.clamp(Mth.lerp(expand, uvs.maxU(), centerU), 0F, 16F),
-            Mth.clamp(Mth.lerp(expand, uvs.maxV(), centerV), 0F, 16F));
+        return builder.build();
     }
 
     /**
-     * Bakes a list of {@linkplain BlockElement block elements} and feeds the baked quads to a {@linkplain QuadCollection.Builder quad collection builder}.
+     * Bakes a list of {@linkplain CuboidModelElement block elements} and feeds the baked quads to a {@linkplain QuadCollection.Builder quad collection builder}.
      */
-    public static void bakeElements(QuadCollection.Builder builder, ModelBaker modelBaker, List<BlockElement> elements, Function<String, Material.Baked> materialGetter, ModelState modelState) {
-        for (BlockElement element : elements) {
+    public static void bakeElements(ModelBaker baker, QuadCollection.Builder builder, List<CuboidModelElement> elements, Function<String, Material.Baked> materialGetter, ModelState modelState) {
+        for (CuboidModelElement element : elements) {
             element.faces().forEach((side, face) -> {
                 Material.Baked material = materialGetter.apply(face.texture());
                 BakedQuad quad = FaceBakery.bakeQuad(
-                    modelBaker,
-                    element.from(), element.to(), face, material, side, modelState, element.rotation(), element.shade(), element.lightEmission()
-                );
+                    baker,
+                    element.from(),
+                    element.to(),
+                    face,
+                    material,
+                    side,
+                    modelState,
+                    element.rotation(),
+                    element.shade(),
+                    element.lightEmission());
                 if (face.cullForDirection() == null)
                     builder.addUnculledFace(quad);
                 else
@@ -126,13 +128,13 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
+     * Bakes a list of {@linkplain CuboidModelElement block elements} and returns the list of baked quads.
      */
-    public static List<BakedQuad> bakeElements(List<BlockElement> elements, ModelBaker baker, Function<String, Material.Baked> materialGetter, ModelState modelState) {
+    public static List<BakedQuad> bakeElements(ModelBaker baker, List<CuboidModelElement> elements, Function<String, Material.Baked> materialGetter, ModelState modelState) {
         if (elements.isEmpty())
             return List.of();
         var builder = new QuadCollection.Builder();
-        bakeElements(builder, baker, elements, materialGetter, modelState);
+        bakeElements(baker, builder, elements, materialGetter, modelState);
         return builder.build().getAll();
     }
 }

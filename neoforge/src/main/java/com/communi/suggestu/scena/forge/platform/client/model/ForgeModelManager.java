@@ -13,18 +13,17 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.block.model.Material;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Util;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -35,6 +34,7 @@ import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyE
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.function.Supplier;
 public final class ForgeModelManager implements IModelManager
 {
     private static final ForgeModelManager INSTANCE = new ForgeModelManager();
-    private static final RandomSource      RANDOM   = Util.make(RandomSource.createNewThreadLocalInstance(), (random) -> random.setSeed(42L));
+    private static final RandomSource      RANDOM   = RandomSource.createThreadLocalInstance(42L);
 
     public static ForgeModelManager getInstance()
     {
@@ -77,13 +77,13 @@ public final class ForgeModelManager implements IModelManager
     }
 
     @Override
-    public Material.Baked getParticleTexture(
+    public Material.Baked getParticleMaterial(
         final BlockState blockState,
         final Supplier<@Nullable BlockEntity> blockEntitySupplier,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));
         return model.particleMaterial(
             new SingleBlockBlockAndTintGetter.Builder()
@@ -104,7 +104,7 @@ public final class ForgeModelManager implements IModelManager
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos)
     {
-        final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));
         return model.createGeometryKey(
             new SingleBlockBlockAndTintGetter.Builder()
@@ -128,9 +128,11 @@ public final class ForgeModelManager implements IModelManager
         final BlockPos pos,
         final Consumer<ModelQuadLayer> pipeline)
     {
-        final BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));
-        final List<BlockModelPart> parts = model.collectParts(
+
+        final List<BlockStateModelPart> parts = new ArrayList<>();
+        model.collectParts(
             new SingleBlockBlockAndTintGetter.Builder()
                 .withBlockState(blockState)
                 .withBlockEntity(blockEntitySupplier)
@@ -139,9 +141,10 @@ public final class ForgeModelManager implements IModelManager
                 .createSingleBlockBlockAndTintGetter(),
             pos,
             blockState,
-            RANDOM
+            RANDOM,
+            parts
         );
-        for (final BlockModelPart part : parts)
+        for (final BlockStateModelPart part : parts)
         {
             for (final BakedQuad quad : part.getQuads(cullDirection))
             {

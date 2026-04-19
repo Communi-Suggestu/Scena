@@ -2,7 +2,7 @@ package com.communi.suggestu.scena.core.client.models.processing;
 
 import com.communi.suggestu.scena.core.util.VectorUtils;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;

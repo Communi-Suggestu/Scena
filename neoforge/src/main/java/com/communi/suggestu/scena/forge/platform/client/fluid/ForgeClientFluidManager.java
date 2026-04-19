@@ -2,7 +2,11 @@ package com.communi.suggestu.scena.forge.platform.client.fluid;
 
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+
+import java.util.Objects;
 
 import static com.communi.suggestu.scena.forge.platform.fluid.ForgeFluidManager.buildFluidStack;
 
@@ -22,8 +26,10 @@ public final class ForgeClientFluidManager implements IClientFluidManager
     @Override
     public int getFluidColor(final FluidInformation fluid)
     {
-        return IClientFluidTypeExtensions.of(fluid.fluid())
-                                         .getTintColor(buildFluidStack(fluid));
+        return Objects.requireNonNull(Minecraft.getInstance().getModelManager().getFluidStateModelSet()
+                .get(fluid.fluid().defaultFluidState())
+                .fluidTintSource())
+            .colorAsStack(buildFluidStack(fluid));
     }
 
 }

@@ -3,16 +3,17 @@ package com.communi.suggestu.scena.fabric.platform.client.model.unbaked;
 import com.communi.suggestu.scena.core.client.rendering.DataAwareBlockStateModel;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
     {
         return mapCodec().xmap(
             unbaked -> new UnbakedCustomModelWrapper<>(mapCodec(), unbaked),
-            customUnbakedBlockStateModel -> model()
+            _ -> model()
         );
     }
 
@@ -71,7 +72,7 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
             final @NonNull RandomSource random,
             final @NonNull Predicate<@org.jspecify.annotations.Nullable Direction> cullTest)
         {
-            final List<BlockModelPart> parts = new ArrayList<>();
+            final List<BlockStateModelPart> parts = new ArrayList<>();
             if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
                 dataAwareBlockStateModel.collectParts(
                     blockView,
@@ -83,14 +84,14 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
             } else {
                 collectParts(random, parts);
             }
-            for (BlockModelPart part : parts)
+            for (BlockStateModelPart part : parts)
             {
                 part.emitQuads(emitter, cullTest);
             }
         }
 
         @Override
-        public void collectParts(final @NonNull RandomSource random, final @NonNull List<BlockModelPart> output)
+        public void collectParts(final @NonNull RandomSource random, final @NonNull List<BlockStateModelPart> output)
         {
             inner().collectParts(random, output);
         }
@@ -111,20 +112,26 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         }
 
         @Override
-        public @NonNull TextureAtlasSprite particleSprite(final @NonNull BlockAndTintGetter blockView, final @NonNull BlockPos pos, final @NonNull BlockState state)
+        public Material.@NonNull Baked particleMaterial(final @NonNull BlockAndTintGetter blockView, final @NonNull BlockPos pos, final @NonNull BlockState state)
         {
             if (inner() instanceof DataAwareBlockStateModel dataAwareBlockStateModel) {
-                return dataAwareBlockStateModel.particleIcon(
+                return dataAwareBlockStateModel.particleMaterial(
                     blockView, pos, state
                 );
             }
-            return BlockStateModel.super.particleSprite(blockView, pos, state);
+            return BlockStateModel.super.particleMaterial(blockView, pos, state);
         }
 
         @Override
-        public @NonNull TextureAtlasSprite particleIcon()
+        public Material.@NonNull Baked particleMaterial()
         {
-            return inner().particleIcon();
+            return inner().particleMaterial();
+        }
+
+        @Override
+        public @BakedQuad.MaterialFlags int materialFlags()
+        {
+            return inner().materialFlags();
         }
     }
 }

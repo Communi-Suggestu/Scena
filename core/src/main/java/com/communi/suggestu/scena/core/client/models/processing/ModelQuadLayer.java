@@ -1,11 +1,7 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
-import com.communi.suggestu.scena.core.client.utils.RenderTypeUtils;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.Material;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.util.TriState;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +13,9 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 public record ModelQuadLayer(VertexData[] vertexData,
-                             BakedQuad.SpriteInfo sprite,
-                             int light,
-                             int tint,
-                             boolean shade,
                              @Nullable Direction cullDirection,
                              BakedQuad sourceQuad,
+                             BakedQuad.MaterialInfo texture,
                              Material.Baked particleSprite,
                              TriState usesAmbientOcclusion) {
 
@@ -30,10 +23,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
     public static final class Builder extends BaseModelReader {
         private final Collection<VertexData> manualVertexData = new ArrayList<>();
         private final Collection<VertexData> vertexData = new ArrayList<>(4);
-        private BakedQuad.SpriteInfo sprite;
-        private int light;
-        private int     tintIndex = -1;
-        private boolean shade;
+        private BakedQuad.MaterialInfo sprite;
         @Nullable
         private Direction cullDirection;
         private       BakedQuad      sourceQuad;
@@ -55,23 +45,8 @@ public record ModelQuadLayer(VertexData[] vertexData,
             return this;
         }
 
-        public Builder withSprite(BakedQuad.SpriteInfo sprite) {
+        public Builder withMaterial(BakedQuad.MaterialInfo sprite) {
             this.sprite = sprite;
-            return this;
-        }
-
-        public Builder withLight(int light) {
-            this.light = light;
-            return this;
-        }
-
-        public Builder withTintIndex(int tintIndex) {
-            this.tintIndex = tintIndex;
-            return this;
-        }
-
-        public Builder withShade(boolean shade) {
-            this.shade = shade;
             return this;
         }
 
@@ -92,29 +67,13 @@ public record ModelQuadLayer(VertexData[] vertexData,
         }
 
         @Override
-        public void tintIndex(int tint) {
-            withTintIndex(tint);
-        }
-
-        @Override
-        public void shade(boolean diffuse) {
-            withShade(diffuse);
-        }
-
-        @Override
         public void cullDirection(@Nullable Direction orientation) {
             withCullDirection(orientation);
         }
 
         @Override
-        public void texture(@NotNull BakedQuad.SpriteInfo texture) {
-            withSprite(texture);
-        }
-
-        @Override
-        public void light(final int lightEmission)
-        {
-            withLight(lightEmission);
+        public void texture(@NotNull BakedQuad.MaterialInfo texture) {
+            withMaterial(texture);
         }
 
         public ModelQuadLayer build() {
@@ -122,7 +81,8 @@ public record ModelQuadLayer(VertexData[] vertexData,
 
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
             vertexData = vertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).toList();
-            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), sprite, light, tintIndex, shade, cullDirection, sourceQuad, particleSprite, usesAmbientOcclusion);
+
+            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, sprite, particleSprite, usesAmbientOcclusion);
         }
 
         private BakedQuad buildSourceQuad() {
@@ -132,8 +92,6 @@ public record ModelQuadLayer(VertexData[] vertexData,
 
             final BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
             builder.cullDirection(cullDirection);
-            builder.tintIndex(tintIndex);
-            builder.shade(true);
             manualVertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).forEach(builder::vertex);
             builder.onComplete();
             return builder.build();

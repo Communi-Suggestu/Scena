@@ -27,8 +27,8 @@ public class FabricConfigurationNetworkingUtils
     }
 
     public static void registerNetworkingChannel(final Gson gson, Supplier<Map<String, FabricConfigurationSpec>> syncedSourcesProvider) {
-        PayloadTypeRegistry.playS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
-        PayloadTypeRegistry.configurationS2C().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundConfiguration().register(SyncedConfiguration.TYPE, SyncedConfiguration.STREAM_CODEC);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientPlayNetworking.registerGlobalReceiver(SyncedConfiguration.TYPE, (payload, context) -> {

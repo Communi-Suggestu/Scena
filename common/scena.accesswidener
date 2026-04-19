@@ -1,21 +1,12 @@
 accessWidener	v1	official
-accessible   field      net/minecraft/client/renderer/ItemBlockRenderTypes TYPE_BY_BLOCK Ljava/util/Map;
 accessible   method     net/minecraft/client/renderer/blockentity/BlockEntityRenderers register (Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/client/renderer/blockentity/BlockEntityRendererProvider;)V
 accessible   class      net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier
-accessible   class      net/minecraft/client/renderer/block/model/BlockElement$Deserializer
-accessible   class      net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer
-accessible   class      net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
-accessible   class      net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer
 accessible   class      net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
 accessible   field      net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
 accessible   class      net/minecraft/world/item/CreativeModeTab$TabVisibility
-accessible   method     net/minecraft/client/renderer/block/model/ItemModelGenerator processFrames (ILjava/lang/String;Lnet/minecraft/client/renderer/texture/SpriteContents;)Ljava/util/List; # processFrames
 accessible   class      net/minecraft/client/resources/model/ModelManager$ReloadState
-accessible method net/minecraft/client/renderer/block/model/FaceBakery defaultFaceUV (Lorg/joml/Vector3fc;Lorg/joml/Vector3fc;Lnet/minecraft/core/Direction;)Lnet/minecraft/client/renderer/block/model/BlockElementFace$UVs;
-accessible method net/minecraft/client/renderer/block/model/SimpleUnbakedGeometry bakeFace (Lnet/minecraft/client/renderer/block/model/BlockElement;Lnet/minecraft/client/renderer/block/model/BlockElementFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/core/Direction;Lnet/minecraft/client/resources/model/ModelState;)Lnet/minecraft/client/renderer/block/model/BakedQuad;
 accessible method net/minecraft/world/level/block/entity/BlockEntityType <init> (Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;Ljava/util/Set;)V
-accessible class net/minecraft/client/resources/model/AtlasManager$AtlasEntry
-accessible method net/minecraft/client/resources/model/AtlasManager$AtlasEntry <init> (Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/client/resources/model/AtlasManager$AtlasConfig;)V
 accessible method net/minecraft/world/level/storage/TagValueInput <init> (Lnet/minecraft/util/ProblemReporter;Lnet/minecraft/world/level/storage/ValueInputContextHelper;Lnet/minecraft/nbt/CompoundTag;)V
 accessible field net/minecraft/client/renderer/item/ItemStackRenderState layers [Lnet/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState;
-accessible field net/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState renderType Lnet/minecraft/client/renderer/rendertype/RenderType;
+accessible method net/minecraft/client/resources/model/cuboid/ItemModelGenerator bakeSideFaces (Lnet/minecraft/client/resources/model/geometry/QuadCollection$Builder;Lnet/minecraft/client/resources/model/ModelBaker$Interner;Lnet/minecraft/client/renderer/block/dispatch/ModelState;Lnet/minecraft/client/resources/model/geometry/BakedQuad$MaterialInfo;)V
+accessible method net/minecraft/client/resources/model/cuboid/FaceBakery defaultFaceUV (Lorg/joml/Vector3fc;Lorg/joml/Vector3fc;Lnet/minecraft/core/Direction;)Lnet/minecraft/client/resources/model/cuboid/CuboidFace$UVs;

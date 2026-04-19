@@ -58,7 +58,7 @@ public class TransformationUtils
                 String transform = json.getAsString();
                 if(transform.equals("identity"))
                 {
-                    return Transformation.identity();
+                    return Transformation.IDENTITY;
                 }
                 else
                 {

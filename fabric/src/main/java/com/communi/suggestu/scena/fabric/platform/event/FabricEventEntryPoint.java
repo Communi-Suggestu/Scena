@@ -13,6 +13,10 @@ public final class FabricEventEntryPoint<T extends IEvent, G> implements IEventE
         return new FabricEventEntryPoint<>(fabricEvent, invoker);
     }
 
+    public static <T extends IEvent> FabricEventEntryPoint<T, T> create(Event<T> fabricEvent) {
+        return new FabricEventEntryPoint<>(fabricEvent, Function.identity());
+    }
+
     private final Event<G> fabricEvent;
 
     private final Function<T, G> invoker;

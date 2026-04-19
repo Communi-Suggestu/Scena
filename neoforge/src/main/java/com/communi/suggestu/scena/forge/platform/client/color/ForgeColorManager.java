@@ -3,6 +3,12 @@ package com.communi.suggestu.scena.forge.platform.client.color;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.forge.utils.Constants;
 import com.google.common.collect.Lists;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.color.block.BlockTintSources;
+import net.minecraft.client.color.item.ItemTintSource;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -42,7 +48,7 @@ public class ForgeColorManager implements IColorManager
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onBlockColorHandler(final RegisterColorHandlersEvent.Block event)
+    public static void onBlockColorHandler(final RegisterColorHandlersEvent.BlockTintSources event)
     {
         ForgeColorManager.getInstance().blockColorSetters.forEach(
             c -> c.accept(event::register)
