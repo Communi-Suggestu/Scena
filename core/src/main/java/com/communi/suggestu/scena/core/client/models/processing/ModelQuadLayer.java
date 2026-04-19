@@ -16,21 +16,21 @@ public record ModelQuadLayer(VertexData[] vertexData,
                              @Nullable Direction cullDirection,
                              BakedQuad sourceQuad,
                              BakedQuad.MaterialInfo texture,
-                             Material.Baked particleSprite,
+                             Material.Baked particleMaterial,
                              TriState usesAmbientOcclusion) {
 
     @SuppressWarnings("UnusedReturnValue")
     public static final class Builder extends BaseModelReader {
         private final Collection<VertexData> manualVertexData = new ArrayList<>();
         private final Collection<VertexData> vertexData = new ArrayList<>(4);
-        private BakedQuad.MaterialInfo sprite;
+        private BakedQuad.MaterialInfo       material;
         @Nullable
         private Direction cullDirection;
         private       BakedQuad      sourceQuad;
-        private final Material.Baked particleSprite;
+        private final Material.Baked particleMaterial;
         private final TriState       usesAmbientOcclusion;
-        private Builder(Material.Baked particleSprite, TriState usesAmbientOcclusion) {
-            this.particleSprite = particleSprite;
+        private Builder(Material.Baked particleMaterial, TriState usesAmbientOcclusion) {
+            this.particleMaterial = particleMaterial;
             this.usesAmbientOcclusion = usesAmbientOcclusion;
         }
 
@@ -46,7 +46,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
         }
 
         public Builder withMaterial(BakedQuad.MaterialInfo sprite) {
-            this.sprite = sprite;
+            this.material = sprite;
             return this;
         }
 
@@ -82,7 +82,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
             vertexData = vertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).toList();
 
-            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, sprite, particleSprite, usesAmbientOcclusion);
+            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, material, particleMaterial, usesAmbientOcclusion);
         }
 
         private BakedQuad buildSourceQuad() {
@@ -90,7 +90,7 @@ public record ModelQuadLayer(VertexData[] vertexData,
                 throw new IllegalStateException("Cannot build a source quad without 4 vertex data");
             }
 
-            final BakedQuadBuilder builder = new BakedQuadBuilder(sprite);
+            final BakedQuadBuilder builder = new BakedQuadBuilder(material);
             builder.cullDirection(cullDirection);
             manualVertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).forEach(builder::vertex);
             builder.onComplete();

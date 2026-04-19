@@ -12,6 +12,7 @@ public class BakedQuadBuilder implements VertexProcessor
     private final List<VertexData> data = new ArrayList<>(4);
     private Direction            orientation;
     private BakedQuad.MaterialInfo texture;
+    private Integer tintIndex = null;
 
     public BakedQuadBuilder(BakedQuad.MaterialInfo texture) {
         this.texture = texture;
@@ -29,6 +30,10 @@ public class BakedQuadBuilder implements VertexProcessor
         this.texture = texture;
     }
 
+    public void tintIndex(int tintIndex) {
+        this.tintIndex = tintIndex;
+    }
+
     @Override
     public void vertex(final VertexData data)
     {
@@ -41,6 +46,17 @@ public class BakedQuadBuilder implements VertexProcessor
         }
         if (texture == null) {
             throw new IllegalStateException("texture not set");
+        }
+
+        if (this.tintIndex != null) {
+            texture = new BakedQuad.MaterialInfo(
+                texture.sprite(),
+                texture.layer(),
+                texture.itemRenderType(),
+                tintIndex,
+                texture.shade(),
+                texture.lightEmission()
+            );
         }
 
         final VertexData v0 = data.get(0);
