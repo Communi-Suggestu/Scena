@@ -9,6 +9,7 @@ import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
@@ -86,7 +87,7 @@ public class SingleBlockBlockAndTintGetter extends SingleBlockBlockReader implem
             return this;
         }
 
-        public Builder withSource(final @Nullable Level level)
+        public Builder withSource(final @Nullable LevelAccessor level)
         {
             if (level == null) {
                 this.source = null;
