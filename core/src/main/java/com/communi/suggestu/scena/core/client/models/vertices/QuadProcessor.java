@@ -39,12 +39,12 @@ public interface QuadProcessor<T extends QuadProcessor<T>> extends Consumer<Vert
     }
 
     /**
-     * Processes the texture of a quad.
+     * Processes the material of a quad.
      *
-     * @param texture The texture of the quad.
-     * @return The processor with the texture stored.
+     * @param material The material of the quad.
+     * @return The processor with the material stored.
      */
-    default T texture(BakedQuad.MaterialInfo texture) {
+    default T material(BakedQuad.MaterialInfo material) {
         return self();
     }
 
@@ -89,7 +89,7 @@ public interface QuadProcessor<T extends QuadProcessor<T>> extends Consumer<Vert
      */
     default T from(BakedQuad quad)
     {
-        return BakedQuadUtils.forEachVertex(quad, texture(quad.materialInfo())
+        return BakedQuadUtils.forEachVertex(quad, material(quad.materialInfo())
             .cullDirection(quad.direction()))
             .complete();
     }

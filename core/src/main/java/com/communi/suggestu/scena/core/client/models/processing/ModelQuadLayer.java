@@ -72,9 +72,9 @@ public record ModelQuadLayer(
         }
 
         @Override
-        public Builder texture(@NotNull BakedQuad.MaterialInfo texture)
+        public Builder material(@NotNull BakedQuad.MaterialInfo material)
         {
-            this.material = texture;
+            this.material = material;
             return this;
         }
 

@@ -27,8 +27,8 @@ public class BakedQuadBuilder implements QuadProcessor<BakedQuadBuilder>
     }
 
     @Override
-    public BakedQuadBuilder texture(BakedQuad.MaterialInfo texture) {
-        this.texture = texture;
+    public BakedQuadBuilder material(BakedQuad.MaterialInfo material) {
+        this.texture = material;
         return this;
     }
 
