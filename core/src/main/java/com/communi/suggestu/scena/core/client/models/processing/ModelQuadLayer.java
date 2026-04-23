@@ -28,6 +28,8 @@ public record ModelQuadLayer(
         private       Direction              cullDirection;
         @Nullable
         private       BakedQuad              sourceQuad;
+        @Nullable
+        private Integer tintIndex = null;
 
         private Builder() {}
 
@@ -78,8 +80,32 @@ public record ModelQuadLayer(
             return this;
         }
 
+        public Builder tintIndex(int tintIndex) {
+            this.tintIndex = tintIndex;
+            return this;
+        }
+
         public ModelQuadLayer build()
         {
+            if (this.material == null) {
+                if (this.sourceQuad == null) {
+                    throw new IllegalStateException("Either a material, or a source quad has to be provided!");
+                }
+
+                this.material = this.sourceQuad.materialInfo();
+            }
+
+            if (this.tintIndex != null) {
+                this.material = new BakedQuad.MaterialInfo(
+                    this.material.sprite(),
+                    this.material.layer(),
+                    this.material.itemRenderType(),
+                    tintIndex,
+                    this.material.shade(),
+                    this.material.lightEmission()
+                );
+            }
+
             final BakedQuad sourceQuad = this.sourceQuad == null ? buildSourceQuad() : this.sourceQuad;
 
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
