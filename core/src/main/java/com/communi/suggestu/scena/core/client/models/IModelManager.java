@@ -1,6 +1,6 @@
 package com.communi.suggestu.scena.core.client.models;
 
-import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
+import com.communi.suggestu.scena.core.client.models.processing.DeconstructedModelPartComponent;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -89,7 +89,7 @@ public interface IModelManager
         final @Nullable Direction cullDirection,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos,
-        final Consumer<ModelQuadLayer> pipeline);
+        final Consumer<DeconstructedModelPartComponent> pipeline);
 
     interface IItemModelPropertyRegistrar {
         /**

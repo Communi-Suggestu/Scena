@@ -1,7 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.client.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
-import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
+import com.communi.suggestu.scena.core.client.models.processing.DeconstructedModelPartComponent;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.communi.suggestu.scena.forge.utils.Constants;
@@ -126,7 +126,7 @@ public final class ForgeModelManager implements IModelManager
         @Nullable final Direction cullDirection,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos,
-        final Consumer<ModelQuadLayer> pipeline)
+        final Consumer<DeconstructedModelPartComponent> pipeline)
     {
         final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         RANDOM.setSeed(blockState.getSeed(pos));
@@ -148,12 +148,11 @@ public final class ForgeModelManager implements IModelManager
         {
             for (final BakedQuad quad : part.getQuads(cullDirection))
             {
-                final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create();
-
-                builder.from(quad);
-                builder.sourceQuad(quad);
-
-                pipeline.accept(builder.build());
+                pipeline.accept(
+                    DeconstructedModelPartComponent.Builder
+                        .create(part, quad)
+                        .build()
+                );
             }
         }
     }

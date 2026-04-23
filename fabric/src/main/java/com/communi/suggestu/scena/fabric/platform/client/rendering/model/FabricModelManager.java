@@ -1,16 +1,20 @@
 package com.communi.suggestu.scena.fabric.platform.client.rendering.model;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
-import com.communi.suggestu.scena.core.client.models.processing.ModelQuadLayer;
+import com.communi.suggestu.scena.core.client.models.processing.DeconstructedModelPartComponent;
+import com.communi.suggestu.scena.core.client.models.processing.ProtoStateModelPart;
 import com.communi.suggestu.scena.core.util.SingleBlockBlockAndTintGetter;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableMesh;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
@@ -124,7 +128,7 @@ public final class FabricModelManager implements IModelManager
         final @Nullable Direction cullDirection,
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final BlockPos pos,
-        final Consumer<ModelQuadLayer> pipeline)
+        final Consumer<DeconstructedModelPartComponent> pipeline)
     {
         final FabricBlockStateModel blockStateModel = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         final BlockAndTintGetter wrapper = new SingleBlockBlockAndTintGetter.Builder()
@@ -135,7 +139,7 @@ public final class FabricModelManager implements IModelManager
             .createSingleBlockBlockAndTintGetter();
         RANDOM.setSeed(blockState.getSeed(pos));
 
-        var mutableMesh = Renderer.get().mutableMesh();
+        MutableMesh mutableMesh = Renderer.get().mutableMesh();
         blockStateModel.emitQuads(
             mutableMesh.emitter(),
             wrapper,
@@ -156,17 +160,34 @@ public final class FabricModelManager implements IModelManager
                     .spriteFinder().find(view)
             );
 
-            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create();
-
-            builder.from(quad);
-            builder.sourceQuad(quad);
+            final DeconstructedModelPartComponent.Builder builder =
+                DeconstructedModelPartComponent.Builder.create(
+                    convertQuadToProto(view, blockStateModel.particleMaterial(
+                        wrapper,
+                        pos,
+                        blockState
+                    )),
+                    quad
+                );
 
             pipeline.accept(builder.build());
         });
     }
-    public MapCodec<UnbakedCustomModelWrapper<?>> wrapUnbakedModelCodec(final MapCodec<? extends BlockStateModel.Unbaked> platformAgnosticCodec)
-    {
-        return blockStateModelCodecDelegates.get(platformAgnosticCodec);
+
+    private static ProtoStateModelPart convertQuadToProto(QuadView view, final Material.Baked baked) {
+        return new ProtoStateModelPart(
+            toMinecraftTriState(view.ambientOcclusion()),
+            baked,
+            calculateFlags(view)
+        );
+    }
+
+    @BakedQuad.MaterialFlags
+    private static int calculateFlags(QuadView view) {
+        int flags = 0;
+        flags |= view.chunkLayer() == ChunkSectionLayer.TRANSLUCENT ? BakedQuad.FLAG_TRANSLUCENT : 0;
+        flags |= view.animated() ? BakedQuad.FLAG_ANIMATED : 0;
+        return flags;
     }
 
     public void registerUnbakedModelCodecWrapping(

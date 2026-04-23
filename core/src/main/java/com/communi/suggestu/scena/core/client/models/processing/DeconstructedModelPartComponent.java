@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
 import com.communi.suggestu.scena.core.client.models.vertices.QuadProcessor;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
-public record ModelQuadLayer(
+public record DeconstructedModelPartComponent(
     VertexData[] vertexData,
     @Nullable Direction cullDirection,
     BakedQuad sourceQuad,
@@ -27,9 +28,11 @@ public record ModelQuadLayer(
         @Nullable
         private       Direction              cullDirection;
         @Nullable
-        private       BakedQuad              sourceQuad;
+        private       BakedQuad              quad;
         @Nullable
-        private Integer tintIndex = null;
+        private       ProtoStateModelPart    part;
+        @Nullable
+        private       Integer                tintIndex        = null;
 
         private Builder() {}
 
@@ -38,17 +41,29 @@ public record ModelQuadLayer(
             return new Builder();
         }
 
-        public Builder sourceQuad(BakedQuad sourceQuad)
+        public static Builder create(ProtoStateModelPart part, BakedQuad quad)
         {
-            this.sourceQuad = sourceQuad;
+            return create().part(part)
+                .from(quad);
+        }
+
+        public static Builder create(BlockStateModelPart part, BakedQuad quad)
+        {
+            return create().part(new ProtoStateModelPart(part))
+                .from(quad);
+        }
+
+        public Builder part(ProtoStateModelPart part)
+        {
+            this.part = part;
             return this;
         }
 
         @Override
         public Builder from(final BakedQuad quad)
         {
-            return sourceQuad(sourceQuad)
-                .from(quad);
+            this.quad = quad;
+            return QuadProcessor.super.from(quad);
         }
 
         public Builder vertex(final Consumer<VertexData.Builder> vertexDataConsumer)
@@ -80,22 +95,26 @@ public record ModelQuadLayer(
             return this;
         }
 
-        public Builder tintIndex(int tintIndex) {
+        public Builder tintIndex(int tintIndex)
+        {
             this.tintIndex = tintIndex;
             return this;
         }
 
-        public ModelQuadLayer build()
+        public DeconstructedModelPartComponent build()
         {
-            if (this.material == null) {
-                if (this.sourceQuad == null) {
+            if (this.material == null)
+            {
+                if (this.quad == null)
+                {
                     throw new IllegalStateException("Either a material, or a source quad has to be provided!");
                 }
 
-                this.material = this.sourceQuad.materialInfo();
+                this.material = this.quad.materialInfo();
             }
 
-            if (this.tintIndex != null) {
+            if (this.tintIndex != null)
+            {
                 this.material = new BakedQuad.MaterialInfo(
                     this.material.sprite(),
                     this.material.layer(),
@@ -106,12 +125,12 @@ public record ModelQuadLayer(
                 );
             }
 
-            final BakedQuad sourceQuad = this.sourceQuad == null ? buildSourceQuad() : this.sourceQuad;
+            final BakedQuad sourceQuad = this.quad == null ? buildSourceQuad() : this.quad;
 
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
             vertexData = vertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).toList();
 
-            return new ModelQuadLayer(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, material);
+            return new DeconstructedModelPartComponent(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, material);
         }
 
         private BakedQuad buildSourceQuad()
@@ -121,7 +140,8 @@ public record ModelQuadLayer(
                 throw new IllegalStateException("Cannot build a source quad without 4 vertex data");
             }
 
-            if (material == null) {
+            if (material == null)
+            {
                 throw new IllegalStateException("Can not build a source quad without a material provided!");
             }
 
