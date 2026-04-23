@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 public record DeconstructedModelPartComponent(
+    ProtoStateModelPart part,
     VertexData[] vertexData,
     @Nullable Direction cullDirection,
     BakedQuad sourceQuad,
@@ -130,7 +131,7 @@ public record DeconstructedModelPartComponent(
             Collection<VertexData> vertexData = !manualVertexData.isEmpty() ? manualVertexData : this.vertexData;
             vertexData = vertexData.stream().sorted(Comparator.comparing(VertexData::vertexIndex)).toList();
 
-            return new DeconstructedModelPartComponent(vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, material);
+            return new DeconstructedModelPartComponent(part, vertexData.toArray(VertexData[]::new), cullDirection, sourceQuad, material);
         }
 
         private BakedQuad buildSourceQuad()
