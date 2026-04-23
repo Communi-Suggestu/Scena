@@ -156,17 +156,10 @@ public final class FabricModelManager implements IModelManager
                     .spriteFinder().find(view)
             );
 
-            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                blockStateModel.particleMaterial(
-                    wrapper,
-                    pos,
-                    blockState
-                ),
-                toMinecraftTriState(view.ambientOcclusion())
-            );
+            final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create();
 
-            builder.put(quad);
-            builder.withSourceQuad(quad);
+            builder.from(quad);
+            builder.sourceQuad(quad);
 
             pipeline.accept(builder.build());
         });

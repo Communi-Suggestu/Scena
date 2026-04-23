@@ -42,13 +42,13 @@ public interface IModelManager
     void registerItemModelProperty(final Consumer<IItemModelPropertyRegistrar> callback);
 
     /**
-     * Retrieves the particle texture for the block state in the given position.
+     * Retrieves the particle material for the block state in the given position.
      *
      * @param blockState          The block state in question.
      * @param blockEntitySupplier The supplier that potentially creates the block entity for the block state to get the model for.
      * @param blockAndTintGetter  The block and tint getter in which the block state is virtually placed.
      * @param pos                 The position on which the block state is virtually placed.
-     * @return The particle texture.
+     * @return The particle material.
      */
     Material.Baked getParticleMaterial(
         final BlockState blockState,

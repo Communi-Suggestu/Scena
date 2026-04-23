@@ -1,13 +1,13 @@
 package com.communi.suggestu.scena.core.client.models.processing;
 
-import com.communi.suggestu.scena.core.client.models.vertices.VertexProcessor;
+import com.communi.suggestu.scena.core.client.models.vertices.QuadProcessor;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BakedQuadBuilder implements VertexProcessor
+public class BakedQuadBuilder implements QuadProcessor<BakedQuadBuilder>
 {
     private final List<VertexData> data = new ArrayList<>(4);
     private Direction            orientation;
@@ -21,23 +21,27 @@ public class BakedQuadBuilder implements VertexProcessor
     protected BakedQuadBuilder() {
     }
     @Override
-    public void cullDirection(Direction orientation) {
+    public BakedQuadBuilder cullDirection(Direction orientation) {
         this.orientation = orientation;
+        return this;
     }
 
     @Override
-    public void texture(BakedQuad.MaterialInfo texture) {
+    public BakedQuadBuilder texture(BakedQuad.MaterialInfo texture) {
         this.texture = texture;
+        return this;
     }
 
-    public void tintIndex(int tintIndex) {
+    public BakedQuadBuilder tintIndex(int tintIndex) {
         this.tintIndex = tintIndex;
+        return this;
     }
 
     @Override
-    public void vertex(final VertexData data)
+    public BakedQuadBuilder vertex(final VertexData data)
     {
         this.data.add(data.vertexIndex(), data);
+        return this;
     }
 
     public BakedQuad build() {
@@ -45,7 +49,7 @@ public class BakedQuadBuilder implements VertexProcessor
             throw new IllegalStateException("not enough data");
         }
         if (texture == null) {
-            throw new IllegalStateException("texture not set");
+            throw new IllegalStateException("material not set");
         }
 
         if (this.tintIndex != null) {

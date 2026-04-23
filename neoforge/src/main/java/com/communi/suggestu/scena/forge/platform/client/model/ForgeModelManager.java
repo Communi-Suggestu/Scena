@@ -148,13 +148,10 @@ public final class ForgeModelManager implements IModelManager
         {
             for (final BakedQuad quad : part.getQuads(cullDirection))
             {
-                final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create(
-                    part.particleMaterial(),
-                    part.ambientOcclusion()
-                );
+                final ModelQuadLayer.Builder builder = ModelQuadLayer.Builder.create();
 
-                builder.put(quad);
-                builder.withSourceQuad(quad);
+                builder.from(quad);
+                builder.sourceQuad(quad);
 
                 pipeline.accept(builder.build());
             }

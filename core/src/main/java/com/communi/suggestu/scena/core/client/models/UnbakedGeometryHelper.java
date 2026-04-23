@@ -32,9 +32,9 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Bakes quads in the shape of the specified mask texture with the specified output texture applied to them.
+     * Bakes quads in the shape of the specified mask material with the specified output material applied to them.
      * <p>
-     * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the mask texture uses.
+     * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the mask material uses.
      */
     public static QuadCollection bakeItemMaskQuads(ModelBaker baker, int layerIndex, Material.Baked maskMaterial, Material.Baked outputMaterial, ModelState modelState, UnaryOperator<BakedQuad.MaterialInfo> materialModifier) {
         QuadCollection.Builder builder = new QuadCollection.Builder();
@@ -50,7 +50,7 @@ public class UnbakedGeometryHelper
         int height = spriteContents.height();
         BitSet bits = new BitSet(width * height);
 
-        // For every frame in the texture, mark all the opaque pixels (this is what vanilla does too)
+        // For every frame in the material, mark all the opaque pixels (this is what vanilla does too)
         spriteContents.getUniqueFrames().forEach(frame -> {
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)

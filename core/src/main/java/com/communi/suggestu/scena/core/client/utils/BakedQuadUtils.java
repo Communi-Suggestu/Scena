@@ -11,10 +11,12 @@ public class BakedQuadUtils
 
     }
 
-    public static void forEachVertex(BakedQuad quad, Consumer<VertexData> forEach) {
+    public static <T extends Consumer<VertexData>> T forEachVertex(BakedQuad quad, T forEach) {
         for (int i = 0; i < 4; i++)
         {
             forEach.accept(VertexData.from(quad, i));
         }
+
+        return forEach;
     }
 }

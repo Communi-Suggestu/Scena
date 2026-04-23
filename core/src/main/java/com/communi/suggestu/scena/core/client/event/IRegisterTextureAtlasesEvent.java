@@ -6,7 +6,7 @@ import net.minecraft.client.resources.model.sprite.AtlasManager;
 import java.util.function.Consumer;
 
 /**
- * Event fired to register new texture atlases.
+ * Event fired to register new material atlases.
  */
 @FunctionalInterface
 public interface IRegisterTextureAtlasesEvent extends IEvent
