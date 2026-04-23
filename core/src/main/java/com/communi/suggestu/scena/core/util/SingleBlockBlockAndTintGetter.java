@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Cursor3D;
@@ -82,6 +83,12 @@ public class SingleBlockBlockAndTintGetter extends SingleBlockBlockReader implem
         }
 
         public Builder withSource(final @Nullable BlockAndTintGetter source)
+        {
+            this.source = source;
+            return this;
+        }
+
+        public Builder withSource(final @Nullable ClientLevel source)
         {
             this.source = source;
             return this;
