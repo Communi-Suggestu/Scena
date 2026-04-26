@@ -16,6 +16,7 @@ import com.communi.suggestu.scena.core.event.IPlayerLoggedInEvent;
 import com.communi.suggestu.scena.core.event.IPlayerRightClickBlockEvent;
 import com.communi.suggestu.scena.core.event.IRegisterCommandsEvent;
 import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
+import com.communi.suggestu.scena.core.event.IServerStartedEvent;
 import com.communi.suggestu.scena.core.event.IServerTickEvent;
 import com.communi.suggestu.scena.core.event.ProcessingResult;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -175,6 +176,12 @@ public final class FabricGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent() {
         return FabricEventEntryPoint.create(ServerLifecycleEvents.SERVER_STARTING, handler -> handler::handle);
+    }
+
+    @Override
+    public IEventEntryPoint<IServerStartedEvent> getServerStartedEvent()
+    {
+        return FabricEventEntryPoint.create(ServerLifecycleEvents.SERVER_STARTED, handler -> handler::handle);
     }
 
     @Override

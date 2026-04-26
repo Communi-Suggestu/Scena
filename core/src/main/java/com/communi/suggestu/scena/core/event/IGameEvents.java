@@ -65,6 +65,13 @@ public interface IGameEvents {
     IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent();
 
     /**
+     * The entry point for when a server is about to start.
+     *
+     * @return The entry point for the server about to start event.
+     */
+    IEventEntryPoint<IServerStartedEvent> getServerStartedEvent();
+
+    /**
      * The entry point for when a chunk is loaded.
      *
      * @return The entry point for the chunk loaded event.

@@ -1,12 +1,26 @@
 package com.communi.suggestu.scena.forge.platform.event;
 
-import com.communi.suggestu.scena.core.event.*;
+import com.communi.suggestu.scena.core.event.IChunkLoadEvent;
+import com.communi.suggestu.scena.core.event.IChunkSentEvent;
+import com.communi.suggestu.scena.core.event.ICommonConfigurationLoaded;
+import com.communi.suggestu.scena.core.event.IDataPackSyncEvent;
+import com.communi.suggestu.scena.core.event.IEventEntryPoint;
+import com.communi.suggestu.scena.core.event.IGameEvents;
+import com.communi.suggestu.scena.core.event.IIsPlayerScopingEvent;
+import com.communi.suggestu.scena.core.event.IItemEntityPickupEvent;
+import com.communi.suggestu.scena.core.event.IPlayerJoinedWorldEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLeftClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IPlayerLoggedInEvent;
+import com.communi.suggestu.scena.core.event.IPlayerRightClickBlockEvent;
+import com.communi.suggestu.scena.core.event.IRegisterCommandsEvent;
+import com.communi.suggestu.scena.core.event.IServerAboutToStartEvent;
+import com.communi.suggestu.scena.core.event.IServerStartedEvent;
+import com.communi.suggestu.scena.core.event.IServerTickEvent;
+import com.communi.suggestu.scena.core.event.ProcessingResult;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -17,6 +31,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class ForgeGameEvents implements IGameEvents {
@@ -81,6 +96,12 @@ public final class ForgeGameEvents implements IGameEvents {
     @Override
     public IEventEntryPoint<IServerAboutToStartEvent> getServerAboutToStartEvent() {
         return EventBusEventEntryPoint.forge(ServerAboutToStartEvent.class, (event, handler) -> handler.handle(event.getServer()));
+    }
+
+    @Override
+    public IEventEntryPoint<IServerStartedEvent> getServerStartedEvent()
+    {
+        return EventBusEventEntryPoint.forge(ServerStartedEvent.class, (event, handler) -> handler.handle(event.getServer()));
     }
 
     @Override
