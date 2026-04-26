@@ -11,8 +11,7 @@
     "common.PlayerScopingMixin",
     "common.SingleBlockBlockReaderExtension",
     "common.TagValueInputMixin",
-    "common.TagValueOutputMixin",
-    "common.WorldlyBlockGrassGrowMixin"
+    "common.TagValueOutputMixin"
   ],
   "client": [
     "client.AbstractClientPlayerScopingMixin",
