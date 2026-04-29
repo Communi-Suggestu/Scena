@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.client;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
+import com.communi.suggestu.scena.core.client.effect.IEffectManager;
 import com.communi.suggestu.scena.core.client.event.IClientEvents;
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
 import com.communi.suggestu.scena.core.client.key.IKeyBindingManager;
@@ -10,6 +11,7 @@ import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.screens.IScreenManager;
+import com.communi.suggestu.scena.fabric.platform.client.effect.FabricEffectManager;
 import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEvents;
 import com.communi.suggestu.scena.fabric.platform.client.keys.FabricKeyBindingManager;
 import com.communi.suggestu.scena.fabric.platform.client.rendering.FabricClientFluidManager;
@@ -84,5 +86,11 @@ public final class FabricClientManager implements IClientManager
     @Override
     public @NotNull IScreenManager getScreenManager() {
         return FabricScreenManager.getInstance();
+    }
+
+    @Override
+    public @NotNull IEffectManager getEffectManager()
+    {
+        return FabricEffectManager.getInstance();
     }
 }

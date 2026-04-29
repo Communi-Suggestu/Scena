@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.client;
 
 import com.communi.suggestu.scena.core.client.IClientManager;
+import com.communi.suggestu.scena.core.client.effect.IEffectManager;
 import com.communi.suggestu.scena.core.client.event.IClientEvents;
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
 import com.communi.suggestu.scena.core.client.key.IKeyBindingManager;
@@ -11,6 +12,7 @@ import com.communi.suggestu.scena.core.client.rendering.IColorManager;
 import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.screens.IScreenManager;
 import com.communi.suggestu.scena.forge.platform.client.color.ForgeColorManager;
+import com.communi.suggestu.scena.forge.platform.client.effect.ForgeEffectManager;
 import com.communi.suggestu.scena.forge.platform.client.event.ForgeClientEvents;
 import com.communi.suggestu.scena.forge.platform.client.fluid.ForgeClientFluidManager;
 import com.communi.suggestu.scena.forge.platform.client.key.ForgeKeyBindingManager;
@@ -85,5 +87,11 @@ public class ForgeClientManager implements IClientManager
     @Override
     public @NotNull IScreenManager getScreenManager() {
         return ForgeScreenManager.getInstance();
+    }
+
+    @Override
+    public @NotNull IEffectManager getEffectManager()
+    {
+        return ForgeEffectManager.getInstance();
     }
 }

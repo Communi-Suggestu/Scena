@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.client;
 
 import com.communi.suggestu.scena.core.IScenaPlatform;
+import com.communi.suggestu.scena.core.client.effect.IEffectManager;
 import com.communi.suggestu.scena.core.client.event.IClientEvents;
 import com.communi.suggestu.scena.core.client.fluid.IClientFluidManager;
 import com.communi.suggestu.scena.core.client.integration.IOptifineCompatibilityManager;
@@ -92,13 +93,27 @@ public interface IClientManager
         return ReflectiveOptifineCompatibilityManager.getInstance();
     }
 
-
+    /**
+     * {@return The fluid manager for handling fluid interactions on properties}
+     */
     @NotNull
     IClientFluidManager getFluidManager();
 
+    /**
+     * {@return the events specific to the client}
+     */
     @NotNull
     IClientEvents getClientEvents();
 
+    /**
+     * {@return The manager for registering different screen types}
+     */
     @NotNull
     IScreenManager getScreenManager();
+
+    /**
+     * {@return The manager for registering effect handlers}
+     */
+    @NotNull
+    IEffectManager getEffectManager();
 }
