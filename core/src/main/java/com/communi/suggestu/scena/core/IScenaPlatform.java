@@ -14,6 +14,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,11 @@ public interface IScenaPlatform
     {
         return Holder.getInstance();
     }
+
+    /**
+     * {@return the id of the platform currently running.}
+     */
+    Identifier getPlatformId();
 
     /**
      * Gives access to the current platform's registry.

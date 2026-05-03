@@ -15,6 +15,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
+import com.communi.suggestu.scena.core.util.PlatformIds;
 import com.communi.suggestu.scena.forge.platform.entity.ForgeBlockEntityPositionManager;
 import com.communi.suggestu.scena.forge.platform.client.ForgeClientManager;
 import com.communi.suggestu.scena.forge.platform.configuration.ForgeConfigurationManager;
@@ -28,6 +29,7 @@ import com.communi.suggestu.scena.forge.platform.item.DyeItemHelper;
 import com.communi.suggestu.scena.forge.platform.level.ForgeLevelBasedPropertyAccessor;
 import com.communi.suggestu.scena.forge.platform.network.ForgeNetworkChannelManager;
 import com.communi.suggestu.scena.forge.platform.registry.ForgeRegistryManager;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -44,6 +46,12 @@ public final class ForgeScenaPlatform implements IScenaPlatform
 
     public static IScenaPlatform init(IEventBus modBus) {
         return new ForgeScenaPlatform(modBus);
+    }
+
+    @Override
+    public Identifier getPlatformId()
+    {
+        return PlatformIds.NEOFORGE;
     }
 
     @Override

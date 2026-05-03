@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.IScenaPlatform;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityManager;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityPositionManager;
 import com.communi.suggestu.scena.core.event.IGameEvents;
+import com.communi.suggestu.scena.core.util.PlatformIds;
 import com.communi.suggestu.scena.fabric.platform.client.FabricClientManager;
 import com.communi.suggestu.scena.fabric.platform.configuration.FabricConfigurationManager;
 import com.communi.suggestu.scena.fabric.platform.creativetab.FabricCreativeTabManager;
@@ -29,6 +30,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.item.IDyeItemHelper;
 import com.communi.suggestu.scena.core.network.INetworkChannelManager;
 import com.communi.suggestu.scena.core.registries.IPlatformRegistryManager;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +41,12 @@ public final class FabricScenaPlatform implements IScenaPlatform
     public static FabricScenaPlatform getInstance()
     {
         return INSTANCE;
+    }
+
+    @Override
+    public Identifier getPlatformId()
+    {
+        return PlatformIds.FABRIC;
     }
 
     private FabricScenaPlatform()
