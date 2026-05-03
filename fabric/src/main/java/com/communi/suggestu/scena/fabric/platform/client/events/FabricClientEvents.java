@@ -39,6 +39,19 @@ import java.util.function.Function;
 
 public final class FabricClientEvents implements IClientEvents
 {
+
+    //The HUD hooks and event have to be before the INSTANCE as the creation of the instance requires them to be not null!
+    private static final Event<IHudRenderEvent> HUD_RENDER = EventFactory.createArrayBacked(
+        IHudRenderEvent.class,
+        handlers -> poseStack -> {
+            for (final IHudRenderEvent eventHandler : handlers)
+            {
+                eventHandler.handle(poseStack);
+            }
+        }
+    );
+
+    private static final HudElement HUD_EVENT_HOOK = (graphics, _) -> HUD_RENDER.invoker().handle(graphics);
     private static final FabricClientEvents INSTANCE = new FabricClientEvents();
 
     public static FabricClientEvents getInstance()
@@ -64,17 +77,6 @@ public final class FabricClientEvents implements IClientEvents
         return false;
     });
 
-    public static final Event<IHudRenderEvent> HUD_RENDER = EventFactory.createArrayBacked(
-        IHudRenderEvent.class,
-        handlers -> (IHudRenderEvent) poseStack -> {
-            for (final IHudRenderEvent eventHandler : handlers)
-            {
-                eventHandler.handle(poseStack);
-            }
-        }
-    );
-
-    private static final HudElement HUD_EVENT_HOOK = (graphics, _) -> HUD_RENDER.invoker().handle(graphics);
 
     public static final Event<IResourceRegistrationEvent> RESOURCE_REGISTRATION = EventFactory.createArrayBacked(IResourceRegistrationEvent.class, callbacks -> () -> {
         for (IResourceRegistrationEvent callback : callbacks)
