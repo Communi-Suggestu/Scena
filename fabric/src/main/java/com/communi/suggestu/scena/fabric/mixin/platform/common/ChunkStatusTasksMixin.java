@@ -24,15 +24,15 @@ public class ChunkStatusTasksMixin {
     private static final String FULL_LAMBDA = "method_60553";
 
     @Inject(
-            method = FULL_LAMBDA,
+            method = "lambda$full$0",
             at = @At("RETURN")
     )
-    private static void onProtoChunkToFullChunkComplete(ChunkAccess chunkAccess, WorldGenContext worldGenContext, GenerationChunkHolder generationChunkHolder, CallbackInfoReturnable<ChunkAccess> cir, @Local ServerLevel level, @Local LevelChunk chunk) {
-        FabricGameEvents.CHUNK_LOAD.invoker().handle(level, chunk);
+    private static void onProtoChunkToFullChunkComplete(ChunkAccess chunk, WorldGenContext context, GenerationChunkHolder holder, CallbackInfoReturnable<ChunkAccess> cir, @Local(name = "level") ServerLevel level, @Local(name = "levelChunk") LevelChunk levelChunk) {
+        FabricGameEvents.CHUNK_LOAD.invoker().handle(level, levelChunk);
     }
 
     @WrapOperation(
-            method = FULL_LAMBDA,
+            method = "lambda$full$0",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/chunk/LevelChunk;runPostLoad()V"
@@ -51,7 +51,7 @@ public class ChunkStatusTasksMixin {
     }
 
     @WrapOperation(
-            method = FULL_LAMBDA,
+            method = "lambda$full$0",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/chunk/LevelChunk;registerAllBlockEntitiesAfterLevelLoad()V"

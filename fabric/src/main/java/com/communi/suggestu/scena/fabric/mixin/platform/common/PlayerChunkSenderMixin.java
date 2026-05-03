@@ -18,8 +18,8 @@ public class PlayerChunkSenderMixin {
             at = @At("RETURN")
     )
     private static void onSendChunkReturn(
-            ServerGamePacketListenerImpl packetListener, ServerLevel level, LevelChunk chunk, CallbackInfo ci
+            ServerGamePacketListenerImpl connection, ServerLevel level, LevelChunk chunk, CallbackInfo ci
     ) {
-        FabricGameEvents.CHUNK_SENT.invoker().handle(packetListener.player, chunk, level);
+        FabricGameEvents.CHUNK_SENT.invoker().handle(connection.player, chunk, level);
     }
 }

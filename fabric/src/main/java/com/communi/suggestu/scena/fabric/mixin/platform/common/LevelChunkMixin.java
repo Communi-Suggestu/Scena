@@ -16,7 +16,7 @@ public class LevelChunkMixin {
             method = "<init>(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ProtoChunk;Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;)V",
             at = @At("RETURN")
     )
-    private void onUpgradeChunk(ServerLevel serverLevel, ProtoChunk protoChunk, LevelChunk.PostLoadProcessor postLoadProcessor, CallbackInfo ci) {
+    private void onUpgradeChunk(ServerLevel level, ProtoChunk protoChunk, LevelChunk.PostLoadProcessor postLoad, CallbackInfo ci) {
         final IFabricBlockEntityPositionHolder protoHolder = (IFabricBlockEntityPositionHolder) protoChunk;
         final IFabricBlockEntityPositionHolder holder = (IFabricBlockEntityPositionHolder) this;
 

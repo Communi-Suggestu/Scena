@@ -18,7 +18,7 @@ public abstract class ServerChunkCacheMixin {
 
     @Shadow
     @Nullable
-    protected abstract ChunkHolder getVisibleChunkIfPresent(long chunkPos);
+    protected abstract ChunkHolder getVisibleChunkIfPresent(long key);
 
     @Inject(
             method = "getChunk",

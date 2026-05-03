@@ -19,7 +19,7 @@ public abstract class AbstractClientPlayerScopingMixin
         ),
         cancellable = true
     )
-    public void getFieldOfViewModifierOnScoping(final boolean isFirstPerson, final float fovEffectScale, final CallbackInfoReturnable<Float> cir) {
+    public void getFieldOfViewModifierOnScoping(final boolean firstPerson, final float effectScale, final CallbackInfoReturnable<Float> cir) {
         final Player player = (Player) ((Object) this);
         final boolean isScoping = FabricGameEvents.IS_PLAYER_SCOPING.invoker()
             .isScoping(player);
