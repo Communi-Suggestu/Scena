@@ -18,6 +18,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * API Surface of a given game platform that is required to run scena mods.
  * Each game platform, like forge or fabric, has to provide this logic, outside
@@ -165,19 +167,19 @@ public interface IScenaPlatform
 
 
     class Holder {
-        private static IScenaPlatform apiInstance;
+        private static final AtomicReference<IScenaPlatform> apiInstance = new AtomicReference<>();
 
         public static IScenaPlatform getInstance()
         {
-            return apiInstance;
+            return apiInstance.get();
         }
 
         public static void setInstance(final IScenaPlatform instance)
         {
-            if (apiInstance != null)
-                throw new IllegalStateException("Can not setup API twice!");
-
-            apiInstance = instance;
+            final IScenaPlatform previous = apiInstance.getAndSet(instance);
+            if (previous != null) {
+                throw new IllegalStateException("Failed to hold on to the scena platform instance! It was already set.");
+            }
         }
     }
 }

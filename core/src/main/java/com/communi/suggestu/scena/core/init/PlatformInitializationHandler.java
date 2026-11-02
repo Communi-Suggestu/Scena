@@ -36,10 +36,8 @@ public final class PlatformInitializationHandler
     public void init(final IScenaPlatform platform) {
         IScenaPlatform.Holder.setInstance(platform);
         isInitialized.set(true);
-        for (final Consumer<IScenaPlatform> initializer : initializers)
-            initializer.accept(platform);
+        for (final Consumer<IScenaPlatform> initializer : initializers) {
+			initializer.accept(IScenaPlatform.getInstance());
+        }
     }
-
-
-
 }
