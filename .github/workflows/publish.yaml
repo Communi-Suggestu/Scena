@@ -35,13 +35,13 @@ jobs:
         id: extract-major-minor
         uses: Communi-Suggestu/Spoliatus@0.0.2
         with:
-          version: ${{ steps.read-properties.outputs['minecraft.runtime'] }}
+          version: ${{ steps.read-properties.outputs['minecraft.version'] }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: ${{ steps.read-properties.outputs['java.version'] }}
+          java-version: ${{ steps.read-properties.outputs['java.runtime'] }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
