@@ -40,11 +40,7 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IDrawHighlightEvent> getDrawHighlightEvent() {
-        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> {
-            if (handler.handle()) {
-                event.setCanceled(true);
-            }
-        }, EventPriority.HIGHEST);
+        return EventBusEventEntryPoint.forge(ExtractBlockOutlineRenderStateEvent.class, (event, handler) -> handler.handle(renderer -> event.addCustomRenderer(renderer::render)), EventPriority.HIGHEST);
     }
 
     @Override
@@ -63,15 +59,13 @@ public final class ForgeClientEvents implements IClientEvents {
 
     @Override
     public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return EventBusEventEntryPoint.forge(RenderLevelStageEvent.AfterTranslucentBlocks.class, (event, handler) -> {
-            handler.handle(
-                event.getLevelRenderer(),
-                event.getPoseStack(),
-                Minecraft.getInstance().renderBuffers().bufferSource(),
-                event.getLevelRenderState(),
-                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
-            );
-        });
+        return EventBusEventEntryPoint.forge(SubmitCustomGeometryEvent.class, (event, handler) -> handler.handle(
+            Minecraft.getInstance().levelRenderer,
+            event.getPoseStack(),
+            event.getSubmitNodeCollector(),
+            event.getLevelRenderState(),
+            Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
+        ));
     }
 
     @Override

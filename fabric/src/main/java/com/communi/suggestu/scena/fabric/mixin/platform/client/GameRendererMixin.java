@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.client.resources.model.ModelManager;
@@ -17,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 //Needs to be less than 1000 as that is the default priority used by fabrics own mixin.
 @Mixin(value = GameRenderer.class, priority = 100)
@@ -33,11 +33,11 @@ public abstract class GameRendererMixin
             .handle(new IRegisterPIPRenderersEvent.Registrar() {
                 @Override
                 public <T extends PictureInPictureRenderState> void register(
-                    final Class<T> stateClass,
-                    final Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<T>> factory)
+                        final Class<T> stateClass,
+                        final Supplier<PictureInPictureRenderer<T>> factory)
                 {
                     PictureInPictureRendererRegistry.register(
-                        ctx -> factory.apply(ctx.bufferSource())
+                            _ -> factory.get()
                     );
                 }
             });

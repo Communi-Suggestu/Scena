@@ -2,10 +2,10 @@ package com.communi.suggestu.scena.core.client.event;
 
 import com.communi.suggestu.scena.core.event.IEvent;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Event used to register new Picture in Picture renderers for GUIs
@@ -29,6 +29,6 @@ public interface IRegisterPIPRenderersEvent extends IEvent
          * @param factory    A function to construct a PiP renderer
          */
         <T extends PictureInPictureRenderState> void register(Class<T> stateClass,
-            Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<T>> factory);
+            Supplier<PictureInPictureRenderer<T>> factory);
     }
 }
