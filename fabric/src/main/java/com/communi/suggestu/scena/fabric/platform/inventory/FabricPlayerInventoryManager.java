@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.fabric.platform.inventory;
 
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,6 +21,6 @@ public final class FabricPlayerInventoryManager implements IPlayerInventoryManag
     @Override
     public void giveToPlayer(final Player player, final ItemStack stack)
     {
-        player.getInventory().placeItemBackInInventory(stack);
+        player.getInventory().placeItemBackInInventory(stack, Prediction.PREDICTED);
     }
 }

@@ -32,8 +32,8 @@ public class ForgeConfigurationManager implements IConfigurationManager {
     private static ModConfig.Type remapType(final ConfigurationType type) {
         return switch (type) {
             case CLIENT_ONLY -> ModConfig.Type.CLIENT;
-            case NOT_SYNCED -> ModConfig.Type.COMMON;
-            case SYNCED -> ModConfig.Type.SERVER;
+            case NOT_SYNCED -> ModConfig.Type.LOCAL;
+            case SYNCED -> ModConfig.Type.SYNCED;
         };
     }
 

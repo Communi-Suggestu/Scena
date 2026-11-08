@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +20,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,16 +101,12 @@ public class ForgeClientBlockExtensionManager
             }
 
             @Override
-            public boolean addHitEffects(final BlockState state, final @NonNull Level level, @Nullable final HitResult target, final @NonNull ParticleEngine manager)
-            {
+            public boolean addHitEffects(BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Direction face, @NonNull ParticleEngine manager) {
                 if (!blockToHitEffectHandler.containsKey(state.getBlock()))
-                    return IClientBlockExtensions.super.addHitEffects(state, level, target, manager);
-
-                if (!(target instanceof BlockHitResult blockHitResult) || target.getType() == HitResult.Type.MISS)
-                    return IClientBlockExtensions.super.addHitEffects(state, level, target, manager);
+                    return IClientBlockExtensions.super.addHitEffects(state, level, pos, face, manager);
 
                 return blockToHitEffectHandler.get(state.getBlock())
-                    .addHitEffects(state, level, blockHitResult.getBlockPos(), blockHitResult.getDirection(), manager);
+                        .addHitEffects(state, level, pos, face, manager);
             }
 
             @Override

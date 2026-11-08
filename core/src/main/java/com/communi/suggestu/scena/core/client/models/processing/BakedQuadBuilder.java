@@ -57,8 +57,10 @@ public class BakedQuadBuilder implements QuadProcessor<BakedQuadBuilder>
                 texture.sprite(),
                 texture.layer(),
                 texture.itemRenderType(),
+                texture.itemGlintRenderType(),
+                texture.itemGlintSpecialRenderType(),
                 tintIndex,
-                texture.shade(),
+                texture.shadeDirectionOverride(),
                 texture.lightEmission()
             );
         }

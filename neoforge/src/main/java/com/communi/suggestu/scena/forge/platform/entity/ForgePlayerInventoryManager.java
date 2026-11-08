@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.forge.platform.entity;
 
 import com.communi.suggestu.scena.core.entity.IPlayerInventoryManager;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -22,9 +23,9 @@ public class ForgePlayerInventoryManager implements IPlayerInventoryManager
     public void giveToPlayer(final Player player, final ItemStack stack)
     {
         if (player instanceof FakePlayer) {
-            player.drop(stack, false, false);
+            player.drop(stack, false, Prediction.SERVER_ONLY);
         } else {
-            player.getInventory().placeItemBackInInventory(stack);
+            player.getInventory().placeItemBackInInventory(stack, Prediction.SERVER_ONLY);
         }
     }
 }

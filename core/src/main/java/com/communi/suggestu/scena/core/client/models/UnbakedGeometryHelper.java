@@ -39,8 +39,8 @@ public class UnbakedGeometryHelper
     public static QuadCollection bakeItemMaskQuads(ModelBaker baker, int layerIndex, Material.Baked maskMaterial, Material.Baked outputMaterial, ModelState modelState, UnaryOperator<BakedQuad.MaterialInfo> materialModifier) {
         QuadCollection.Builder builder = new QuadCollection.Builder();
         ModelBaker.Interner interner = baker.interner();
-        BakedQuad.MaterialInfo maskMaterialInfo = interner.materialInfo(BakedQuad.MaterialInfo.of(maskMaterial, maskMaterial.sprite().transparency(), layerIndex, true, 0));
-        BakedQuad.MaterialInfo outMaterialInfo = interner.materialInfo(materialModifier.apply(BakedQuad.MaterialInfo.of(outputMaterial, outputMaterial.sprite().transparency(), layerIndex, true, 0)));
+        BakedQuad.MaterialInfo maskMaterialInfo = interner.materialInfo(BakedQuad.MaterialInfo.of(maskMaterial, maskMaterial.sprite().transparency(), layerIndex, null, 0));
+        BakedQuad.MaterialInfo outMaterialInfo = interner.materialInfo(materialModifier.apply(BakedQuad.MaterialInfo.of(outputMaterial, outputMaterial.sprite().transparency(), layerIndex, null, 0)));
 
         // TODO 26.1: why are the side faces included at all?
         ItemModelGenerator.bakeSideFaces(builder, interner, modelState, maskMaterialInfo);
@@ -117,7 +117,7 @@ public class UnbakedGeometryHelper
                     side,
                     modelState,
                     element.rotation(),
-                    element.shade(),
+                    element.shadeDirectionOverride(),
                     element.lightEmission());
                 if (face.cullForDirection() == null)
                     builder.addUnculledFace(quad);

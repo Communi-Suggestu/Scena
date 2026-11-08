@@ -120,8 +120,10 @@ public record DeconstructedModelPartComponent(
                     this.material.sprite(),
                     this.material.layer(),
                     this.material.itemRenderType(),
+                    this.material.itemGlintRenderType(),
+                    this.material.itemGlintSpecialRenderType(),
                     tintIndex,
-                    this.material.shade(),
+                    this.material.shadeDirectionOverride(),
                     this.material.lightEmission()
                 );
             }
