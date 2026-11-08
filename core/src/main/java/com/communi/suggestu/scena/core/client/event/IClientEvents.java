@@ -39,11 +39,18 @@ public interface IClientEvents {
     IEventEntryPoint<IScrollEvent> getScrollEvent();
 
     /**
-     * The entry point for the post render world event.
+     * The entry point for the event fired when rendering data is extracted from the level.
      *
-     * @return The entry point for the post render world event.
+     * @return The entry point for the event fired when rendering data is extracted from the level.
      */
-    IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent();
+    IEventEntryPoint<IExtractLevelRenderStateEvent> getExtractLevelRenderStateEvent();
+
+    /**
+     * The entry point for the event fired when custom geometry is submitted to the renderer.
+     *
+     * @return The entry point for the event fired when custom geometry is submitted to the renderer.
+     */
+    IEventEntryPoint<ISubmitCustomGeometryEvent> getSubmitCustomGeometryEvent();
 
     /**
      * The entry point for the resource registration event.
