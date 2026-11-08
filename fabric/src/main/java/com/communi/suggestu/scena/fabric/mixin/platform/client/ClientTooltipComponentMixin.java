@@ -16,10 +16,10 @@ public interface ClientTooltipComponentMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void onConvertTooltipComponent(TooltipComponent visualTooltipComponent, CallbackInfoReturnable<ClientTooltipComponent> cir) {
-        final ClientTooltipComponent component = ClientTooltipComponentConverterRegistry.getInstance().convert(visualTooltipComponent);
-        if (component != null) {
-            cir.setReturnValue(component);
+    private static void onConvertTooltipComponent(TooltipComponent component, CallbackInfoReturnable<ClientTooltipComponent> cir) {
+        final ClientTooltipComponent clientComponent = ClientTooltipComponentConverterRegistry.getInstance().convert(component);
+        if (clientComponent != null) {
+            cir.setReturnValue(clientComponent);
         }
     }
 }

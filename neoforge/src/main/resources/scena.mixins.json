@@ -15,9 +15,9 @@
   ],
   "client": [
     "client.AbstractClientPlayerScopingMixin",
-    "client.ActiveModelDataManagerMixin",
     "client.BlockStateModelExtensionMixin",
-    "client.GuiGraphicsExtractorMixin"
+    "client.GuiGraphicsExtractorMixin",
+    "client.IBlockExtensionMixin"
   ],
   "server": [],
   "injectors": {

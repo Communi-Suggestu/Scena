@@ -3,12 +3,17 @@ package com.communi.suggestu.scena.fabric.mixin.platform.client;
 import com.communi.suggestu.scena.core.client.event.IRegisterPIPRenderersEvent;
 import com.communi.suggestu.scena.fabric.platform.client.events.FabricClientEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
@@ -17,7 +22,11 @@ import java.util.function.Supplier;
 public abstract class GameRendererMixin
 {
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-	private void guiRendererReady() {
+	private void guiRendererReady(Minecraft minecraft,
+                                  FirstPersonHandsAndItemsRenderer firstPersonHandsAndItemsRenderer,
+                                  ModelManager modelManager,
+                                  ItemModelResolver itemModelResolver,
+                                  CallbackInfo ci) {
         FabricClientEvents.REGISTER_PIPS_EVENT.invoker()
             .handle(new IRegisterPIPRenderersEvent.Registrar() {
                 @Override

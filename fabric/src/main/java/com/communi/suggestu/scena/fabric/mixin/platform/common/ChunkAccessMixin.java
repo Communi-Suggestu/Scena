@@ -26,12 +26,12 @@ public class ChunkAccessMixin implements IFabricBlockEntityPositionHolder {
 
     @Override
     public void scena$add(Class<? extends BlockEntity> blockEntityClass, BlockPos pos) {
-        blockEntityPositions.computeIfAbsent(blockEntityClass, k -> ConcurrentHashMap.newKeySet()).add(pos);
+        blockEntityPositions.computeIfAbsent(blockEntityClass,_ -> ConcurrentHashMap.newKeySet()).add(pos);
     }
 
     @Override
     public void scena$remove(Class<? extends BlockEntity> blockEntityClass, BlockPos pos) {
-        blockEntityPositions.computeIfAbsent(blockEntityClass, k -> ConcurrentHashMap.newKeySet()).remove(pos);
+        blockEntityPositions.computeIfAbsent(blockEntityClass, _ -> ConcurrentHashMap.newKeySet()).remove(pos);
     }
 
     @Override

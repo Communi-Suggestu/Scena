@@ -6,21 +6,25 @@ import com.communi.suggestu.scena.forge.platform.client.model.data.ForgeBlockMod
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.common.extensions.IBlockExtension;
 import net.neoforged.neoforge.model.data.ModelData;
-import net.neoforged.neoforge.model.data.ModelDataManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(value = ModelDataManager.class, remap = false)
-public abstract class ActiveModelDataManagerMixin
-{
+@Mixin(IBlockExtension.class)
+public interface IBlockExtensionMixin {
+
+    @SuppressWarnings("ConstantValue")
     @WrapOperation(
-            method = "refreshAt",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getModelData()Lnet/neoforged/neoforge/model/data/ModelData;")
+            method = "getModelData",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getModelData()Lnet/neoforged/neoforge/model/data/ModelData;"
+            )
     )
-    private ModelData bypassExpensiveCalculationIfNecessary(BlockEntity instance, Operation<ModelData> original) {
+    default ModelData scena$getModelDataWithBlockEntityCheck(BlockEntity instance, Operation<ModelData> original) {
         if (instance instanceof IBlockEntityWithModelData blockEntityWithModelData) {
-            final IBlockModelData blockModelData = blockEntityWithModelData.getBlockModelData();
+           final IBlockModelData blockModelData = blockEntityWithModelData.getBlockModelData();
             if (blockModelData == null) {
                 return ModelData.EMPTY;
             }
@@ -30,8 +34,8 @@ public abstract class ActiveModelDataManagerMixin
             }
 
             return platformDelegate.getDelegate();
+        } else {
+            return original.call(instance);
         }
-
-        return original.call(instance);
     }
 }

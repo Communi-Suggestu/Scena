@@ -31,8 +31,8 @@ public abstract class FluidTypeFluidMixin
     private void onGetFluidType(final CallbackInfoReturnable<FluidType> cir) {
         if (scena$getThis() instanceof FluidWithHandler withHandler) {
             final IFluidVariantHandler handler = withHandler.getVariantHandler();
-            if (handler instanceof ForgeFluidVariantHandlerDelegate forgeHandler &&
-                forgeHandler.delegate() instanceof ForgeFluidTypeDelegate delegate) {
+            if (handler instanceof ForgeFluidVariantHandlerDelegate(FluidType delegate1) &&
+                delegate1 instanceof ForgeFluidTypeDelegate delegate) {
                 cir.setReturnValue(delegate);
                 return;
             }

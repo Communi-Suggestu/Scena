@@ -29,7 +29,7 @@ public abstract class ServerChunkCacheMixin {
                     ordinal = 1),
                     @At(
                     value = "INVOKE",
-                    target = "/getChunkBlocking/",
+                    target = "Lnet/minecraft/server/level/ServerChunkCache;getChunkFutureMainThread(IILnet/minecraft/world/level/chunk/status/ChunkStatus;Z)Ljava/util/concurrent/CompletableFuture;",
                     ordinal = 0)
             },
             allow = 1,

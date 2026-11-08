@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,38 +46,39 @@ public class GuiGraphicsExtractorMixin implements IGuiGraphicsTooltipHandler, IE
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
             at = @At("HEAD")
     )
-    public void storeItemStack(Font font, ItemStack stack, int mouseX, int mouseY, CallbackInfo ci) {
-        this.currentStack = stack;
+    public void storeItemStack(Font font, ItemStack itemStack, int xo, int yo, CallbackInfo ci) {
+        this.currentStack = itemStack;
     }
 
     @Inject(
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
             at = @At("RETURN")
     )
-    public void clearItemStack(Font font, ItemStack stack, int mouseX, int mouseY, CallbackInfo ci) {
+    public void clearItemStack(Font font, ItemStack itemStack, int xo, int yo, CallbackInfo ci) {
         this.currentStack = ItemStack.EMPTY;
     }
 
-    @WrapMethod(method = "setTooltipForNextFrameInternal")
+    @WrapMethod(method = "setTooltipForNextFrameInternal(Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;ZZ)V")
     private void collectCustomComponentsInRenderTooltipInternal(
-        final Font font,
-        List<ClientTooltipComponent> components,
-        final int x,
-        final int y,
-        final ClientTooltipPositioner positioner,
-        final Identifier background,
-        final boolean focused,
-        final Operation<Void> original) {
+            Font font,
+            List<ClientTooltipComponent> lines,
+            int xo,
+            int yo,
+            ClientTooltipPositioner positioner,
+            @Nullable Identifier style,
+            boolean replaceExisting,
+            boolean extraSpaceAfterFirstLine,
+            Operation<Void> original) {
         if (!this.currentStack.isEmpty()) {
-            components = new ArrayList<>(components);
+            lines = new ArrayList<>(lines);
 
             TooltipUtils.gatherTooltipComponents(
                     this.currentStack,
-                    components
+                    lines
             );
         }
 
-        original.call(font, components, x, y, positioner, background, focused);
+        original.call(font, lines, xo, yo, positioner, style, replaceExisting, extraSpaceAfterFirstLine);
     }
 
     @Override

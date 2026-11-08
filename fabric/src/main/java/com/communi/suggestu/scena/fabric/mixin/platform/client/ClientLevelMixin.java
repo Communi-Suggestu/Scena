@@ -1,14 +1,10 @@
 package com.communi.suggestu.scena.fabric.mixin.platform.client;
 
 import com.communi.suggestu.scena.fabric.platform.client.effect.FabricEffectManager;
-import com.llamalad7.mixinextras.expression.Definition;
-import com.llamalad7.mixinextras.expression.Expression;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -21,10 +17,6 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ClientLevel.class)
 public abstract class ClientLevelMixin
 {
-    @Shadow
-    @Final
-    private BlockStatePredictionHandler blockStatePredictionHandler;
-
     @Shadow
     @Final
     private Minecraft minecraft;
@@ -52,7 +44,7 @@ public abstract class ClientLevelMixin
     }
 
     @WrapOperation(
-        method = "addBreakingBlockEffect",
+        method = "addBreakingBlockEffects",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"
