@@ -9,10 +9,10 @@ import com.communi.suggestu.scena.forge.platform.client.model.unbaked.UnbakedCus
 import com.communi.suggestu.scena.forge.platform.event.EventBusEventEntryPoint;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.client.event.*;
@@ -58,15 +58,40 @@ public final class ForgeClientEvents implements IClientEvents {
     }
 
     @Override
-    public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return EventBusEventEntryPoint.forge(SubmitCustomGeometryEvent.class, (event, handler) -> handler.handle(
-            Minecraft.getInstance().levelRenderer,
-            event.getPoseStack(),
-            event.getSubmitNodeCollector(),
-            event.getLevelRenderState(),
-            Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
-        ));
+    public IEventEntryPoint<IExtractLevelRenderStateEvent> getExtractLevelRenderStateEvent() {
+        return EventBusEventEntryPoint.forge(ExtractLevelRenderStateEvent.class, (event, handler) -> {
+            handler.handle(
+                    event.getRenderState(),
+                    event.getLevel(),
+                    event.getCamera(),
+                    event.getDeltaTracker(),
+                    new IExtractLevelRenderStateEvent.IRenderStateStore() {
+                        @Override
+                        public <T> void write(Identifier state, T value) {
+                            event.getRenderState().setRenderData(new ContextKey<>(state), value);
+                        }
+                    }
+            );
+        });
     }
+
+    @Override
+    public IEventEntryPoint<ISubmitCustomGeometryEvent> getSubmitCustomGeometryEvent() {
+        return EventBusEventEntryPoint.forge(SubmitCustomGeometryEvent.class, (event, handler) -> {
+            handler.handle(
+                    event.getSubmitNodeCollector(),
+                    event.getPoseStack(),
+                    event.getLevelRenderState(),
+                    new ISubmitCustomGeometryEvent.IRenderStateStore() {
+                        @Override
+                        public <T> T read(Identifier identifier) {
+                            return event.getLevelRenderState().getRenderData(new ContextKey<>(identifier));
+                        }
+                    }
+            );
+        });
+    }
+
 
     @Override
     public IEventEntryPoint<IResourceRegistrationEvent> getResourceRegistrationEvent() {

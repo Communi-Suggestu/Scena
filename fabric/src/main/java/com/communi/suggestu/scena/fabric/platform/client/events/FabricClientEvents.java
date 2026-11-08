@@ -1,18 +1,6 @@
 package com.communi.suggestu.scena.fabric.platform.client.events;
 
-import com.communi.suggestu.scena.core.client.event.IClientEvents;
-import com.communi.suggestu.scena.core.client.event.IClientTickStartedEvent;
-import com.communi.suggestu.scena.core.client.event.IDrawHighlightEvent;
-import com.communi.suggestu.scena.core.client.event.IGatherTooltipComponentsEvent;
-import com.communi.suggestu.scena.core.client.event.IHudRenderEvent;
-import com.communi.suggestu.scena.core.client.event.IPostRenderWorldEvent;
-import com.communi.suggestu.scena.core.client.event.IRegisterBlockStateModelEvent;
-import com.communi.suggestu.scena.core.client.event.IRegisterClientReloadListenersEvent;
-import com.communi.suggestu.scena.core.client.event.IRegisterItemModelEvent;
-import com.communi.suggestu.scena.core.client.event.IRegisterPIPRenderersEvent;
-import com.communi.suggestu.scena.core.client.event.IRegisterTextureAtlasesEvent;
-import com.communi.suggestu.scena.core.client.event.IResourceRegistrationEvent;
-import com.communi.suggestu.scena.core.client.event.IScrollEvent;
+import com.communi.suggestu.scena.core.client.event.*;
 import com.communi.suggestu.scena.core.event.IEventEntryPoint;
 import com.communi.suggestu.scena.core.event.IGatherTooltipEvent;
 import com.communi.suggestu.scena.fabric.platform.client.model.unbaked.UnbakedCustomModelWrapper;
@@ -22,6 +10,8 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
+import net.fabricmc.fabric.api.client.rendering.v1.FabricRenderState;
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -30,7 +20,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.resources.Identifier;
@@ -152,17 +141,36 @@ public final class FabricClientEvents implements IClientEvents {
     }
 
     @Override
-    public IEventEntryPoint<IPostRenderWorldEvent> getPostRenderWorldEvent() {
-        return FabricEventEntryPoint.create(
-                LevelRenderEvents.END_MAIN,
-                scena -> context -> scena.handle(
-                        context.levelRenderer(),
-                        context.poseStack(),
-                        context.submitNodeCollector(),
-                        context.levelState(),
-                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
-                )
-        );
+    public IEventEntryPoint<IExtractLevelRenderStateEvent> getExtractLevelRenderStateEvent() {
+        return FabricEventEntryPoint.create(LevelExtractionEvents.END_EXTRACTION, scena -> context -> scena.handle(
+                context.levelState(),
+                context.level(),
+                context.camera(),
+                context.deltaTracker(),
+                new IExtractLevelRenderStateEvent.IRenderStateStore() {
+                    @Override
+                    public <T> void write(Identifier state, T value) {
+                        final FabricRenderState fabricRenderState = context.levelState();
+                        fabricRenderState.setData(RenderStateDataKey.create(state::toString), value);
+                    }
+                }
+        ));
+    }
+
+    @Override
+    public IEventEntryPoint<ISubmitCustomGeometryEvent> getSubmitCustomGeometryEvent() {
+        return FabricEventEntryPoint.create(LevelRenderEvents.COLLECT_SUBMITS, scena -> context -> scena.handle(
+                context.submitNodeCollector(),
+                context.poseStack(),
+                context.levelState(),
+                new ISubmitCustomGeometryEvent.IRenderStateStore() {
+                    @Override
+                    public <T> T read(Identifier identifier) {
+                        final FabricRenderState fabricRenderState = context.levelState();
+                        return fabricRenderState.getData(RenderStateDataKey.create(identifier::toString));
+                    }
+                }
+        ));
     }
 
     @Override
