@@ -10,7 +10,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,7 +22,6 @@ import java.util.concurrent.Executor;
 public abstract class ModelBakeryFromModelManagerAccessorMixin implements IModelBakeryAccessor
 {
 
-    @Shadow private Object2IntMap<BlockState> modelGroups;
     @Unique
     private ModelBakery currentBakery = null;
 

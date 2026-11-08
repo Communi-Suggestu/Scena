@@ -12,16 +12,12 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatusTasks;
 import net.minecraft.world.level.chunk.status.WorldGenContext;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChunkStatusTasks.class)
 public class ChunkStatusTasksMixin {
-
-    @Unique
-    private static final String FULL_LAMBDA = "method_60553";
 
     @Inject(
             method = "lambda$full$0",
@@ -38,7 +34,7 @@ public class ChunkStatusTasksMixin {
                     target = "Lnet/minecraft/world/level/chunk/LevelChunk;runPostLoad()V"
             )
     )
-    private static void wrapPostLoadToHandleLevelChunk(LevelChunk instance, Operation<Void> original, @Local(argsOnly = true) GenerationChunkHolder chunkHolder) {
+    private static void wrapPostLoadToHandleLevelChunk(LevelChunk instance, Operation<Void> original, @Local(argsOnly = true, name = "holder") GenerationChunkHolder chunkHolder) {
         try {
             if (chunkHolder instanceof ILoadingAwareChunkHolder loadingAwareChunkHolder)
                 loadingAwareChunkHolder.scena$setCurrentlyLoading(instance);
@@ -57,7 +53,7 @@ public class ChunkStatusTasksMixin {
                     target = "Lnet/minecraft/world/level/chunk/LevelChunk;registerAllBlockEntitiesAfterLevelLoad()V"
             )
     )
-    private static void wrapRegisterAllBlockEntitiesAfterLevelLoadToHandleLevelChunk(LevelChunk instance, Operation<Void> original, @Local(argsOnly = true) GenerationChunkHolder chunkHolder) {
+    private static void wrapRegisterAllBlockEntitiesAfterLevelLoadToHandleLevelChunk(LevelChunk instance, Operation<Void> original, @Local(argsOnly = true, name = "holder") GenerationChunkHolder chunkHolder) {
         try {
             if (chunkHolder instanceof ILoadingAwareChunkHolder loadingAwareChunkHolder)
                 loadingAwareChunkHolder.scena$setCurrentlyLoading(instance);

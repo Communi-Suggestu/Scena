@@ -4,8 +4,10 @@ import com.communi.suggestu.scena.core.world.level.storage.CopyableTagValueInput
 import com.communi.suggestu.scena.core.world.level.storage.WriteableTagValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInputContextHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,6 +30,6 @@ public class TagValueOutputMixin implements WriteableTagValueOutput
     @Override
     public CopyableTagValueInput scena$asInput()
     {
-        return (CopyableTagValueInput) new TagValueInput(null, null, output);
+        return (CopyableTagValueInput) new TagValueInput(ProblemReporter.DISCARDING, null, output);
     }
 }

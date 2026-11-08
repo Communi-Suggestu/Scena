@@ -45,15 +45,15 @@ public class GuiGraphicsExtractorMixin implements IGuiGraphicsTooltipHandler, IE
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
             at = @At("HEAD")
     )
-    public void storeItemStack(Font font, ItemStack stack, int mouseX, int mouseY, CallbackInfo ci) {
-        this.currentStack = stack;
+    public void storeItemStack(Font font, ItemStack itemStack, int xo, int yo, CallbackInfo ci) {
+        this.currentStack = itemStack;
     }
 
     @Inject(
             method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V",
             at = @At("RETURN")
     )
-    public void clearItemStack(Font font, ItemStack stack, int mouseX, int mouseY, CallbackInfo ci) {
+    public void clearItemStack(Font font, ItemStack itemStack, int xo, int yo, CallbackInfo ci) {
         this.currentStack = ItemStack.EMPTY;
     }
 
@@ -64,8 +64,8 @@ public class GuiGraphicsExtractorMixin implements IGuiGraphicsTooltipHandler, IE
         final int x,
         final int y,
         final ClientTooltipPositioner positioner,
-        final Identifier background,
-        final boolean focused,
+        final Identifier style,
+        final boolean replaceExisting,
         final Operation<Void> original) {
         if (!this.currentStack.isEmpty()) {
             components = new ArrayList<>(components);
@@ -76,7 +76,7 @@ public class GuiGraphicsExtractorMixin implements IGuiGraphicsTooltipHandler, IE
             );
         }
 
-        original.call(font, components, x, y, positioner, background, focused);
+        original.call(font, components, x, y, positioner, style, replaceExisting);
     }
 
     @Override

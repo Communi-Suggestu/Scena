@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(value = ModelDataManager.class, remap = false)
 public abstract class ActiveModelDataManagerMixin
 {
+    @SuppressWarnings("ConstantValue")
     @WrapOperation(
             method = "refreshAt",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getModelData()Lnet/neoforged/neoforge/model/data/ModelData;")

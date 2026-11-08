@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.client.resources.model.ModelManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 //Needs to be less than 1000 as that is the default priority used by fabrics own mixin.
@@ -24,11 +22,10 @@ public abstract class GameRendererMixin
 {
     @Inject(method = "<init>", at = @At(value = "RETURN"))
 	private void guiRendererReady(
-        final Minecraft minecraft,
-        final ItemInHandRenderer itemInHandRenderer,
-        final RenderBuffers renderBuffers,
-        final ModelManager modelManager,
-        final CallbackInfo ci) {
+            Minecraft minecraft,
+            ItemInHandRenderer itemInHandRenderer,
+            ModelManager modelManager,
+            CallbackInfo ci) {
         FabricClientEvents.REGISTER_PIPS_EVENT.invoker()
             .handle(new IRegisterPIPRenderersEvent.Registrar() {
                 @Override

@@ -17,7 +17,7 @@ public class SingleBlockBlockReaderExtension implements IBlockGetterExtension
 
     @Shadow
     @Final
-    private BlockEntity blockEntity;
+    protected BlockEntity blockEntity;
 
     @Override
     public @NotNull ModelData getModelData(final @NotNull BlockPos pos)

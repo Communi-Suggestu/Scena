@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.world.level.storage.CopyableTagValueInput
 import com.communi.suggestu.scena.core.world.level.storage.WriteableTagValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import org.spongepowered.asm.mixin.Final;
@@ -29,6 +30,6 @@ public class TagValueOutputMixin implements WriteableTagValueOutput
     public CopyableTagValueInput scena$asInput()
     {
         //noinspection DataFlowIssue
-        return (CopyableTagValueInput) new TagValueInput(null, null, output);
+        return (CopyableTagValueInput) new TagValueInput(ProblemReporter.DISCARDING, null, output);
     }
 }
