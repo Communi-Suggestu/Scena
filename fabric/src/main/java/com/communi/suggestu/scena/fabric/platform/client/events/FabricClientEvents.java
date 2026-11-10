@@ -229,4 +229,9 @@ public final class FabricClientEvents implements IClientEvents {
         return handler -> handler.handle((key, listener) -> ResourceLoader.get(PackType.CLIENT_RESOURCES)
                 .registerReloadListener(key, listener));
     }
+
+    @Override
+    public IEventEntryPoint<IPostRenderLevelEvent> getPostRenderLevelEvent() {
+        return FabricEventEntryPoint.create(LevelRenderEvents.END_MAIN, scena -> context -> scena.handle());
+    }
 }
