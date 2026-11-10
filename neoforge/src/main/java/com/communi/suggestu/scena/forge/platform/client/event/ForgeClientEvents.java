@@ -183,4 +183,12 @@ public final class ForgeClientEvents implements IClientEvents {
             }
         );
     }
+
+    @Override
+    public IEventEntryPoint<IPostRenderLevelEvent> getPostRenderLevelEvent() {
+        return EventBusEventEntryPoint.forge(
+                RenderLevelStageEvent.AfterLevel.class,
+                (_, scena) -> scena.handle()
+        );
+    }
 }

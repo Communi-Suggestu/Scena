@@ -108,4 +108,11 @@ public interface IClientEvents {
      * @return The entry point
      */
     IEventEntryPoint<IRegisterClientReloadListenersEvent> getRegisterClientResourceReloadListenersEvent();
+
+    /**
+     * The entry point for the post render world event.
+     *
+     * @return The entry point
+     */
+    IEventEntryPoint<IPostRenderLevelEvent> getPostRenderLevelEvent();
 }
