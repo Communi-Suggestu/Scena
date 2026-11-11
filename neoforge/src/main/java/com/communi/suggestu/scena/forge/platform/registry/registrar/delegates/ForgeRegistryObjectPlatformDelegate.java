@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.forge.platform.registry.registrar.delegates;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -12,20 +13,28 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"unchecked"})
-public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IRegistryObject<T>
+public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IRegistryObject<R, T>
 {
 
     private final Identifier            id;
     private final Supplier<Optional<T>> delegate;
+    private final ResourceKey<R>        key;
 
-    public ForgeRegistryObjectPlatformDelegate(Identifier id, final Supplier<Optional<T>> delegate) {
+    public ForgeRegistryObjectPlatformDelegate(Identifier id, final Supplier<Optional<T>> delegate, ResourceKey<R> key) {
         this.id = id;
-        this.delegate = delegate;}
+        this.delegate = delegate;
+        this.key = key;
+    }
 
     @Override
     public @NotNull T get()
     {
         return delegate.get().orElseThrow();
+    }
+
+    @Override
+    public ResourceKey<R> key() {
+        return key;
     }
 
     @Override
@@ -35,7 +44,7 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     }
 
     @Override
-    public Stream<T> stream()
+    public Stream<R> stream()
     {
         return Stream.of(get());
     }
@@ -49,15 +58,15 @@ public class ForgeRegistryObjectPlatformDelegate<R, T extends R> implements IReg
     @Override
     public void ifPresent(final Consumer<? super T> consumer)
     {
-        delegate.get().ifPresent((Consumer<Object>) o -> consumer.accept((T) o));
+        delegate.get().ifPresent(consumer);
     }
 
     @Override
-    public IRegistryObject<T> filter(final Predicate<? super T> predicate)
+    public IRegistryObject<R, T> filter(final Predicate<? super T> predicate)
     {
         return new ForgeRegistryObjectPlatformDelegate<>(
                 id,
-                () -> delegate.get().filter((Predicate<Object>) o -> predicate.test((T) o)));
+                () -> delegate.get().filter((Predicate<Object>) o -> predicate.test((T) o)), key);
     }
 
     @Override

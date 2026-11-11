@@ -47,10 +47,10 @@ public class ForgeFluidManager implements IFluidManager {
         final IFluidVariantHandler handler = variantHandler.get();
 
         final IRegistrar<FluidType> fluidTypeRegistrar = IRegistrar.create(NeoForgeRegistries.FLUID_TYPES.key(), name.getNamespace());
-        final IRegistryObject<FluidType> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
+        final IRegistryObject<FluidType, ?> fluidTypeRegistration = fluidTypeRegistrar.register(name.getPath(), () -> new ForgeFluidTypeDelegate(handler));
 
         final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registries.FLUID, name.getNamespace());
-        final IRegistryObject<Fluid> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
+        final IRegistryObject<Fluid, ?> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
 
         return new FluidRegistration(fluidRegistration, Suppliers.memoize(() -> new ForgeFluidVariantHandlerDelegate(fluidTypeRegistration.get())));
     }

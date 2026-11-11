@@ -27,5 +27,5 @@ public interface IRegistrar<T>
      * @param factory A factory for the new entry, it should return a new instance every time it is called.
      * @return A RegistryObject that will be updated with when the entries in the registry change.
      */
-    <I extends T> IRegistryObject<I> register(String name, Supplier<? extends I> factory);
+    <I extends T> IRegistryObject<T, I> register(String name, Supplier<? extends I> factory);
 }

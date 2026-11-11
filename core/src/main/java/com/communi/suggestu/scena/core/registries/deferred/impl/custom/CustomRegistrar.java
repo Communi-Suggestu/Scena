@@ -38,7 +38,7 @@ public class CustomRegistrar<T extends ICustomRegistryEntry> implements ICustomR
     }
 
     @Override
-    public <I extends T> IRegistryObject<I> register(final String name, final Supplier<? extends I> factory)
+    public <I extends T> IRegistryObject<T, I> register(final String name, final Supplier<? extends I> factory)
     {
         if (registry == null) {
             preBuildValueSuppliers.add(() -> {

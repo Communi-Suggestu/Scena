@@ -1,6 +1,7 @@
 package com.communi.suggestu.scena.core.registries.deferred;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public interface IRegistryObject<T> extends Supplier<T>
+public interface IRegistryObject<T, R extends T> extends Supplier<R>
 {
     /**
      * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
@@ -18,8 +19,20 @@ public interface IRegistryObject<T> extends Supplier<T>
      */
     @Override
     @NotNull
-    T get();
+    R get();
 
+    /**
+     * Returns the key of the registry object.
+     *
+     * @return The key of the registry object.
+     */
+    ResourceKey<T> key();
+
+    /**
+     * Returns the id of the registry object.
+     *
+     * @return The id of the registry object.
+     */
     Identifier getId();
 
     /**
@@ -44,7 +57,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * @throws NullPointerException if mod object is present and {@code consumer} is
      * null
      */
-    void ifPresent(Consumer<? super T> consumer);
+    void ifPresent(Consumer<? super R> consumer);
 
     /**
      * If a mod object is present, and the mod object matches the given predicate,
@@ -57,7 +70,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * otherwise an empty {@code IChiselsAndBitsRegistryObject}
      * @throws NullPointerException if the predicate is null
      */
-    IRegistryObject<T> filter(Predicate<? super T> predicate);
+    IRegistryObject<T, R> filter(Predicate<? super R> predicate);
 
     /**
      * If a mod object is present, apply the provided mapping function to it,
@@ -71,7 +84,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * otherwise an empty {@code Optional}
      * @throws NullPointerException if the mapping function is null
      */
-    <U> Optional<U> map(Function<? super T, ? extends U> mapper);
+    <U> Optional<U> map(Function<? super R, ? extends U> mapper);
 
     /**
      * If a value is present, apply the provided {@code Optional}-bearing
@@ -90,7 +103,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * @throws NullPointerException if the mapping function is null or returns
      * a null result
      */
-    <U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper);
+    <U> Optional<U> flatMap(Function<? super R, Optional<U>> mapper);
 
     /**
      * If a mod object is present, lazily apply the provided mapping function to it,
@@ -104,7 +117,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * otherwise a supplier returning {@code null}
      * @throws NullPointerException if the mapping function is {@code null}
      */
-    <U> Supplier<U> lazyMap(Function<? super T, ? extends U> mapper);
+    <U> Supplier<U> lazyMap(Function<? super R, ? extends U> mapper);
 
     /**
      * Return the mod object if present, otherwise return {@code other}.
@@ -113,7 +126,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * be null
      * @return the mod object, if present, otherwise {@code other}
      */
-    T orElse(T other);
+    R orElse(R other);
 
     /**
      * Return the mod object if present, otherwise invoke {@code other} and return
@@ -125,7 +138,7 @@ public interface IRegistryObject<T> extends Supplier<T>
      * @throws NullPointerException if mod object is not present and {@code other} is
      * null
      */
-    T orElseGet(Supplier<? extends T> other);
+    R orElseGet(Supplier<? extends R> other);
 
     /**
      * Return the contained mod object, if present, otherwise throw an exception
@@ -139,5 +152,5 @@ public interface IRegistryObject<T> extends Supplier<T>
      * @throws NullPointerException if no mod object is present and
      * {@code exceptionSupplier} is null
      */
-    <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
+    <X extends Throwable> R orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 }
