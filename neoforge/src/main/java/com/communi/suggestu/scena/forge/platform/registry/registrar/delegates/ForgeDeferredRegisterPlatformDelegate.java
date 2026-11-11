@@ -15,12 +15,13 @@ public class ForgeDeferredRegisterPlatformDelegate<T> implements IRegistrar<T>
     public ForgeDeferredRegisterPlatformDelegate(final DeferredRegister<T> delegate) {this.delegate = delegate;}
 
     @Override
-    public <I extends T> IRegistryObject<I> register(final String name, final Supplier<? extends I> factory)
+    public <I extends T> IRegistryObject<T, I> register(final String name, final Supplier<? extends I> factory)
     {
         final DeferredHolder<T, I> holder = delegate.register(name, factory);
         return new ForgeRegistryObjectPlatformDelegate<>(
                 holder.getId(),
-                holder::asOptional
-                );
+                holder::asOptional,
+                holder.getKey()
+        );
     }
 }

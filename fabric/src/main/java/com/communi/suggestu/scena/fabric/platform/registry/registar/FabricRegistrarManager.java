@@ -36,34 +36,34 @@ public final class FabricRegistrarManager implements IRegistrarManager
     @Override
     public <T, R extends T> IRegistrar<R> createRegistrar(final ResourceKey<? extends Registry<T>> typeClass, final String modId)
     {
+        //noinspection UnnecessaryLocalVariable -> Without this the code would not compile as the generics don't line up, but these are singletons in production
+        ResourceKey registryKey = typeClass;
 
-        final ResourceKey registryName = typeClass;
-
-        if (registryName == Registries.ITEM) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.ITEM);
+        if (registryKey == Registries.ITEM) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.ITEM);
         }
 
-        if (registryName ==  Registries.BLOCK) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.BLOCK);
+        if (registryKey ==  Registries.BLOCK) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.BLOCK);
         }
 
-        if (registryName == Registries.FLUID) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.FLUID);
+        if (registryKey == Registries.FLUID) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.FLUID);
         }
 
-        if (registryName == Registries.BLOCK_ENTITY_TYPE) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.BLOCK_ENTITY_TYPE);
+        if (registryKey == Registries.BLOCK_ENTITY_TYPE) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.BLOCK_ENTITY_TYPE);
         }
 
-        if (registryName == Registries.MENU) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.MENU);
+        if (registryKey == Registries.MENU) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.MENU);
         }
 
-        if (registryName == Registries.RECIPE_SERIALIZER) {
-            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry<T>) BuiltInRegistries.RECIPE_SERIALIZER);
+        if (registryKey == Registries.RECIPE_SERIALIZER) {
+            return new FabricVanillaRegistryRegistrarDelegate<>(modId, (Registry) BuiltInRegistries.RECIPE_SERIALIZER);
         }
 
-        final Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue((ResourceKey) typeClass);
+        final Registry registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue((ResourceKey) typeClass);
 
         if (registry != null) {
             return new FabricVanillaRegistryRegistrarDelegate<>(modId, registry);

@@ -5,6 +5,6 @@ import net.minecraft.world.level.material.Fluid;
 
 import java.util.function.Supplier;
 
-public record FluidRegistration(IRegistryObject<Fluid> fluid, Supplier<IFluidVariantHandler> variantHandler)
+public record FluidRegistration(IRegistryObject<Fluid, ?> fluid, Supplier<IFluidVariantHandler> variantHandler)
 {
 }

@@ -2,6 +2,7 @@ package com.communi.suggestu.scena.core.registries.deferred.impl.custom;
 
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class EmptyCustomRegistryObject<T> implements IRegistryObject<T>
+public class EmptyCustomRegistryObject<T> implements IRegistryObject<T, T>
 {
     private final Identifier entryName;
 
@@ -22,6 +23,11 @@ public class EmptyCustomRegistryObject<T> implements IRegistryObject<T>
     @Override
     public @NotNull T get()
     {
+        throw new IllegalStateException("Empty registry object");
+    }
+
+    @Override
+    public ResourceKey<T> key() {
         throw new IllegalStateException("Empty registry object");
     }
 
@@ -50,7 +56,7 @@ public class EmptyCustomRegistryObject<T> implements IRegistryObject<T>
     }
 
     @Override
-    public IRegistryObject<T> filter(final Predicate<? super T> predicate)
+    public IRegistryObject<T, T> filter(final Predicate<? super T> predicate)
     {
         return this;
     }

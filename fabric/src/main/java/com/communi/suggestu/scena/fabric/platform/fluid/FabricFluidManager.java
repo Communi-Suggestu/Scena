@@ -46,7 +46,7 @@ public class FabricFluidManager implements IFluidManager
     public FluidRegistration registerFluidAndVariant(final Identifier name, final Supplier<FluidWithHandler> fluid, final Supplier<IFluidVariantHandler> variantHandler)
     {
         final IRegistrar<Fluid> fluidRegistrar = IRegistrar.create(Registries.FLUID, name.getNamespace());
-        final IRegistryObject<Fluid> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
+        final IRegistryObject<Fluid, ?> fluidRegistration = fluidRegistrar.register(name.getPath(), fluid);
 
         final IFluidVariantHandler handler = variantHandler.get();
         FluidVariantAttributes.register(fluidRegistration.get(), new FabricFluidVariantAttributeHandlerDelegate(handler));

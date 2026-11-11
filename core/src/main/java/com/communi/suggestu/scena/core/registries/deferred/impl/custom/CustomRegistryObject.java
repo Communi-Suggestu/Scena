@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.registries.ICustomRegistry;
 import com.communi.suggestu.scena.core.registries.ICustomRegistryEntry;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> implements IRegistryObject<T>
+public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> implements IRegistryObject<R, T>
 {
 
     private final Identifier                   entryName;
@@ -37,6 +38,11 @@ public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> i
         return getEntry().orElseThrow();
     }
 
+    @Override
+    public ResourceKey<R> key() {
+        throw new IllegalStateException("Custom registries do not have a ResourceKey, as they are not part of the vanilla registry system.");
+    }
+
     @SuppressWarnings("unchecked")
     private Optional<T> getEntry()
     {
@@ -50,9 +56,9 @@ public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> i
     }
 
     @Override
-    public Stream<T> stream()
+    public Stream<R> stream()
     {
-        return getEntry().stream();
+        return Stream.of(getEntry().orElseThrow());
     }
 
     @Override
@@ -68,7 +74,7 @@ public class CustomRegistryObject<T extends R, R extends ICustomRegistryEntry> i
     }
 
     @Override
-    public IRegistryObject<T> filter(final Predicate<? super T> predicate)
+    public IRegistryObject<R, T> filter(final Predicate<? super T> predicate)
     {
         return getEntry()
                  .filter(predicate)
