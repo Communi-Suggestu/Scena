@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.communi.suggestu.scena.fabric.mixin",
+  "plugin": "com.communi.suggestu.scena.mixin.terrain.NativeTerrainMixinPlugin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "platform.common.ChunkAccessMixin",
@@ -30,7 +31,9 @@
     "platform.client.ModelBakeryFromModelManagerAccessorMixin",
     "platform.client.MouseHandlerMixin",
     "platform.client.SpecialModelRenderersMixin",
-    "platform.client.VanillaBlockModelPartEncoderMixin"
+    "platform.client.VanillaBlockModelPartEncoderMixin",
+    "platform.client.TerrainCompileScopeMixin",
+    "platform.client.TerrainGeometrySectionCompilerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

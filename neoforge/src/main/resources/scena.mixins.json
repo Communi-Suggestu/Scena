@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.communi.suggestu.scena.forge.mixin.platform",
+  "plugin": "com.communi.suggestu.scena.mixin.terrain.NativeTerrainMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "scena.refmap.json",
   "mixins": [
@@ -17,7 +18,9 @@
     "client.AbstractClientPlayerScopingMixin",
     "client.ActiveModelDataManagerMixin",
     "client.BlockStateModelExtensionMixin",
-    "client.GuiGraphicsExtractorMixin"
+    "client.GuiGraphicsExtractorMixin",
+    "client.TerrainCompileScopeMixin",
+    "client.TerrainGeometrySectionCompilerMixin"
   ],
   "server": [],
   "injectors": {
