@@ -31,3 +31,5 @@ $project.description
     side="BOTH"
 [[mixins]]
 config="scena.mixins.json"
+[[mixins]]
+config="scena.terrain.mixins.json"

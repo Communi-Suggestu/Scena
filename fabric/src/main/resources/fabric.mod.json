@@ -23,6 +23,7 @@
   },
   "mixins": [
     "scena.mixins.json",
+    "scena.terrain.mixins.json"
   ],
   "accessWidener" : "scena.accesswidener",
   "depends": {

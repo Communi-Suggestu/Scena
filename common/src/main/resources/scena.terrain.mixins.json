@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.communi.suggestu.scena.mixin.terrain",
+  "plugin": "com.communi.suggestu.scena.mixin.terrain.NativeTerrainMixinPlugin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "StagingBufferMixin",
+    "UberGpuBufferMixin",
+    "SectionUberBuffersMixin",
+    "CompiledSectionMeshMixin",
+    "SectionRenderDispatcherMixin",
+    "RenderSectionMixin",
+    "CompileTaskMixin",
+    "LevelRendererMixin",
+    "BufferBuilderMixin",
+    "CpuSectionCompilerMixin",
+    "SectionCompilerResultsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
+}

@@ -22,16 +22,10 @@ public abstract class ServerChunkCacheMixin {
 
     @Inject(
             method = "getChunk",
-            at = {
-                    @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;incrementCounter(Ljava/lang/String;)V",
-                    ordinal = 1),
-                    @At(
+            at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerChunkCache;getChunkFutureMainThread(IILnet/minecraft/world/level/chunk/status/ChunkStatus;Z)Ljava/util/concurrent/CompletableFuture;",
-                    ordinal = 0)
-            },
+                    ordinal = 0),
             allow = 1,
             cancellable = true
     )

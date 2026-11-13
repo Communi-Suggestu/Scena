@@ -1,6 +1,8 @@
 package com.communi.suggestu.scena.fabric.platform.client.model.unbaked;
 
 import com.communi.suggestu.scena.core.client.rendering.DataAwareBlockStateModel;
+import com.communi.suggestu.scena.core.client.rendering.terrain.ITerrainGeometryContext;
+import com.communi.suggestu.scena.core.client.rendering.terrain.TerrainGeometryBlockStateModel;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.client.model.loading.v1.CustomUnbakedBlockStateModel;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
@@ -61,7 +63,44 @@ public record UnbakedCustomModelWrapper<T extends BlockStateModel.Unbaked>(
         model().resolveDependencies(resolver);
     }
 
-    public record DataAware(BlockStateModel inner) implements BlockStateModel {
+    public record DataAware(BlockStateModel inner) implements BlockStateModel, TerrainGeometryBlockStateModel {
+
+        @Override
+        public boolean canEmitTerrainGeometry(final ITerrainGeometryContext context)
+        {
+            return inner() instanceof TerrainGeometryBlockStateModel geometryModel
+                && geometryModel.canEmitTerrainGeometry(context);
+        }
+
+        @Override
+        public @Nullable Object preflightTerrainGeometry(final ITerrainGeometryContext context)
+        {
+            return inner() instanceof TerrainGeometryBlockStateModel geometryModel
+                ? geometryModel.preflightTerrainGeometry(context)
+                : null;
+        }
+
+        @Override
+        public void emitTerrainGeometry(final ITerrainGeometryContext context)
+        {
+            if (!(inner() instanceof TerrainGeometryBlockStateModel geometryModel))
+            {
+                throw new IllegalStateException("Wrapped model does not opt in to terrain geometry");
+            }
+
+            geometryModel.emitTerrainGeometry(context);
+        }
+
+        @Override
+        public void emitTerrainGeometry(final ITerrainGeometryContext context, final Object preflight)
+        {
+            if (!(inner() instanceof TerrainGeometryBlockStateModel geometryModel))
+            {
+                throw new IllegalStateException("Wrapped model does not opt in to terrain geometry");
+            }
+
+            geometryModel.emitTerrainGeometry(context, preflight);
+        }
 
         @Override
         public void emitQuads(

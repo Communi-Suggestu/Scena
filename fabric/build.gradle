@@ -34,4 +34,14 @@ tableau {
 dependencies {
     implementation "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
     include "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.14.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+sourceSets.main.java.srcDir(rootProject.file('common/src/main/java'))
+sourceSets.main.resources.srcDir(rootProject.file('common/src/main/resources'))
+
+test {
+    useJUnitPlatform()
 }

@@ -47,7 +47,6 @@ import java.util.function.Supplier;
 public final class ForgeModelManager implements IModelManager
 {
     private static final ForgeModelManager INSTANCE = new ForgeModelManager();
-    private static final RandomSource      RANDOM   = RandomSource.createThreadLocalInstance(42L);
 
     public static ForgeModelManager getInstance()
     {
@@ -84,7 +83,6 @@ public final class ForgeModelManager implements IModelManager
         final BlockPos pos)
     {
         final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
-        RANDOM.setSeed(blockState.getSeed(pos));
         return model.particleMaterial(
             new SingleBlockBlockAndTintGetter.Builder()
                 .withBlockState(blockState)
@@ -105,7 +103,7 @@ public final class ForgeModelManager implements IModelManager
         final BlockPos pos)
     {
         final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
-        RANDOM.setSeed(blockState.getSeed(pos));
+        final RandomSource random = RandomSource.createThreadLocalInstance(blockState.getSeed(pos));
         return model.createGeometryKey(
             new SingleBlockBlockAndTintGetter.Builder()
                 .withBlockState(blockState)
@@ -115,7 +113,7 @@ public final class ForgeModelManager implements IModelManager
                 .createSingleBlockBlockAndTintGetter(),
             pos,
             blockState,
-            RANDOM
+            random
         );
     }
 
@@ -129,7 +127,7 @@ public final class ForgeModelManager implements IModelManager
         final Consumer<DeconstructedModelPartComponent> pipeline)
     {
         final BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
-        RANDOM.setSeed(blockState.getSeed(pos));
+        final RandomSource random = RandomSource.createThreadLocalInstance(blockState.getSeed(pos));
 
         final List<BlockStateModelPart> parts = new ArrayList<>();
         model.collectParts(
@@ -141,7 +139,7 @@ public final class ForgeModelManager implements IModelManager
                 .createSingleBlockBlockAndTintGetter(),
             pos,
             blockState,
-            RANDOM,
+            random,
             parts
         );
         for (final BlockStateModelPart part : parts)

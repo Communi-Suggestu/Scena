@@ -39,7 +39,6 @@ import java.util.function.Supplier;
 public final class FabricModelManager implements IModelManager
 {
     private static final FabricModelManager INSTANCE = new FabricModelManager();
-    private static final RandomSource       RANDOM   = RandomSource.createThreadLocalInstance(42L);
 
     public static FabricModelManager getInstance()
     {
@@ -88,8 +87,6 @@ public final class FabricModelManager implements IModelManager
             .withPos(pos)
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
-        RANDOM.setSeed(blockState.getSeed(pos));
-
         return blockStateModel.particleMaterial(
             wrapper,
             pos,
@@ -111,13 +108,13 @@ public final class FabricModelManager implements IModelManager
             .withPos(pos)
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
-        RANDOM.setSeed(blockState.getSeed(pos));
+        final RandomSource random = RandomSource.createThreadLocalInstance(blockState.getSeed(pos));
 
         return blockStateModel.createGeometryKey(
             wrapper,
             pos,
             blockState,
-            RANDOM
+            random
         );
     }
 
@@ -137,7 +134,7 @@ public final class FabricModelManager implements IModelManager
             .withPos(pos)
             .withSource(blockAndTintGetter)
             .createSingleBlockBlockAndTintGetter();
-        RANDOM.setSeed(blockState.getSeed(pos));
+        final RandomSource random = RandomSource.createThreadLocalInstance(blockState.getSeed(pos));
 
         MutableMesh mutableMesh = Renderer.get().mutableMesh();
         blockStateModel.emitQuads(
@@ -145,7 +142,7 @@ public final class FabricModelManager implements IModelManager
             wrapper,
             pos,
             blockState,
-            RANDOM,
+            random,
             dir -> {
                 if (dir == null && cullDirection == null)
                     return false;
