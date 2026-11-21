@@ -91,6 +91,7 @@ public final class TerrainMeshState
             if (!released && generation == owner.scena$pending().generation()
                 && !((TerrainDispatcherAccess) owner.scena$dispatcher()).scena$uploads().isClosed())
             {
+                TerrainShardStats.recordShardsUploaded(layers.get(layer).keys().size());
                 LOGGER.info("Experimental terrain shards uploaded: layer={}, shards={}", layer, layers.get(layer).keys().size());
                 owner.scena$vertexUploaded(parent, layer);
             }

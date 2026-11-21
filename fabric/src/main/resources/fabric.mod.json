@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "com.communi.suggestu.scena.fabric.Fabric"
+    ],
+    "fabric-client-gametest": [
+      "com.communi.suggestu.scena.fabric.gametest.TerrainShardStressClientGameTest"
     ]
   },
   "mixins": [

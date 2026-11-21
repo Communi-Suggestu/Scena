@@ -45,3 +45,15 @@ sourceSets.main.resources.srcDir(rootProject.file('common/src/main/resources'))
 test {
     useJUnitPlatform()
 }
+
+def terrainStressEnabled = providers.gradleProperty('scenaTerrainStress').getOrElse('false') == 'true'
+
+tasks.named('runClient', JavaExec) {
+    systemProperty 'scena.experimentalTerrainSharding', providers.gradleProperty('scenaTerrainSharding').getOrElse('false')
+    systemProperty 'scena.debugTerrainSharding', providers.gradleProperty('scenaTerrainShardingDebug').getOrElse('false')
+    if (terrainStressEnabled) {
+        systemProperty 'scena.terrainStress', 'true'
+        systemProperty 'fabric.client.gametest', 'true'
+        systemProperty 'fabric.client.gametest.modid', 'scena'
+    }
+}

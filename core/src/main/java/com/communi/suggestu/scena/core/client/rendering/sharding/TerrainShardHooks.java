@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 public final class TerrainShardHooks
 {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static int NEEDS_SHARDS_LOGS;
+
     private TerrainShardHooks()
     {
     }
@@ -28,7 +30,14 @@ public final class TerrainShardHooks
     public static boolean needsShards(final TerrainSectionAccess owner, final CompiledSectionMesh mesh, final ChunkSectionLayer layer, final int bytes)
     {
         final TerrainCpuBatch batch = ((TerrainMeshAccess) mesh).scena$shards().cpuBatch();
-        return (batch != null && batch.hasLayer(layer)) || bytes > budget((TerrainDispatcherAccess) owner.scena$dispatcher(), layer);
+        final int budget = budget((TerrainDispatcherAccess) owner.scena$dispatcher(), layer);
+        if (Boolean.getBoolean("scena.debugTerrainSharding") && NEEDS_SHARDS_LOGS < 5)
+        {
+            NEEDS_SHARDS_LOGS++;
+            LOGGER.info("Terrain shard check: layer={} bytes={} budget={} cpuBatch={}",
+                layer, bytes, budget, batch != null && batch.hasLayer(layer));
+        }
+        return (batch != null && batch.hasLayer(layer)) || bytes > budget;
     }
 
     private static int budget(final TerrainDispatcherAccess dispatcher, final ChunkSectionLayer layer)
@@ -64,6 +73,7 @@ public final class TerrainShardHooks
                 LOGGER.info("Experimental terrain sharding: layer={}, bytes={}, shards={}, shardBudget={}",
                     layer, sources.stream().mapToLong(ByteBuffer::remaining).sum(), shards.keys().size(), budget(access, layer));
                 parent.setIndexBufferUploaded(layer);
+                TerrainShardStats.recordLayerSharded(shards.keys().size());
             }
             final boolean accepted = shards.stage(sources, access.scena$vertices(layer), () -> state.uploaded(layer));
             if (accepted && cpuSharded)
@@ -118,6 +128,7 @@ public final class TerrainShardHooks
                     append.accept(new RenderPass.Draw<>(first.slot(), slice.vertexBuffer(), null, null, 0,
                         key.getSectionDraw(layer).indexCount(), base, first.uniformUploaderConsumer()));
                 }
+                TerrainShardStats.recordDrawsAppended(shards.keys().size() - 1);
             }
         }
         return true;

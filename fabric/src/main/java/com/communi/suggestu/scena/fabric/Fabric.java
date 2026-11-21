@@ -5,8 +5,11 @@ import com.communi.suggestu.scena.core.init.PlatformInitializationHandler;
 import com.communi.suggestu.scena.fabric.platform.FabricScenaPlatform;
 import com.communi.suggestu.scena.fabric.platform.event.FabricGameEvents;
 import com.communi.suggestu.scena.fabric.platform.server.FabricServerLifecycleManager;
+import com.communi.suggestu.scena.fabric.platform.client.rendering.TerrainStressModels;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,11 @@ public class Fabric implements ModInitializer {
         PlatformInitializationHandler.getInstance().init(platform);
 
         setupEvents();
+
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+        {
+            TerrainStressModels.register();
+        }
 
         FabricGameEvents.COMMON_CONFIGURATION_LOADED.invoker().handle();
 

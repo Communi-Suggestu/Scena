@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
 import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
+import net.minecraft.core.SectionPos;
 
 /**
  * Compile-local CPU ownership, transferred to the parent mesh on successful compilation.
@@ -20,11 +24,14 @@ import net.minecraft.client.renderer.chunk.SectionCompiler;
 public final class TerrainCpuBatch
 {
     public static final int MAX_VERTEX_BYTES = 32 * 1024 * 1024;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static int ROTATE_LOGS;
+    private static int COMPILE_LOGS;
     private static final ThreadLocal<TerrainCpuBatch> CURRENT = new ThreadLocal<>();
-
     private final Map<ChunkSectionLayer, List<OwnedMesh>> meshes = new EnumMap<>(ChunkSectionLayer.class);
     private final Map<ChunkSectionLayer, ByteBufferBuilder> current = new EnumMap<>(ChunkSectionLayer.class);
     private boolean finished;
+    private long maxBuilderBytes;
 
     private record OwnedMesh(MeshData mesh, ByteBufferBuilder owner)
     {
@@ -42,7 +49,7 @@ public final class TerrainCpuBatch
     {
     }
 
-    public static SectionCompiler.Results compile(final Supplier<SectionCompiler.Results> operation)
+    public static SectionCompiler.Results compile(final SectionPos pos, final Supplier<SectionCompiler.Results> operation)
     {
         if (!TerrainShardGate.isEnabled())
         {
@@ -53,11 +60,23 @@ public final class TerrainCpuBatch
             throw new IllegalStateException("Nested terrain compilation on the same thread");
         }
         final TerrainCpuBatch batch = new TerrainCpuBatch();
+        TerrainShardStats.recordCompile();
         CURRENT.set(batch);
         boolean transferred = false;
         try
         {
             final SectionCompiler.Results results = operation.get();
+            long bytes = 0;
+            for (final MeshData part : results.renderedLayers.values())
+            {
+                bytes += part.vertexBuffer().remaining();
+            }
+            if (Boolean.getBoolean("scena.debugTerrainSharding") && COMPILE_LOGS < 20 && bytes > 1024 * 1024)
+            {
+                COMPILE_LOGS++;
+                LOGGER.info("Terrain compile result: pos={} layers={} bytes={} builder={} batches={}",
+                    pos, results.renderedLayers.size(), bytes, batch.maxBuilderBytes, batch.meshes.size());
+            }
             batch.finish(results);
             ((TerrainCpuResultAccess) (Object) results).scena$cpuBatch(batch);
             transferred = true;
@@ -84,12 +103,25 @@ public final class TerrainCpuBatch
         final TerrainBuilderAccess access = (TerrainBuilderAccess) builder;
         final int vertices = access.scena$vertexCount();
         final int stride = access.scena$format().getVertexSize();
+        final long builderBytes = (long) vertices * stride;
+        batch.maxBuilderBytes = Math.max(batch.maxBuilderBytes, builderBytes);
+        if (Boolean.getBoolean("scena.debugTerrainSharding") && ROTATE_LOGS < 10)
+        {
+            ROTATE_LOGS++;
+            LOGGER.info("Terrain rotate check: layer={} vertices={} stride={} bytes={}",
+                layer, vertices, stride, builderBytes);
+        }
         if (!shouldRotate(vertices, stride))
         {
             return builder;
         }
         final MeshData mesh = builder.buildOrThrow();
         batch.meshes.computeIfAbsent(layer, ignored -> new ArrayList<>()).add(new OwnedMesh(mesh, batch.current.remove(layer)));
+        TerrainShardStats.recordBuilderRotation();
+        if (Boolean.getBoolean("scena.debugTerrainSharding"))
+        {
+            LOGGER.info("Terrain builder rotated: layer={} vertices={} bytes={}", layer, vertices, builderBytes);
+        }
         final ByteBufferBuilder buffer = new ByteBufferBuilder(32 * 1024);
         batch.current.put(layer, buffer);
         final BufferBuilder next = new BufferBuilder(buffer, PrimitiveTopology.QUADS, access.scena$format());

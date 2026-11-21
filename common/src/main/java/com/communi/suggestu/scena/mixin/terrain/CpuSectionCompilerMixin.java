@@ -27,7 +27,7 @@ public abstract class CpuSectionCompilerMixin
                                                 final VertexSorting sorting, final SectionBufferBuilderPack buffers,
                                                 final Operation<SectionCompiler.Results> original)
     {
-        return TerrainCpuBatch.compile(() -> original.call(pos, region, sorting, buffers));
+        return TerrainCpuBatch.compile(pos, () -> original.call(pos, region, sorting, buffers));
     }
 
     @Inject(
