@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.communi.suggestu.scena.mixin.terrain",
-  "plugin": "com.communi.suggestu.scena.mixin.terrain.NativeTerrainMixinPlugin",
+  "plugin": "com.communi.suggestu.scena.mixin.terrain.TerrainShardingMixinPlugin",
   "compatibilityLevel": "JAVA_25",
   "client": [
     "StagingBufferMixin",
