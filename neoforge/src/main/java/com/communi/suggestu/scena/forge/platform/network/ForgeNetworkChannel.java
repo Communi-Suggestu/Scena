@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.extensions.IServerCommonPacketListenerExtension;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,8 +49,21 @@ public class ForgeNetworkChannel implements INetworkChannel {
 
     @Override
     public void sendToPlayer(CustomPacketPayload msg, ServerPacketListener listener) {
+        if (!canSendTo(msg, listener)) {
+            return;
+        }
+
         final IServerCommonPacketListenerExtension extension = (IServerCommonPacketListenerExtension) listener;
         extension.send(msg);
+    }
+
+    @Override
+    public boolean canSendTo(final CustomPacketPayload msg, final ServerPacketListener listener) {
+        if (!(listener instanceof IServerCommonPacketListenerExtension extension)) {
+            return false;
+        }
+
+        return NetworkRegistry.hasChannel(extension, msg.type().id());
     }
 
     public record Registration<T extends CustomPacketPayload, B extends FriendlyByteBuf>(

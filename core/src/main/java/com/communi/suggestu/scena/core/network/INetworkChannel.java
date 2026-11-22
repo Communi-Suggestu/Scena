@@ -92,6 +92,31 @@ public interface INetworkChannel
     void sendToPlayer(CustomPacketPayload msg, ServerPacketListener listener);
 
     /**
+     * Checks if the given message can be sent to the given player, on this platform.
+     *
+     * @param msg The message to send.
+     * @param player The player to send to.
+     * @return True if the message can be sent, false otherwise.
+     */
+    default boolean canSendTo(final CustomPacketPayload msg, final ServerPlayer player) {
+        return player.connection != null && canSendTo(msg, player.connection);
+    }
+
+    /**
+     * Checks if the given message can be sent to the given listener, on this platform.
+     *
+     * <p>Platforms that negotiate payload channels per connection should override this; a listener
+     * without a negotiated channel (for example a game-test mock player) cannot receive custom payloads.
+     *
+     * @param msg The message to send.
+     * @param listener The listener to send to.
+     * @return True if the message can be sent, false otherwise.
+     */
+    default boolean canSendTo(final CustomPacketPayload msg, final ServerPacketListener listener) {
+        return true;
+    }
+
+    /**
      * Sends to everyone.
      *
      * @param msg message to send
