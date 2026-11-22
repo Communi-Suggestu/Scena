@@ -80,6 +80,10 @@ public interface INetworkChannel
      * @param player The player to send the message to.
      */
     default void sendToPlayer(CustomPacketPayload msg, ServerPlayer player) {
+        if (!canSendTo(msg, player)) {
+            return;
+        }
+
         sendToPlayer(msg, player.connection);
     }
 
