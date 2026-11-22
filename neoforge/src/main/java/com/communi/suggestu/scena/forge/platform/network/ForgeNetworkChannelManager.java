@@ -133,31 +133,25 @@ public class ForgeNetworkChannelManager implements INetworkChannelManager {
             final PayloadDirection direction
     ) {
         if (phase == PayloadPhase.PLAY) {
-            if (direction == PayloadDirection.BOTH) {
-                return (type, reader, handler) -> registrar.playBidirectional(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
-            }
-            if (direction == PayloadDirection.CLIENTBOUND) {
-                return (type, reader, handler) -> registrar.playToClient(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
-            }
-            if (direction == PayloadDirection.SERVERBOUND) {
-                return (type, reader, handler) -> registrar.playToServer(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
-            }
-
-            throw new IllegalArgumentException("Unknown direction: " + direction);
+            return (type, reader, handler) -> {
+                switch (direction) {
+                    case BOTH -> registrar.playBidirectional(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+                    case CLIENTBOUND -> registrar.playToClient(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+                    case SERVERBOUND -> registrar.playToServer(type, (StreamCodec<RegistryFriendlyByteBuf, T>) reader, handler);
+                    default -> throw new IllegalArgumentException("Unknown direction: " + direction);
+                }
+            };
         }
 
         if (phase == PayloadPhase.CONFIG) {
-            if (direction == PayloadDirection.BOTH) {
-                return (type, reader, handler) -> registrar.configurationBidirectional(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
-            }
-            if (direction == PayloadDirection.CLIENTBOUND) {
-                return (type, reader, handler) -> registrar.configurationToClient(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
-            }
-            if (direction == PayloadDirection.SERVERBOUND) {
-                return (type, reader, handler) -> registrar.configurationToServer(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
-            }
-
-            throw new IllegalArgumentException("Unknown direction: " + direction);
+            return (type, reader, handler) -> {
+                switch (direction) {
+                    case BOTH -> registrar.configurationBidirectional(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+                    case CLIENTBOUND -> registrar.configurationToClient(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+                    case SERVERBOUND -> registrar.configurationToServer(type, (StreamCodec<FriendlyByteBuf, T>) reader, handler);
+                    default -> throw new IllegalArgumentException("Unknown direction: " + direction);
+                }
+            };
         }
 
         throw new IllegalArgumentException("Unknown phase: " + phase);
